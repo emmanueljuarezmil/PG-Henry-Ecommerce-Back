@@ -3,38 +3,42 @@
 /**
  * Module dependencies.
  */
-
-var app = require('../app');
-var debug = require('debug')('pg-henry-ecommerce-back:server');
-var http = require('http');
+ const server = require('./src/app.js');
+ const { conn } = require('./src/db.js');
+const app = require('../app');
+const debug = require('debug')('pg-henry-ecommerce-back:server');
+const http = require('http');
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 /**
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+const server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
  */
+// Ya acomodado con sinq a la db
+conn.sync({force: true}).then(() =>
+  server.listen(port),
+  server.on('error', onError),
+  server.on('listening', onListening)
+)
 
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.
  */
 
 function normalizePort(val) {
-  var port = parseInt(val, 10);
+   port = parseInt(val, 10);
 
   if (isNaN(port)) {
     // named pipe
