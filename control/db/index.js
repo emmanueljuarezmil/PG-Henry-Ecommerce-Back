@@ -19,6 +19,10 @@ module.exports = (sequelize) => {
     nombre_usuario:{
         type: DataTypes.STRING,
         unique: true
+    },
+    email: {
+      type: DataTypes.STRING,
+      unique: true
     }
   })
   sequelize.define('Producto', {    
@@ -31,6 +35,11 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    stock:{
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+
   });
   sequelize.define('Vendedor', {
       id: {
@@ -39,7 +48,7 @@ module.exports = (sequelize) => {
           primaryKey: true,
       },
       name: {
-          type:
+          type: DataTypes.STRING
       }
   })
   
