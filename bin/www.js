@@ -25,12 +25,12 @@ const server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 // Ya acomodado con sinq a la db
+// server.on('error', onError),
+// server.on('listening', onListening)
 
 conn.sync({force: true}).then(() =>
-  // server.listen(port),
-  server.on('error', onError),
-  server.on('listening', onListening)
-).catch(console.log('algo no '))
+  server.listen(port)
+).then(() => { console.log(`funciona en el ${port}`)}).catch(console.log('algo no '))
 
 
 /**
