@@ -3,8 +3,7 @@
 /**
  * Module dependencies.
  */
- const server = require('./src/app.js');
- const { conn } = require('./src/db.js');
+const { conn } = require('../db.js');
 const app = require('../app');
 const debug = require('debug')('pg-henry-ecommerce-back:server');
 const http = require('http');
@@ -13,7 +12,7 @@ const http = require('http');
  * Get port from environment and store in Express.
  */
 
-const port = normalizePort(process.env.PORT || '3000');
+let port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 /**
@@ -26,11 +25,12 @@ const server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 // Ya acomodado con sinq a la db
+// server.on('error', onError),
+// server.on('listening', onListening)
+
 conn.sync({force: true}).then(() =>
-  server.listen(port),
-  server.on('error', onError),
-  server.on('listening', onListening)
-)
+  server.listen(port)
+).then(() => { console.log(`funciona en el ${port}`)}).catch(console.log('algo no '))
 
 
 /**
@@ -38,7 +38,7 @@ conn.sync({force: true}).then(() =>
  */
 
 function normalizePort(val) {
-   port = parseInt(val, 10);
+  let port = parseInt(val, 10);
 
   if (isNaN(port)) {
     // named pipe
