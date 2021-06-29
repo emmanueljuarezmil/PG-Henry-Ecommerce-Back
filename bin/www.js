@@ -27,7 +27,7 @@ const server = http.createServer(app);
 // Ya acomodado con sinq a la db
 
 conn.sync({force: true}).then(() =>
-  server.listen(port),
+  // server.listen(port),
   server.on('error', onError),
   server.on('listening', onListening)
 ).catch(console.log('algo no '))
