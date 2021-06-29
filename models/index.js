@@ -12,7 +12,7 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING(32),
       unique: true,
       allowNull: false,
-      is: /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/
+      is: /^[a-zA-Z]+(([,.-][a-zA-Z ])?[a-zA-Z]*)*$/
     },
     email: {
       type: DataTypes.STRING(32),
@@ -20,6 +20,9 @@ module.exports = (sequelize) => {
       allowNull: false,
       is: /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/
     },
+    hashedPassword:{
+      type: DataTypes.STRING(32)
+    }
   })
   sequelize.define('Usuario', {
     id:{
@@ -29,13 +32,13 @@ module.exports = (sequelize) => {
     },
     nombre:{
       type: DataTypes.STRING(32),
-      is: /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/
+      is: /^[a-zA-Z]+(([ ][a-zA-Z ])?[a-zA-Z]*)*$/
     },
     nombre_usuario:{
         type: DataTypes.STRING(32),
         unique: true,
         allowNull: false,
-        is: /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/
+        is: /^[a-zA-Z]+(([ ,.-][a-zA-Z ])?[a-zA-Z]*)*$/
     },
     email: {
       type: DataTypes.STRING(32),
@@ -58,15 +61,16 @@ module.exports = (sequelize) => {
     nombre: {
       type: DataTypes.STRING(32),
       allowNull: false,
-      is: /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/
+      is: /^[a-zA-Z]+(([ ,.-][a-zA-Z ])?[a-zA-Z]*)*$/
     },
     descripcion: {
       type: DataTypes.TEXT,
       is: /[CDATA[^[a-zA-Z0-9 .-]+$]]/
     },
     precio: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.FLOAT,
       allowNull: false,
+
     },
     stock:{
       type: DataTypes.INTEGER,
@@ -83,13 +87,13 @@ module.exports = (sequelize) => {
       nombre: {
           type: DataTypes.STRING(32),
           allowNull: false,
-          is: /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/
+          is: /^[a-zA-Z]+(([,. -][a-zA-Z ])?[a-zA-Z]*)*$/
       },
       nombre_usuario:{
           type: DataTypes.STRING(32),
           unique: true,
           allowNull: false,
-          is: /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/
+          is: /^[a-zA-Z]+(([,. -][a-zA-Z ])?[a-zA-Z]*)*$/
       },
       email: {
         type: DataTypes.STRING(32),
@@ -104,7 +108,6 @@ module.exports = (sequelize) => {
       },
       validate :{
           type: DataTypes.BOOLEAN,
-    
       }
   })
   
