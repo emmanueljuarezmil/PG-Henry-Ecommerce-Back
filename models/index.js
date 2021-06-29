@@ -7,6 +7,20 @@ const { DataTypes } = require('sequelize');
 //HACER LAS VALIDACIONES
 
 module.exports = (sequelize) => {
+  sequelize.define('Admin', {
+    nombre_usuario:{
+      type: DataTypes.STRING(32),
+      unique: true,
+      allowNull: false,
+      is: /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/
+    },
+    email: {
+      type: DataTypes.STRING(32),
+      unique: true,
+      allowNull: false,
+      is: /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/
+    },
+  })
   sequelize.define('Usuario', {
     id:{
       type: DataTypes.UUID,
