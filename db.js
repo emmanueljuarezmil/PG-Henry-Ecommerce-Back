@@ -36,6 +36,8 @@ const { Producto, Vendedor, Usuario } = sequelize.models;
 // Product.hasMany(Reviews);
 
 //RELACIONES!!!
+Usuario.belongsToMany(Producto, 'productos_comprados')
+Producto.belongsToMany(Usuario, 'productos_comprados')
 
 
 
