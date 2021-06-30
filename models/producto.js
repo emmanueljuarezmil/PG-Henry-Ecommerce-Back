@@ -25,27 +25,13 @@ module.exports = (sequelize) => {
       allowNull: false
     },
     stock_spell:{
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
         defaultValue: 0,
         allowNull: false
     },
     perc_desc: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
         defaultValue: 0
     },
-    created_at: {
-        type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
-    },
-    updated_at: {
-        type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
-    },
-    deleted_at: {
-        type: Sequelize.DATE,
-        allowNull: true,
-    }
   });
 };
