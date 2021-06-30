@@ -7,11 +7,11 @@ module.exports = (sequelize) => {
       allowNull: false,
       primaryKey: true
     },
-    nombre:{
+    name:{
       type: DataTypes.STRING(32),
       is: /^[a-zA-Z]+(([ ][a-zA-Z ])?[a-zA-Z]*)*$/
     },
-    nombre_usuario:{
+    name_user:{
         type: DataTypes.STRING(32),
         unique: true,
         allowNull: false,
@@ -33,7 +33,7 @@ module.exports = (sequelize) => {
       allowNull: false,
       is: /^[0-9a-f]{64}$/i
     },
-    creado_at: {
+    create_at: {
       type: Sequelize.DATE,
       allowNull: false,
       defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),

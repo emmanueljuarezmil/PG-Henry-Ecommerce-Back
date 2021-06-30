@@ -7,7 +7,7 @@ module.exports = (sequelize) => {
       allowNull: false,
       primaryKey: true
     },
-    nombre: {
+    name: {
       type: DataTypes.STRING(32),
       allowNull: false,
       is: /^[a-zA-Z]+(([ ,.-][a-zA-Z ])?[a-zA-Z]*)*$/

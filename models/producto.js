@@ -7,29 +7,29 @@ module.exports = (sequelize) => {
       allowNull: false,
       primaryKey: true
     },
-    nombre: {
+    name: {
       type: DataTypes.STRING(32),
       allowNull: false,
       is: /^[a-zA-Z]+(([ ,.-][a-zA-Z ])?[a-zA-Z]*)*$/
     },
-    descripcion: {
+    descrip: {
       type: DataTypes.TEXT,
       is: /[CDATA[^[a-zA-Z0-9 .-]+$]]/
     },
-    precio: {
+    price: {
       type: DataTypes.FLOAT,
       allowNull: false,
     },
-    cant:{
+    stock:{
       type: DataTypes.INTEGER,
       allowNull: false
     },
-    cant_vendido:{
+    stock_spell:{
         type: Sequelize.INTEGER,
         defaultValue: 0,
         allowNull: false
     },
-    porc_desc: {
+    perc_desc: {
         type: Sequelize.INTEGER,
         defaultValue: 0
     },
