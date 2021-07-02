@@ -6,6 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "axios": "^0.21.1",
     "cookie-parser": "~1.4.4",
     "debug": "^2.6.9",
     "dotenv": "^10.0.0",
@@ -14,6 +15,7 @@
     "http": "^0.0.1-security",
     "http-errors": "^1.6.3",
     "morgan": "^1.10.0",
+    "node": "^16.4.0",
     "path": "^0.12.7",
     "pg": "^8.6.0",
     "sequelize": "^6.6.4"

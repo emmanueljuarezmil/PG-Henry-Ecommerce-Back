@@ -1,9 +1,11 @@
-const express = require('express');
-const router = express.Router();
+const { Router } = require('express');
+const {getProducts} = require('../../control/default/products.js')
 
 /* GET default landing. */
-router.get('/', function(req, res, next) {
-  res.status(200).send({status:200})
-});
+
+const router = Router();
+
+router.use('/products', getProducts)
+
 
 module.exports = router;
