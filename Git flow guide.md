@@ -5,21 +5,16 @@ Tambien es importante no trabajar de mas de a 1 en el mismo archivo, a lo sumo j
 
 ## Comandos utiles GIT
 
-ver rama en la que estoy: git branch
-crear rama local: git branch {nombre de la rama}
-moverse entre ramas locales: git checkout {nombre de la rama}
-crear una rama local y moverse a ella: git checkout -b {nombre de la rama}
-
-borrar rama local: git branch -d {nombre de la rama local}
-borrar rama remota: git push origin --delete {nombre de la rama remota}
-
-actualizar el repo local con lo que hay en el remoto: git pull (git pull !== pull request)
-
-interfaz visual de git para ver las ramas: gitk
-
-interfaz en consola para ver las ramas: git log --oneline --graph
-
-pushear cambios: git push origin {nombre de la rama} (indicar el nombre de la rama para asegurarse que pusheamos a esa rama)
+- ver rama en la que estoy: git branch
+- crear rama local: git branch {nombre de la rama}
+- moverse entre ramas locales: git checkout {nombre de la rama}
+- crear una rama local y moverse a ella: git checkout -b {nombre de la rama}
+- borrar rama local: git branch -d {nombre de la rama local}
+- borrar rama remota: git push origin --delete {nombre de la rama remota}
+- actualizar el repo local con lo que hay en el remoto: git pull (git pull !== pull request)
+- interfaz visual de git para ver las ramas: gitk
+- interfaz en consola para ver las ramas: git log --oneline --graph
+- pushear cambios: git push origin {nombre de la rama} (indicar el nombre de la rama para asegurarse que pusheamos a esa rama)
 
 
 ## Branches
