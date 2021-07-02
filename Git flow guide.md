@@ -25,7 +25,11 @@ Las ramas principales son:
 - Prueba: Esta va a ser la rama staging, de produccion, donde vamos a ir haciendo pull request y mergeando todo lo que vayamos haciendo. Y cada tanto vamos a pasar estos cambios a la main asegurandonos de que sea estable lo que tenemos.
 
 Luego vamos a creando ramas descriptivas cada vez que vayamos a trabajar en algo. 
-Por descriptivas es por ej: feat/user_creation, fix/currency_with_decimal, chore/lint_ci, refactor/auth_routing.
+Por descriptivas es por ej:
+- feat/user_creation
+- fix/currency_with_decimal 
+- chore/lint_ci 
+- refactor/auth_routing.
 Es importante que nos comuniquemos cuando vayamos a hacer algo asi no pasa que otro se ponga a trabajar y modificar los mismos archivos que estamos trabajando, y no generamos conflictos
 Y tambien es importante limitar la rama a algo chico, lo que vamos a hacer ese dia o en ese momento, por ej no hacer una rama para configurar todo el server, asi todos vamos teniendo todo actualizado
 
@@ -36,7 +40,7 @@ Y tambien es importante limitar la rama a algo chico, lo que vamos a hacer ese d
 
 Al empezar hacer git pull desde la rama local prueba asi los archivos actualizados del repo remoto los tenemos localmente en esa rama (en prueba local asi no sucede de tener en main o en una rama local lo que es prueba del remoto y es mas facil guiarse)
 git pull origin prueba
-En la consola de git bash sale la rama en la que estas parado entre parentesis, o con git branch
+En la consola de git bash sale la rama en la que estas parado entre parentesis, o con git branch  
 /d/Repositorios/Pruebas/pruebasgit (main)
 
 
@@ -47,7 +51,11 @@ Es recomendable hacer un commit por cada cosa o correccion pequeña separada que
 Para facilitar el tema de los commits y no ir agregando los archivos con comando (sugerencia no usar git add . por las dudas modifiquemos sin querer otros archivos que no son los que queremos trabajar), en vsc en la parte izquierda en source control van a ir apareciendo los archivos que se crean o modifican con un +.
 Ese + hace el git add de ese archivo.
 Luego seguiria hacer el commit con git commit -m 'mensaje' o poner el msj ahi en el input en source control y darle al tic
-Algunos ejemplos posibles de commits: feat(api/players route): add endpoint GET /players/:id || refactor(client/dashboard): date logic for product expirations || fix(api/users controller): return 404 on inexistent user || test(api/math): add missing tests for division by zero
+Algunos ejemplos posibles de commits: 
+- feat(api/players route): add endpoint GET /players/:id 
+- refactor(client/dashboard): date logic for product expirations 
+- fix(api/users controller): return 404 on inexistent user 
+- test(api/math): add missing tests for division by zero
 Una vez terminado todo el laburo de la rama recien ahi el push git push origin {nombre de la rama}
 Es importante marcarle el nombre de la rama porque hasta el momento la rama que hicimos existe solo en el repo local, y si no se lo marcamos creo que toma la default del repo remoto y lo hace a esa
 Todo esto siempre parado en la rama local que corresponde al laburo que queremos hacer, no en main o prueba
@@ -68,9 +76,9 @@ Esto crea la pull request y ahi debereriamos avisarle al o los code reviewers qu
 
 En la parte de pull requests salen los PRs activos
 El code reviewer puede:
--Aprobar el pull request
--Dejar algun comentario a modo de sugerencia pero sin rechazar el pull request
--Rechazar el pull request porque si o si necesita correcciones lo hecho
+- Aprobar el pull request
+- Dejar algun comentario a modo de sugerencia pero sin rechazar el pull request
+- Rechazar el pull request porque si o si necesita correcciones lo hecho
 
 En la parte de files changed va a salir una comparacion con los archivos que fueron cambiados, que lineas de codigo fueron borradas en rojo, y que lineas de codigo fueron agregadas en verde.
 A parte del mensaje en si del PR, en la misma linea del codigo se puede hacer comentarios con lo que creen que esta mal o la sugerencia
@@ -81,8 +89,8 @@ A parte del mensaje en si del PR, en la misma linea del codigo se puede hacer co
 Si la configuracion de github lo permite (no lo se aun si esta bien configurado para que cualquiera pueda, de ultima avisar para que el own repository lo haga)
 El autor de la rama mergea los cambios aprobados de su rama a la rama prueba.
 Para que no tengamos 70 ramas, completado esto borrar la rama que creamos para trabajar del repo local, y la misma rama del repo remoto
-git branch -d {nombre de la rama local}
-git push origin --delete {nombre de la rama remota}
+- git branch -d {nombre de la rama local}
+- git push origin --delete {nombre de la rama remota}
 
 
 Y de nuevo se repite el ciclo, eat sleep code repeat. **Maiameeeee**
