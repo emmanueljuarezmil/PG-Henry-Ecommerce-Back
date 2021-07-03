@@ -11,7 +11,7 @@ async function getProducts (req,res) {
               name: product.title,
               price: product.price,
               foto: product.thumbnail,
-              description: "insturmento para que usen de dildo",
+              description: "instrumento",
               stock: product.available_quantity  
           }
         })
