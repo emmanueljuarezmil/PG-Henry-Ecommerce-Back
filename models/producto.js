@@ -10,6 +10,7 @@ module.exports = (sequelize) => {
     name: {
       type: DataTypes.STRING(32),
       allowNull: false,
+      unique: true,
       is: /^[a-zA-Z]+(([ ,.-][a-zA-Z ])?[a-zA-Z]*)*$/
     },
     descrip: {
@@ -31,7 +32,6 @@ module.exports = (sequelize) => {
     stock_spell:{
         type: DataTypes.INTEGER,
         defaultValue: 0,
-        allowNull: false
     },
     perc_desc: {
         type: DataTypes.INTEGER,
