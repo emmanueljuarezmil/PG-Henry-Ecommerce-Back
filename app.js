@@ -8,11 +8,13 @@ const cors = require('cors');
 
 
 
+
 const indexRouter = require('./routes/default/index');
 const catRouter = require('./routes/default/category');
 
-const app = express();
 
+
+const app = express();
 // view engine setup
 /* app.set('views', path.join(__dirname, 'views')); */
 /* app.use(bodyParser.json()); */
