@@ -3,15 +3,14 @@ const { v4: uuidv4 } = require('uuid');
 
 const newCategory = async (req, res) => {
     if (!req.body.name) {return res.status(500).json({message: `The category don't have a name`})};
-    console.log(req.body.name);
+    const asd = await Categorias.findOne({where: {
+        name: req.body.name
+    }})
+    if (asd !== null) {return res.status(500).json({message: `The category already exist`})}
     try {
-        const asd = await Categorias.findOne({where: {
-            name: req.body.name
-        }})
-        if (asd.length != 0) {return res.status(500).json({message: `The category already exist`})}
         const id = uuidv4()
-        const catNew = {...req.body.name, id};
-        console.log(catNew);
+        const name = req.body.name
+        const catNew = {name, id};
         const cat = await Categorias.create(catNew)
         if (req.body.prods) {
             req.body.prods.map(p => {
@@ -27,14 +26,13 @@ const newCategory = async (req, res) => {
 const productsByCategory = async (req, res) => {
     const cat = req.params.catName
     try {
-        const prod = await Producto.findAll({
+        const prod = await Productos.findAll({
             include: {
                 model: Categorias,
                 where : {
                     name : {[Op.iLike]: `%${cat}%`}
-                }
-            }
-        })
+                },
+            }})
         return res.status(200).json(prod)
     }
     catch {
@@ -54,7 +52,14 @@ const deleteCategory = async (req, res) => {
 
 }
 
-
+const getAllCategories = async (req, res) => {
+    try {
+        const cat = await Categorias.findAll()
+        return res.status(200).json(cat)
+    } catch {
+        return res.status(400).json({message: 'Algo ha fallado'})
+    }
+}
 
 
 module.exports = {
@@ -63,4 +68,5 @@ module.exports = {
     addOrDeleteCategory, 
     updateCategory, 
     deleteCategory,
+    getAllCategories
 }
