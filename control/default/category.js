@@ -12,7 +12,7 @@ const newCategory = async (req, res) => {
         const catNew = {...req.body.name, id}
         const cat = await Categorias.create(catNew)
         if (req.body.prods) {
-            prods.map(p => {
+            req.body.prods.map(p => {
                 cat.addProductos(p, {through:'producto_categorias'})
             })
         }
