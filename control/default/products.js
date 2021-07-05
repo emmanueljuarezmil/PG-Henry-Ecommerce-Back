@@ -45,7 +45,7 @@ async function getProducts (req,res, next) {
         })
         return res.status(200).send(homeProducts);
     } catch (error) {
-        return res.status(404).send("Bad Request");
+        return res.status(400).send("Bad Request");
     }
 }
 
@@ -86,6 +86,7 @@ async function addProduct(req, res){
         const createdProduct = await Producto.create(product);
         if(req.body.cat){
             const cats = req.body.cat;
+        
             cats.forEach(async (element) => {
                 await createdProduct.addCategorias(element, {through:'producto_categorias'})
             });
