@@ -1,5 +1,6 @@
 const {Producto, Categorias} = require('../../db.js');
 const { v4: uuidv4 } = require('uuid');
+const { nextTick } = require('process');
 
 const newCategory = async (req, res) => {
     if (!req.body.name) {return res.status(500).json({message: `The category don't have a name`})};
@@ -44,8 +45,21 @@ const addOrDeleteCategory = async (req, res) => {    // crear ruta para agregar 
 
 }
 
-const updateCategory = async (req, res) => {
-
+const updateCategory = async (req, res, next) => {
+    try {if(!req.params.idCategory) return res.status(500).send({message: "id is required"})
+    const {name} = req.body
+    if(name){
+        await Categorias.update({name: name}, {
+            where: {
+                id: req.params.idCategory
+            }
+        })
+    }
+    return res.send("category updated")
+    }
+    catch(error){
+        next(error)
+    }
 }
 
 const deleteCategory = async (req, res) => {
