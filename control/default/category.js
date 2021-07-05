@@ -2,14 +2,16 @@ const {Producto, Categorias} = require('../../db.js');
 const { v4: uuidv4 } = require('uuid');
 
 const newCategory = async (req, res) => {
-    if (!req.body.name) {return res.status(500).json({message: `The category don't have a name`})}
+    if (!req.body.name) {return res.status(500).json({message: `The category don't have a name`})};
+    console.log(req.body.name);
     try {
-        const asd = await Categoria.findOne({where: {
+        const asd = await Categorias.findOne({where: {
             name: req.body.name
         }})
         if (asd.length != 0) {return res.status(500).json({message: `The category already exist`})}
         const id = uuidv4()
-        const catNew = {...req.body.name, id}
+        const catNew = {...req.body.name, id};
+        console.log(catNew);
         const cat = await Categorias.create(catNew)
         if (req.body.prods) {
             req.body.prods.map(p => {
@@ -40,7 +42,7 @@ const productsByCategory = async (req, res) => {
     }
 }
 
-const addOrDeleteCategory = async (req, res) => {
+const addOrDeleteCategory = async (req, res) => {    // crear ruta para agregar categoria o sacarle a un producto
 
 }
 
@@ -52,10 +54,13 @@ const deleteCategory = async (req, res) => {
 
 }
 
+
+
+
 module.exports = {
     productsByCategory, 
     newCategory, 
     addOrDeleteCategory, 
     updateCategory, 
-    deleteCategory
+    deleteCategory,
 }

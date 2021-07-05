@@ -2,21 +2,23 @@ const {Producto, Categorias} = require('../../db.js');
 const { v4: uuidv4 } = require('uuid');
 const axios = require('axios');
 
-async function getProducts (req,res) {
+async function getProducts (req,res, next) {
     if(req.query.name){
-        const lowercasename = decodeURI(req.query.name.toLowerCase()); // chequear si anda bien 
+        var lowercasename = decodeURI(req.query.name.toLowerCase()); // chequear si anda bien  // chequear si anda bien 
         try{
-           const product = await Producto.findOne({
+           var product = await Producto.findAll({
                where:{
-                   name: lowercasename
+                   name: {[Op.iLike]: `%${req.query.name}%`}
                }// le habia puesto que incluya categorias pero como es la busqueda no es necesario
            })
-           const searchedProduct = {
-               name: product.name.charAt(0).toUpperCase() + product.name.slice(1),
-               photo: product.photo,
-               price: product.price,
-               id: product.id
-           }
+           console.log(product);
+            var searchedProduct = product.map( p => {
+            return {
+            name: p.dataValues.name.charAt(0).toUpperCase() + p.dataValues.name.slice(1),
+            photo: p.dataValues.photo,
+            price: p.dataValues.price,
+            id: p.dataValues.id
+           }})
            return res.status(200).send(searchedProduct);
         } catch (error){
             return res.status(404).send("The product you are looking for does not exist");
@@ -52,12 +54,16 @@ async function getProductsById(req, res) {
         try{
            const product = await Producto.findOne({
                where:{
-                   id: req.body.id
+                   id: req.params.idProduct
                }
            })
            const searchedProduct = {
                name: product.name.charAt(0).toUpperCase() + product.name.slice(1),
                photo: product.photo,
+               description: product.descrip,
+               stock: product.stock,
+               selled: product.stock_spell,
+               perc_desc: product.perc_desc,
                price: product.price,
                id: product.id
            }
@@ -68,7 +74,7 @@ async function getProductsById(req, res) {
 }
 
 
-async function addProduct(req, res, next){
+async function addProduct(req, res){
     const id = uuidv4();
     const product = {...req.body, id: id};
     if(!req.body.name) {
@@ -78,19 +84,21 @@ async function addProduct(req, res, next){
     }
     try{
         const createdProduct = await Producto.create(product);
-        const cats = req.body.cat.split('')
-        cats.forEach(element => {
-            await createdProduct.addCategorias(element, {through:'producto_categorias'})
-        });
+        if(req.body.cat){
+            const cats = req.body.cat;
+            cats.forEach(async (element) => {
+                await createdProduct.addCategorias(element, {through:'producto_categorias'})
+            });
+        }
         const result = await Producto.findOne({
             where: {
                 name: req.body.name
-            },
-            include: Categorias // AGREGAR CATEGORIAS PRIMER
+            }//,
+            //include: Categorias // AGREGAR CATEGORIAS PRIMER
         });
         return res.status(200).json(result);
     }catch(error){
-        next(error)
+        return res.status(500).json({message: "internal error DB"});
     }
 }
 
