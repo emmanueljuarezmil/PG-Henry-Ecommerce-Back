@@ -14,7 +14,7 @@ router.get('/products', getProducts);
 router.get('/products/:idProduct', getProductsById);
 router.post('/products', addProduct);
 router.put('/products/:id', updateProduct);
-router.delete('./products/:id', deleteProduct);
+router.delete('/products/:id', deleteProduct);
 
 
 
