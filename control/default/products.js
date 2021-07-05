@@ -1,27 +1,30 @@
 const {Producto, Categorias} = require('../../db.js');
 const { v4: uuidv4 } = require('uuid');
 const axios = require('axios');
+const { Op } = require("sequelize");
 
-async function getProducts (req,res, next) {
-    if(req.query.name){
-        var lowercasename = decodeURI(req.query.name.toLowerCase()); // chequear si anda bien  // chequear si anda bien 
+async function getProducts (req, res, next) {
+    const { name } = req.query
+    if(name){
+        var lowercasename = decodeURI(name.toLowerCase()); // chequear si anda bien  // chequear si anda bien 
         try{
            var product = await Producto.findAll({
-               where:{
-                   name: {[Op.iLike]: `%${req.query.name}%`}
-               }// le habia puesto que incluya categorias pero como es la busqueda no es necesario
+            where: {
+                name:  {[Op.iLike]: `%${lowercasename}%`}
+                
+            }// le habia puesto que incluya categorias pero como es la busqueda no es necesario
            })
-           console.log(product);
             var searchedProduct = product.map( p => {
             return {
             name: p.dataValues.name.charAt(0).toUpperCase() + p.dataValues.name.slice(1),
             photo: p.dataValues.photo,
             price: p.dataValues.price,
-            id: p.dataValues.id
+            id: p.dataValues.id 
            }})
            return res.status(200).send(searchedProduct);
         } catch (error){
-            return res.status(404).send("The product you are looking for does not exist");
+            //return res.status(404).send("The product you are looking for does not exist");
+            next(error)
         }
     } 
     try {
@@ -84,8 +87,8 @@ async function addProduct(req, res){
     }
     try{
         const createdProduct = await Producto.create(product);
-        if(req.body.cat){
-            const cats = req.body.cat;
+        if(req.body.category){
+            const cats = req.body.category;
         
             cats.forEach(async (element) => {
                 await createdProduct.addCategorias(element, {through:'producto_categorias'})
@@ -104,11 +107,36 @@ async function addProduct(req, res){
 }
 
 async function updateProduct(req,res){
-
+    if (!req.body.id){
+        return res.status(400).json({message: 'ID of the deleted product is needed', status:400})
+    }
+    const { id, name, photo, description, stock, selled, perc_desc, price} = req.body;
+    try{
+        await Producto.update({ name: name }, {
+            where: {
+              id: id
+            }
+          });
+    }catch (error){
+        next(error)
+    }   
 }
 
-async function deleteProduct(req,res){
-
+async function deleteProduct(req,res, next){
+    if (!req.body.id){
+        return res.status(400).json({message: 'ID of the deleted product is needed', status:400})
+    }
+    const {id} = req.body;
+    try{
+        await Producto.destroy({
+            where: {
+                id: id
+            }
+        })
+        return res.status(200).send('the product was succesfully deleted')
+    } catch(error) {
+        next(error);
+    }
 }
 
 

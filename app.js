@@ -9,7 +9,7 @@ const cors = require('cors');
 
 
 const indexRouter = require('./routes/default/index');
-// const usersRouter = require('./routes/user/index');
+const catRouter = require('./routes/default/category');
 
 const app = express();
 
@@ -26,6 +26,7 @@ app.use(cookieParser());
 app.use(cors())
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
+app.use('/', catRouter);
 
 // app.use('/users', usersRouter);
 
