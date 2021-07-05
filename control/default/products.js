@@ -112,7 +112,7 @@ async function updateProduct(req,res){
     }
     const { id, name, photo, description, stock, selled, perc_desc, price} = req.body;
     try{
-        const ajaa = await Producto.findOne({where: {name: name }})
+        const ajaa = await Producto.findOne({where: {id: id }})
         if (name) {ajaa.name = name}
         if (description) {ajaa.descrip = description}
         if (stock) {ajaa.stock = stock}
