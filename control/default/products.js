@@ -112,12 +112,16 @@ async function updateProduct(req,res){
     }
     const { id, name, photo, description, stock, selled, perc_desc, price} = req.body;
     try{
-        await Producto.update({ name: name }, {
-            where: {
-              id: id
-            }
-          });
-    }catch (error){
+        const ajaa = await Producto.findOne({where: {id: id }})
+        if (name) {ajaa.name = name}
+        if (description) {ajaa.descrip = description}
+        if (stock) {ajaa.stock = stock}
+        if (selled) {ajaa.stock_spell = selled}
+        if (perc_desc) {ajaa.perc_desc = perc_desc}
+        if (price) {ajaa.price = price}
+        await ajaa.save()
+        return res.status(200).json({message: 'El producto ha sido actulizado'})
+    } catch (error){
         next(error)
     }   
 }
