@@ -13,9 +13,8 @@ router.get('/', function(req, res, ) {
 router.get('/products', getProducts);
 router.get('/products/:idProduct', getProductsById);
 router.post('/products', addProduct);
-router.put('/products/:id', updateProduct);
-router.delete('/products/:id', deleteProduct);
-
+router.put('/products/update', updateProduct);
+router.delete('/products', deleteProduct);
 
 
 
