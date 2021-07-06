@@ -46,12 +46,12 @@ const addOrDeleteCategory = async (req, res) => {    // crear ruta para agregar 
 }
 
 const updateCategory = async (req, res, next) => {
-    try {if(!req.params.idCategory) return res.status(500).send({message: "id is required"})
+    try {if(!req.body.id) return res.status(500).send({message: "id is required"})
     const {name} = req.body
     if(name){
         await Categorias.update({name: name}, {
             where: {
-                id: req.params.idCategory
+                id: req.body.id
             }
         })
     }
