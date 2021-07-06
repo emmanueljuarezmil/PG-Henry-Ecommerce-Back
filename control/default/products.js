@@ -3,25 +3,32 @@ const { v4: uuidv4 } = require('uuid');
 const axios = require('axios');
 const { Op } = require("sequelize");
 
+
+
 async function getProducts (req, res, next) {
     const { name } = req.query
+    let categoryMap = [];
     if(name){
         var lowercasename = decodeURI(name.toLowerCase()); // chequear si anda bien  // chequear si anda bien 
         try{
            var product = await Producto.findAll({
-            where: {
-                name:  {[Op.iLike]: `%${lowercasename}%`}
-                
-            }// le habia puesto que incluya categorias pero como es la busqueda no es necesario
+                where: {
+                    name:  {[Op.iLike]: `%${lowercasename}%`}
+                },
+                include: Categorias
            })
-            var searchedProduct = product.map( p => {
-            return {
-            name: p.dataValues.name.charAt(0).toUpperCase() + p.dataValues.name.slice(1),
-            photo: p.dataValues.photo,
-            price: p.dataValues.price,
-            id: p.dataValues.id 
-           }})
-           return res.status(200).send(searchedProduct);
+           var searchedProduct = product.map( p => {
+               categoryMap=[];
+                p.dataValues.Categorias.map(cat => categoryMap.push(cat.dataValues.name))
+                return {
+                    name: p.dataValues.name.charAt(0).toUpperCase() + p.dataValues.name.slice(1),
+                    photo: p.dataValues.photo,
+                    price: p.dataValues.price,
+                    id: p.dataValues.id,
+                    category: categoryMap
+                }
+            })
+            return res.status(200).send(searchedProduct);
         } catch (error){
             //return res.status(404).send("The product you are looking for does not exist");
             next(error)
@@ -38,28 +45,34 @@ async function getProducts (req, res, next) {
             }        
         })
         const homeProducts = products.map(result => {
+            categoryMap=[];
+            result.dataValues.Categorias.map(cat => categoryMap.push(cat.dataValues.name))
             return {
                     name: result.name.charAt(0).toUpperCase() + result.name.slice(1),
                     photo: result.photo,
                     id: result.id,
                     price: result.price,
-                    //category: product.categorias VER CUANDO HAGO UN POST COMO SE LLAMA LA PROPIEDAD PARA PONERLA BIEN
+                    category: categoryMap
             }
         })
         return res.status(200).send(homeProducts);
     } catch (error) {
-        return res.status(400).send("Bad Request");
+        next(error);
     }
 }
 
 
 async function getProductsById(req, res) {
+    let categoryMapAux = [];
         try{
            const product = await Producto.findOne({
                where:{
                    id: req.params.idProduct
-               }
+               },
+               include: Categorias
            })
+           categoryMapAux=[];
+            product.Categorias.map(cat => categoryMapAux.push(cat.dataValues.name))
            const searchedProduct = {
                name: product.name.charAt(0).toUpperCase() + product.name.slice(1),
                photo: product.photo,
@@ -68,7 +81,8 @@ async function getProductsById(req, res) {
                selled: product.stock_spell,
                perc_desc: product.perc_desc,
                price: product.price,
-               id: product.id
+               id: product.id,
+               category: categoryMapAux
            }
            return res.status(200).send(searchedProduct);
         } catch (error){
@@ -87,7 +101,9 @@ async function addProduct(req, res){
     }
     try{
         const createdProduct = await Producto.create(product);
-        const addCat= await createdProduct.addCategorias(req.body.category, {through:'producto_categorias'})
+        for(let i=0; i<req.body.Categorias.length; i++){
+            await createdProduct.addCategorias(req.body.Categorias[i], {through:'producto_categorias'})
+        }
     /*     if(req.body.category){
             const cats = req.body.category;
         
@@ -106,6 +122,8 @@ async function addProduct(req, res){
         return res.status(500).json({message: "internal error DB"});
     }
 }
+
+
 
 async function updateProduct(req,res){
     if (!req.body.id){
