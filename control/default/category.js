@@ -62,8 +62,22 @@ const updateCategory = async (req, res, next) => {
     }
 }
 
-const deleteCategory = async (req, res) => {
 
+const deleteCategory = async (req, res, next) => {
+    if(!req.body.id) return res.status(400).send("ID is required")
+    const {id} = req.body
+    try {
+            await Categorias.destroy({
+                where: {
+                    id: id
+                }
+            })
+            return res.send("The category was succesfully deleted")
+    }
+    catch (error){
+
+        next(error)
+    }
 }
 
 const getAllCategories = async (req, res) => {
