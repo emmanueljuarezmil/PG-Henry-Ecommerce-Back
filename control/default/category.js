@@ -9,9 +9,10 @@ const newCategory = async (req, res) => {
     }})
     if (asd !== null) {return res.status(500).json({message: `The category already exist`})}
     try {
-        const id = uuidv4()
+        /* const id = uuidv4() */
         const name = req.body.name
-        const catNew = {name, id};
+        //const catNew = {name, id};
+        const catNew = {name};
         const cat = await Categorias.create(catNew)
         if (req.body.prods) {
             req.body.prods.map(p => {
