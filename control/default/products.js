@@ -87,18 +87,19 @@ async function addProduct(req, res){
     }
     try{
         const createdProduct = await Producto.create(product);
-        if(req.body.category){
+        const addCat= await createdProduct.addCategorias(req.body.category, {through:'producto_categorias'})
+    /*     if(req.body.category){
             const cats = req.body.category;
         
             cats.forEach(async (element) => {
                 await createdProduct.addCategorias(element, {through:'producto_categorias'})
             });
-        }
+        } */
         const result = await Producto.findOne({
             where: {
                 name: req.body.name
-            }//,
-            //include: Categorias // AGREGAR CATEGORIAS PRIMER
+            },
+            include: Categorias // AGREGAR CATEGORIAS PRIMER
         });
         return res.status(200).json(result);
     }catch(error){
@@ -112,14 +113,15 @@ async function updateProduct(req,res){
     }
     const { id, name, photo, description, stock, selled, perc_desc, price} = req.body;
     try{
-        const ajaa = await Producto.findOne({where: {id: id }})
-        if (name) {ajaa.name = name}
-        if (description) {ajaa.descrip = description}
-        if (stock) {ajaa.stock = stock}
-        if (selled) {ajaa.stock_spell = selled}
-        if (perc_desc) {ajaa.perc_desc = perc_desc}
-        if (price) {ajaa.price = price}
-        await ajaa.save()
+        const product = await Producto.findOne({where: {id: id }})
+        if (name) {product.name = name}
+        if (description) {product.descrip = description}
+        if (stock) {product.stock = stock}
+        if (photo) {product.photo = photo}
+        if (selled) {product.stock_spell = selled}
+        if (perc_desc) {product.perc_desc = perc_desc}
+        if (price) {product.price = price}
+        await product.save()
         return res.status(200).json({message: 'El producto ha sido actulizado'})
     } catch (error){
         next(error)
