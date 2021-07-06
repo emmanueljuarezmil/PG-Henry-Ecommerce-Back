@@ -1,6 +1,5 @@
 const {Producto, Categorias} = require('../../db.js');
 const { v4: uuidv4 } = require('uuid');
-const { nextTick } = require('process');
 
 const newCategory = async (req, res) => {
     if (!req.body.name) {return res.status(500).json({message: `The category don't have a name`})};
@@ -9,10 +8,10 @@ const newCategory = async (req, res) => {
     }})
     if (asd !== null) {return res.status(500).json({message: `The category already exist`})}
     try {
-        /* const id = uuidv4() */
+        //const id = uuidv4()
         const name = req.body.name
         //const catNew = {name, id};
-        const catNew = {name};
+        const catNew = {name}
         const cat = await Categorias.create(catNew)
         if (req.body.prods) {
             req.body.prods.map(p => {
@@ -25,7 +24,23 @@ const newCategory = async (req, res) => {
     }
 }
 
+const prodByCatId = async(req, res) => {
+    const cat = req.body.id
+    try {
+        const prods = await Categorias.findAll({
+            where : {
+                id: cat
+            },
+            include: Productos
+        })
+        return res.status(200).json(prods)
+    } catch {
+        return res.status(500).json({message: 'Internal Error server'})
+    }
+}
+
 const productsByCategory = async (req, res) => {
+    if (req.params.catName){
     const cat = req.params.catName
     try {
         const prod = await Productos.findAll({
@@ -39,32 +54,54 @@ const productsByCategory = async (req, res) => {
     }
     catch {
         return res.status(400).json({message: 'Bad request', status: 400})
-    }
+    }}
 }
 
 const addOrDeleteCategory = async (req, res) => {    // crear ruta para agregar categoria o sacarle a un producto
-
+    if(!req.body.id) return res.status(500).send({message: "ID is required"})
+    if(!req.body.category) return res.status(500).send({message: "category is required"})
+    try {
+        const product= await Producto.findOne({
+            where: {
+                id: req.body.id
+            },
+            include: Categorias
+        })
+        const newCats = req.body.category
+        await producto_categorias.destroy({
+            where: {
+                ProductoId: req.body.id
+            }
+        })
+        newCats.forEach(async element => {
+            await product.addCategorias(element, {through:'producto_categorias'})                
+        })
+        return status(200).json({message: 'Catergories updated'})
+    }
+        catch{
+            return res.status(500).json({message: "Internal error in DB"})
+        }
 }
 
 const updateCategory = async (req, res, next) => {
-    try {if(!req.body.id) return res.status(500).send({message: "id is required"})
-    const {name} = req.body
-    if(name){
-        await Categorias.update({name: name}, {
-            where: {
-                id: req.body.id
-            }
-        })
-    }
-    return res.send("category updated")
+    if(!req.body.id) return res.status(500).send({message: "id is required"})
+    try {
+        const {name} = req.body
+        if(name){
+            await Categorias.update({name: name}, {
+                where: {
+                    id: req.body.id
+                }
+            })
+        }
+        return res.status(501).send("category updated")
     }
     catch(error){
         next(error)
     }
 }
 
-
-const deleteCategory = async (req, res, next) => {
+const deleteCategory = async (req, res) => {
     if(!req.body.id) return res.status(400).send("ID is required")
     const {id} = req.body
     try {
@@ -79,6 +116,7 @@ const deleteCategory = async (req, res, next) => {
 
         next(error)
     }
+
 }
 
 const getAllCategories = async (req, res) => {
@@ -97,5 +135,6 @@ module.exports = {
     addOrDeleteCategory, 
     updateCategory, 
     deleteCategory,
-    getAllCategories
+    getAllCategories,
+    prodByCatId
 }
