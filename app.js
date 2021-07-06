@@ -9,8 +9,9 @@ const cors = require('cors');
 
 
 
-const indexRouter = require('./routes/index');
-
+//const indexRouter = require('./routes/index');
+const cat = require('./routes/default/category')
+const ind = require('./routes/default/index.js')
 
 const app = express();
 // view engine setup
@@ -25,7 +26,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors())
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/', indexRouter);
+app.use('/', ind)
+app.use('/', cat);
+
 
 // app.use('/users', usersRouter);
 
