@@ -11,7 +11,7 @@ router.post('/category', newCategory);
 router.get('/categories', getAllCategories)
 router.put('/category/product/:idCategory', addOrDeleteCategory);  //para agregar o sacar una categoria al producto
 router.put('/category/update', updateCategory);
-router.delete('/category/:idCategory', deleteCategory);
+router.delete('/category/delete', deleteCategory);
 
 
 
