@@ -52,7 +52,7 @@ async function getProducts (req, res, next) {
                     photo: result.photo,
                     id: result.id,
                     price: result.price,
-                    category: categoryMap
+                     category: categoryMap
             }
         })
         return res.status(200).send(homeProducts);
@@ -163,6 +163,13 @@ async function deleteProduct(req,res, next){
     }
 }
 
+async function fullDbproducts(req,res, next){
+    try{
+
+    }catch(error){
+        next(error)
+    }
+}
 
 
 module.exports = {
@@ -170,7 +177,8 @@ module.exports = {
     getProductsById,
     addProduct, 
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    fullDbproducts
 }
 
 

@@ -1,0 +1,90 @@
+[
+    {
+        "name": "Percusion",
+        "id": "b1824feb-50ae-481a-a852-0957430b1205"
+    },
+    {
+        "name": "Bombos",
+        "id": "1ad8d595-5057-4f76-919b-6b5763de44ec"
+    },
+    {
+        "name": "Panderetas",
+        "id": "c6fb08e0-4420-4160-8ea3-2c7679252858"
+    },
+    {
+        "name": "Baterias",
+        "id": "83a79a42-845b-4ab8-9575-a558f72766f7"
+    },
+    {
+        "name": "Electricas",
+        "id": "24f5baec-215a-4752-b826-b3421353f7e4"
+    },
+    {
+        "name": "Acusticas",
+        "id": "b3784801-ab5b-42de-b3fb-015fbf137177"
+    },
+    {
+        "name": "Instrumentos de viento",
+        "id": "422f1939-f3eb-405d-a9cf-5110002337f0"
+    },
+    {
+        "name": "Flautas",
+        "id": "cd164acc-c0cf-4be9-9b56-f53a501535e9"
+    },
+    {
+        "name": "Saxos",
+        "id": "655e1703-aa3e-41dd-8469-04eb410567e8"
+    },
+    {
+        "name": "Trompetas",
+        "id": "334c3b86-6072-40a6-b327-3787fc23b219"
+    },
+    {
+        "name": "Instrumentos de cuerda",
+        "id": "f331dbe9-c1fb-4824-bded-bea1964e1c6f"
+    },
+    {
+        "name": "Bajos",
+        "id": "5dbb0617-c15e-43c1-8f5a-b1180aa77e15"
+    },
+    {
+        "name": "Violines",
+        "id": "9dee9fc9-18b7-47da-95b0-28f327eac0e6"
+    },
+    {
+        "name": "Ukeleles",
+        "id": "22275d96-de03-4b76-9ed4-18139fcea1ad"
+    },
+    {
+        "name": "Violoncellos",
+        "id": "3c009dbb-c7fa-4ec7-8208-f7801aaeab93"
+    },
+    {
+        "name": "Guitarras",
+        "id": "b5d60acd-888a-4b5c-80f4-926ea248eae5"
+    },
+    {
+        "name": "Clasicas",
+        "id": "acbfff10-4f9e-4862-b595-0024fa79c62a"
+    },
+    {
+        "name": "Pianos",
+        "id": "335c4fda-86ea-41a3-86b4-ab94eda3686e"
+    },
+    {
+        "name": "Acusticos",
+        "id": "33c54a37-d8e4-45fa-b239-f40f95f3b3fc"
+    },
+    {
+        "name": "Digitales",
+        "id": "146ab233-cd0e-432e-9e1f-ddc28f108639"
+    },
+    {
+        "name": "Teclados",
+        "id": "0971c1c9-b676-4fe3-a0a4-35a5e8a07698"
+    },
+    {
+        "name": "Sintetizadores",
+        "id": "c49af5f4-a82b-4f10-b4b5-a2fd2e6aa9ed"
+    }
+]

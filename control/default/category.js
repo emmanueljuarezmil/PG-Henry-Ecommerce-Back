@@ -1,5 +1,6 @@
 const {Producto, Categorias} = require('../../db.js');
 const { v4: uuidv4 } = require('uuid');
+const categoriesDb = require('../../bin/data/categories.json')
 
 const newCategory = async (req, res) => {
     if (!req.body.name) {return res.status(500).json({message: `The category don't have a name`})};
@@ -8,10 +9,10 @@ const newCategory = async (req, res) => {
     }})
     if (asd !== null) {return res.status(500).json({message: `The category already exist`})}
     try {
-        //const id = uuidv4()
+        const id = uuidv4();
         const name = req.body.name
-        //const catNew = {name, id};
-        const catNew = {name}
+        const catNew = {name, id};
+        //const catNew = {name}
         const cat = await Categorias.create(catNew)
         if (req.body.prods) {
             req.body.prods.map(p => {
@@ -128,6 +129,16 @@ const getAllCategories = async (req, res) => {
     }
 }
 
+const fulldbCat = async(req, res, next) => {
+    try {
+        await Categorias.bulkCreate(categoriesDb);
+        return res.send("created ok");
+
+    } catch(error){
+        next(error);
+    }
+}
+
 
 module.exports = {
     productsByCategory, 
@@ -136,5 +147,6 @@ module.exports = {
     updateCategory, 
     deleteCategory,
     getAllCategories,
-    prodByCatId
+    prodByCatId,
+    fulldbCat
 }
