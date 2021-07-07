@@ -3,12 +3,13 @@ const { DataTypes } = require('sequelize');
 module.exports = (sequelize) => {
   sequelize.define('Categorias', {    
     id: {
-   /*    type: DataTypes.UUID,
+      type: DataTypes.UUID,
       allowNull: false,
-      primaryKey: true */
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
       primaryKey: true,
+/*       type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true, */
+      unique: true,
     },
     name: {
       type: DataTypes.STRING(32),

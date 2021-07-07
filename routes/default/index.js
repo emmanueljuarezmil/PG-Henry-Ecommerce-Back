@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const {getProducts, getProductsById, addProduct, updateProduct, deleteProduct} = require('../../control/default/products.js')
+const {getProducts, getProductsById, addProduct, updateProduct, deleteProduct, fullDbproducts} = require('../../control/default/products.js')
 
 
 const router = Router();
@@ -15,6 +15,7 @@ router.get('/products/:idProduct', getProductsById);
 router.post('/products', addProduct);
 router.put('/products/update', updateProduct);
 router.delete('/products', deleteProduct);
+router.get('/prod', fullDbproducts);
 
 
 
