@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-  sequelize.define('Producto', {    
+  sequelize.define('Product', {    
     id: {
       type: DataTypes.UUID,
       allowNull: false,
@@ -11,7 +11,6 @@ module.exports = (sequelize) => {
     name: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
       is: /^[a-zA-Z]+(([ ,.-][a-zA-Z ])?[a-zA-Z]*)*$/
     },
     descrip: {

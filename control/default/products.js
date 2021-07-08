@@ -1,4 +1,4 @@
-const {Producto, Categorias} = require('../../db.js');
+const {Product, Category} = require('../../db.js');
 const { v4: uuidv4 } = require('uuid');
 const axios = require('axios');
 const { Op } = require("sequelize");
@@ -13,15 +13,15 @@ async function getProducts (req, res, next) {
     if(name){
         var lowercasename = decodeURI(name.toLowerCase()); // chequear si anda bien  // chequear si anda bien 
         try{
-           var product = await Producto.findAll({
+           var prod = await Product.findAll({
                 where: {
                     name:  {[Op.iLike]: `%${lowercasename}%`}
                 },
-                include: Categorias
+                include: Category
            })
-           var searchedProduct = product.map( p => {
+           var searchedProduct = prod.map( p => {
                categoryMap=[];
-                p.dataValues.Categorias.map(cat => categoryMap.push(cat.dataValues.name))
+                p.dataValues.Categories.map(cat => categoryMap.push(cat.dataValues.name))
                 return {
                     name: p.dataValues.name.charAt(0).toUpperCase() + p.dataValues.name.slice(1),
                     photo: p.dataValues.photo,
@@ -37,10 +37,10 @@ async function getProducts (req, res, next) {
         }
     } 
     try {
-        const products = await Producto.findAll({
+        const products = await Product.findAll({
             include: {
                 attributes: ['name'],
-                model: Categorias,
+                model: Category,
                 through: {
                     attributes: [],
                 }
@@ -48,13 +48,13 @@ async function getProducts (req, res, next) {
         })
         const homeProducts = products.map(result => {
             categoryMap=[];
-            result.dataValues.Categorias.map(cat => categoryMap.push(cat.dataValues.name))
+            result.dataValues.Categories.map(cat => categoryMap.push(cat.dataValues.name))
             return {
                     name: result.name.charAt(0).toUpperCase() + result.name.slice(1),
                     photo: result.photo,
                     id: result.id,
                     price: result.price,
-                     category: categoryMap
+                    category: categoryMap
             }
         })
         return res.status(200).send(homeProducts);
@@ -65,16 +65,12 @@ async function getProducts (req, res, next) {
 
 
 async function getProductsById(req, res) {
-    let categoryMapAux = [];
+    const {idProduct} =req.params
+    let categoryMapAux = []
         try{
-           const product = await Producto.findOne({
-               where:{
-                   id: req.params.idProduct
-               },
-               include: Categorias
-           })
-           categoryMapAux=[];
-            product.Categorias.map(cat => categoryMapAux.push(cat.dataValues.name))
+            // const searchedProduct = await Product.findByPk(idProduct,{include: Category})
+           const product = await Product.findByPk(idProduct, {include: Category })        //    console.log(product);
+            product.Categories.map(cat => categoryMapAux.push(cat.dataValues.name))
            const searchedProduct = {
                name: product.name.charAt(0).toUpperCase() + product.name.slice(1),
                photo: product.photo,
@@ -86,7 +82,7 @@ async function getProductsById(req, res) {
                id: product.id,
                category: categoryMapAux
            }
-           return res.status(200).send(searchedProduct);
+           return res.status(200).json(searchedProduct);
         } catch (error){
             return res.status(400).json({message: 'bad request', status:400})
         }
@@ -95,17 +91,19 @@ async function getProductsById(req, res) {
 
 async function addProduct(req, res){
     const id = uuidv4();
-    const product = {...req.body, id: id};
-    if(!req.body.name) {
+    const products = {...req.body, id: id};
+    if(!req.body.name || !req.body.price || !req.body.stock) {
         return res.send({      
             message: 'you have to set a name for your product',
         });
     }
     try{
-        const createdProduct = await Producto.create(product);
+        const createdProduct = await Product.create(products);
+        if(req.body.category){
         for(let i=0; i<req.body.Categorias.length; i++){
-            await createdProduct.addCategorias(req.body.Categorias[i], {through:'producto_categorias'})
+            await createdProduct.addCategory(req.body.Categorias[i], {through:'product_categories'})
         }
+    }
     /*     if(req.body.category){
             const cats = req.body.category;
         
@@ -113,11 +111,12 @@ async function addProduct(req, res){
                 await createdProduct.addCategorias(element, {through:'producto_categorias'})
             });
         } */
+        const {name} = req.body 
         const result = await Producto.findOne({
             where: {
-                name: req.body.name
+                name: name
             },
-            include: Categorias // AGREGAR CATEGORIAS PRIMER
+            include: Category // AGREGAR CATEGORIAS PRIMER
         });
         return res.status(200).json(result);
     }catch(error){
@@ -131,11 +130,11 @@ async function updateProduct(req,res){
     if (!req.body.id){
         return res.status(400).json({message: 'ID of the deleted product is needed', status:400})
     }
-    const { id, name, photo, descripion, stock, selled, perc_desc, price} = req.body;
+    const { id, name, photo, description, stock, selled, perc_desc, price} = req.body;
     try{
-        const product = await Producto.findOne({where: {id: id }})
+        const product = await Product.findByPk(id)
         if (name) {product.name = name}
-        if (descripion) {product.descrip = descripion}
+        if (description) {product.descrip = description}
         if (stock) {product.stock = stock}
         if (photo) {product.photo = photo}
         if (selled) {product.stock_spell = selled}
@@ -154,7 +153,7 @@ async function deleteProduct(req,res, next){
     }
     const {id} = req.body;
     try{
-        await Producto.destroy({
+        await Product.destroy({
             where: {
                 id: id
             }
@@ -169,8 +168,8 @@ async function deleteProduct(req,res, next){
     for(let i of productosmeli){
         try{
             var id = uuidv4();
-            var prodFinal = await Producto.create({name: i.name,id:id, price:i.price, photo: i.photo, descrip: i.descrip, stock: i.stock})
-            await prodFinal.setCategorias(i.Categorias);
+            var prodFinal = await Product.create({name: i.name,id:id, price:i.price, photo: i.photo, descrip: i.descrip, stock: i.stock})
+            await prodFinal.setCategories(i.Categorias);
         }catch(error){
             console.log(error);
             next(error);
