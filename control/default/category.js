@@ -26,7 +26,7 @@ const newCategory = async (req, res) => {
 }
 
 const prodByCatId = async(req, res) => {
-    const cat = req.body.id
+    const cat = req.params.id
     try {
         const prods = await Categorias.findAll({
             where : {
