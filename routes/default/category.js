@@ -7,7 +7,7 @@ const router = Router();
 
 
 router.get('/category/:catName', productsByCategory); //tiene que devolver los productos de esa categoria
-router.get('/category/id',prodByCatId)
+router.get('/category/p/:id',prodByCatId)
 router.post('/category', newCategory); 
 router.get('/categories', getAllCategories)
 router.put('/category/product', addOrDeleteCategory);  //para agregar o sacar una categoria al producto
