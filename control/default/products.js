@@ -1,6 +1,5 @@
 const {Product, Category} = require('../../db.js');
 const { v4: uuidv4 } = require('uuid');
-const axios = require('axios');
 const { Op } = require("sequelize");
 const productosmeli = require('../../bin/data/productsDB.json');
 
