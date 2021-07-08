@@ -1,4 +1,4 @@
-const {Producto, Categorias} = require('../../db.js');
+const {Product, Categories} = require('../../db.js');
 const { v4: uuidv4 } = require('uuid');
 const axios = require('axios');
 const { Op } = require("sequelize");
@@ -11,15 +11,15 @@ async function getProducts (req, res, next) {
     if(name){
         var lowercasename = decodeURI(name.toLowerCase()); // chequear si anda bien  // chequear si anda bien 
         try{
-           var product = await Producto.findAll({
+           var product = await Product.findAll({
                 where: {
                     name:  {[Op.iLike]: `%${lowercasename}%`}
                 },
-                include: Categorias
+                include: Categories
            })
            var searchedProduct = product.map( p => {
                categoryMap=[];
-                p.dataValues.Categorias.map(cat => categoryMap.push(cat.dataValues.name))
+                p.dataValues.Categories.map(cat => categoryMap.push(cat.dataValues.name))
                 return {
                     name: p.dataValues.name.charAt(0).toUpperCase() + p.dataValues.name.slice(1),
                     photo: p.dataValues.photo,
@@ -35,10 +35,10 @@ async function getProducts (req, res, next) {
         }
     } 
     try {
-        const products = await Producto.findAll({
+        const products = await Product.findAll({
             include: {
                 attributes: ['name'],
-                model: Categorias,
+                model: Categories,
                 through: {
                     attributes: [],
                 }
@@ -46,7 +46,7 @@ async function getProducts (req, res, next) {
         })
         const homeProducts = products.map(result => {
             categoryMap=[];
-            result.dataValues.Categorias.map(cat => categoryMap.push(cat.dataValues.name))
+            result.dataValues.Categories.map(cat => categoryMap.push(cat.dataValues.name))
             return {
                     name: result.name.charAt(0).toUpperCase() + result.name.slice(1),
                     photo: result.photo,
@@ -65,14 +65,14 @@ async function getProducts (req, res, next) {
 async function getProductsById(req, res) {
     let categoryMapAux = [];
         try{
-           const product = await Producto.findOne({
+           const product = await Product.findOne({
                where:{
                    id: req.params.idProduct
                },
-               include: Categorias
+               include: Categories
            })
            categoryMapAux=[];
-            product.Categorias.map(cat => categoryMapAux.push(cat.dataValues.name))
+            product.Categories.map(cat => categoryMapAux.push(cat.dataValues.name))
            const searchedProduct = {
                name: product.name.charAt(0).toUpperCase() + product.name.slice(1),
                photo: product.photo,
@@ -100,9 +100,9 @@ async function addProduct(req, res){
         });
     }
     try{
-        const createdProduct = await Producto.create(product);
-        for(let i=0; i<req.body.Categorias.length; i++){
-            await createdProduct.addCategorias(req.body.Categorias[i], {through:'producto_categorias'})
+        const createdProduct = await Product.create(product);        
+        for(let i=0; i < req.body.Categories.length; i++){
+            await createdProduct.addCategories(req.body.Categories[i], {through:'product_categories'})
         }
     /*     if(req.body.category){
             const cats = req.body.category;
@@ -111,11 +111,11 @@ async function addProduct(req, res){
                 await createdProduct.addCategorias(element, {through:'producto_categorias'})
             });
         } */
-        const result = await Producto.findOne({
+        const result = await Product.findOne({
             where: {
                 name: req.body.name
             },
-            include: Categorias // AGREGAR CATEGORIAS PRIMER
+            include: Categories // AGREGAR CATEGORIAS PRIMER
         });
         return res.status(200).json(result);
     }catch(error){
@@ -131,7 +131,7 @@ async function updateProduct(req,res){
     }
     const { id, name, photo, description, stock, selled, perc_desc, price} = req.body;
     try{
-        const product = await Producto.findOne({where: {id: id }})
+        const product = await Product.findOne({where: {id: id }})
         if (name) {product.name = name}
         if (description) {product.descrip = description}
         if (stock) {product.stock = stock}
@@ -152,7 +152,7 @@ async function deleteProduct(req,res, next){
     }
     const {id} = req.body;
     try{
-        await Producto.destroy({
+        await Product.destroy({
             where: {
                 id: id
             }

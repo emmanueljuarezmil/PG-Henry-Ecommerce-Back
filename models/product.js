@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-  sequelize.define('Producto', {    
+  sequelize.define('Product', {    
     id: {
       type: DataTypes.UUID,
       allowNull: false,
@@ -13,7 +13,7 @@ module.exports = (sequelize) => {
       unique: true,
       is: /^[a-zA-Z]+(([ ,.-][a-zA-Z ])?[a-zA-Z]*)*$/
     },
-    descrip: {
+    description: {
       type: DataTypes.TEXT,
       is: /[CDATA[^[a-zA-Z0-9 .-]+$]]/
     },
@@ -21,7 +21,7 @@ module.exports = (sequelize) => {
       type: DataTypes.FLOAT,
       allowNull: false,
     },
-    photo: {
+    image: {
       type: DataTypes.STRING,
       allowNull: false,
     },
