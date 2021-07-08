@@ -2,6 +2,8 @@ const {Producto, Categorias} = require('../../db.js');
 const { v4: uuidv4 } = require('uuid');
 const axios = require('axios');
 const { Op } = require("sequelize");
+const productosmeli = require('../../bin/data/productsDB.json');
+
 
 
 
@@ -76,7 +78,7 @@ async function getProductsById(req, res) {
            const searchedProduct = {
                name: product.name.charAt(0).toUpperCase() + product.name.slice(1),
                photo: product.photo,
-               description: product.descrip,
+               descripion: product.descrip,
                stock: product.stock,
                selled: product.stock_spell,
                perc_desc: product.perc_desc,
@@ -129,11 +131,11 @@ async function updateProduct(req,res){
     if (!req.body.id){
         return res.status(400).json({message: 'ID of the deleted product is needed', status:400})
     }
-    const { id, name, photo, description, stock, selled, perc_desc, price} = req.body;
+    const { id, name, photo, descripion, stock, selled, perc_desc, price} = req.body;
     try{
         const product = await Producto.findOne({where: {id: id }})
         if (name) {product.name = name}
-        if (description) {product.descrip = description}
+        if (descripion) {product.descrip = descripion}
         if (stock) {product.stock = stock}
         if (photo) {product.photo = photo}
         if (selled) {product.stock_spell = selled}
@@ -163,12 +165,24 @@ async function deleteProduct(req,res, next){
     }
 }
 
-async function fullDbproducts(req,res, next){
-    try{
+ async function fullDbproducts(req,res, next){
+    for(let i of productosmeli){
+        try{
+            var id = uuidv4();
+            var prodFinal = await Producto.create({name: i.name,id:id, price:i.price, photo: i.photo, descrip: i.descrip, stock: i.stock})
+            await prodFinal.setCategorias(i.Categorias);
+        }catch(error){
+            console.log(error);
+            next(error);
+        }
+    }
+    return  res.send('meli products posted ok');
+   /*  try{
+        return res.send(db);
 
     }catch(error){
-        next(error)
-    }
+        next(error);
+    } */
 }
 
 

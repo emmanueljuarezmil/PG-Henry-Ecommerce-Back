@@ -9,7 +9,7 @@ module.exports = (sequelize) => {
       unique: true,
     },
     name: {
-      type: DataTypes.STRING(32),
+      type: DataTypes.STRING,
       allowNull: false,
       unique: true,
       is: /^[a-zA-Z]+(([ ,.-][a-zA-Z ])?[a-zA-Z]*)*$/
@@ -23,7 +23,7 @@ module.exports = (sequelize) => {
       allowNull: false,
     },
     photo: {
-      type: DataTypes.STRING,
+      type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull: false,
     },
     stock:{

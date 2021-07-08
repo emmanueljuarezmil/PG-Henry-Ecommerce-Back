@@ -24,8 +24,8 @@ Las ramas principales son:
 - Main: Esta va a ser la rama estable porlas lleguemos a romper o pase algo, no se debe hacer el pull request a esta rama
 - Prueba: Esta va a ser la rama staging, de produccion, donde vamos a ir haciendo pull request y mergeando todo lo que vayamos haciendo. Y cada tanto vamos a pasar estos cambios a la main asegurandonos de que sea estable lo que tenemos.
 
-Luego vamos a creando ramas descriptivas cada vez que vayamos a trabajar en algo. 
-Por descriptivas es por ej:
+Luego vamos a creando ramas descripivas cada vez que vayamos a trabajar en algo. 
+Por descripivas es por ej:
 - feat/user_creation
 - fix/currency_with_decimal 
 - chore/lint_ci 
