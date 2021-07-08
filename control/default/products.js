@@ -74,7 +74,7 @@ async function getProductsById(req, res) {
            const searchedProduct = {
                name: product.name.charAt(0).toUpperCase() + product.name.slice(1),
                photo: product.photo,
-               descripion: product.descrip,
+               description: product.descrip,
                stock: product.stock,
                selled: product.stock_spell,
                perc_desc: product.perc_desc,
@@ -168,7 +168,7 @@ async function deleteProduct(req,res, next){
     for(let i of productosmeli){
         try{
             var id = uuidv4();
-            var prodFinal = await Product.create({name: i.name,id:id, price:i.price, photo: i.photo, descrip: i.descrip, stock: i.stock})
+            var prodFinal = await Product.create({name: i.name,id:id, price:i.price, photo: i.photo, descrip: i.descript, stock: i.stock})
             await prodFinal.setCategories(i.Categorias);
         }catch(error){
             console.log(error);
