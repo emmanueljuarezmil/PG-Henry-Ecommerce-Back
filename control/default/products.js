@@ -111,13 +111,19 @@ async function getProductsById(req, res) {
 
 
 async function addProduct(req, res){
-    const id = uuidv4();
-    const products = {...req.body, id: id};
-    if(!req.body.name || !req.body.price || !req.body.stock) {
+    if(!req.body.name || !req.body.name.length || !req.body.price || !req.body.stock) {
         return res.send({      
             message: 'you have to set a name for your product',
         });
     }
+    const id = uuidv4();
+    const products = {
+        id: id,
+        name: req.body.name,
+        price: parseFloat(req.body.price),
+        stock: parseFloat(req.body.stock)
+    };
+
     try{
         const createdProduct = await Product.create(products);
         if(req.body.category){
@@ -162,11 +168,11 @@ async function updateProduct(req,res){
         const product = await Product.findByPk(id)
         if (name) {product.name = name}
         if (description) {product.descrip = description}
-        if (stock) {product.stock = stock}
+        if (stock) {product.stock = parseFloat(stock)}
         if (photo) {product.photo = photo}
-        if (selled) {product.stock_spell = selled}
-        if (perc_desc) {product.perc_desc = perc_desc}
-        if (price) {product.price = price}
+        if (selled) {product.stock_spell = parseFloat(selled)}
+        if (perc_desc) {product.perc_desc = parseFloat(perc_desc)}
+        if (price) {product.price = parseFloat(price)}
         await product.save()
         return res.status(200).json({message: 'El producto ha sido actulizado'})
     } catch (error){
