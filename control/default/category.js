@@ -54,13 +54,13 @@ const addOrDeleteCategory = async (req, res) => {    // crear ruta para agregar 
     try {
         const {id} = req.body
         const product= await Product.findByPk(id, {include: Category})
-        const newCats = req.body.category
+        const {category} = req.body
         await product_categories.destroy({
             where: {
                 ProductId: id
             }
         })
-        newCats.forEach(async element => {
+        category.forEach(async element => {
             await product.addCategory(element, {through:'product_categories'})                
         })
         return status(200).json({message: 'Catergories updated'})

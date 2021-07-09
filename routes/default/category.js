@@ -12,7 +12,7 @@ router.post('/category', newCategory);
 router.get('/categories', getAllCategories)
 router.put('/category/product', addOrDeleteCategory);  //para agregar o sacar una categoria al producto
 router.put('/category/update', updateCategory);
-router.delete('/category/:idCategoyr', deleteCategory);
+router.delete('/category/:idCategory', deleteCategory);
 router.get('/categories/bring', fulldbCat); // para precargar las categorias de una, vamos a usarla solo una vez porque el force va a estar en false
 
 

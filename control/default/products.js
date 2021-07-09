@@ -100,8 +100,9 @@ async function addProduct(req, res){
     try{
         const createdProduct = await Product.create(products);
         if(req.body.category){
-        for(let i=0; i<req.body.Categorias.length; i++){
-            await createdProduct.addCategory(req.body.Categorias[i], {through:'product_categories'})
+            const {category} = req.body
+        for(let i=0; i<category.length; i++){
+            await createdProduct.addCategory(category[i], {through:'product_categories'})
         }
     }
     /*     if(req.body.category){
@@ -112,7 +113,7 @@ async function addProduct(req, res){
             });
         } */
         const {name} = req.body 
-        const result = await Producto.findOne({
+        const result = await Product.findOne({
             where: {
                 name: name
             },
@@ -168,7 +169,7 @@ async function deleteProduct(req,res, next){
     for(let i of productosmeli){
         try{
             var id = uuidv4();
-            var prodFinal = await Product.create({name: i.name,id:id, price:i.price, photo: i.photo, descrip: i.descrip, stock: i.stock})
+            var prodFinal = await Product.create({name: i.name,id:id, price:i.price, photo: i.photo, descrip: i.descript, stock: i.stock})
             await prodFinal.setCategories(i.Categorias);
         }catch(error){
             console.log(error);
