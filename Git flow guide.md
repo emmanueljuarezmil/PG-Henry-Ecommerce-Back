@@ -42,7 +42,7 @@ Y tambien es importante limitar la rama a algo chico, lo que vamos a hacer ese d
 Al empezar hacer git pull desde la rama local prueba asi los archivos actualizados del repo remoto los tenemos localmente en esa rama (en prueba local asi no sucede de tener en main o en una rama local lo que es prueba del remoto y es mas facil guiarse)
 git pull origin prueba
 En la consola de git bash sale la rama en la que estas parado entre parentesis, o con git branch  
-/d/Repositorios/Pruebas/pruebasgit (main)
+/d/Repositorios/Pruebas/pruebasgit (main)  
 
 
 ### Trabajo local
