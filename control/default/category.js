@@ -5,19 +5,17 @@ const categoriesDb = require('../../bin/data/categories.json')
 
 const newCategory = async (req, res) => {
     if (!req.body.name) {return res.status(500).json({message: `The category don't have a name`})};
-    const asd = await Category.findOne({where: {
+    const catExist = await Category.findOne({where: {
         name: req.body.name
     }})
-    if (asd !== null) {return res.status(500).json({message: `The category already exist`})}
+    if (catExist !== null) {return res.status(500).json({message: `The category already exist`})}
     try {
         const id = uuidv4();
         const name = req.body.name
         const catNew = {name, id};
         const cat = await Category.create(catNew)
         if (req.body.prods) {
-            req.body.prods.map(p => {
-                cat.addProduct(p, {through:'product_categories'})
-            })
+            cat.addProduct(req.body.prods);
         }
         return res.status(201).json({message: 'Category created'})
     } catch {
