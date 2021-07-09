@@ -13,7 +13,6 @@ const newCategory = async (req, res) => {
         const id = uuidv4();
         const name = req.body.name
         const catNew = {name, id};
-        //const catNew = {name}
         const cat = await Category.create(catNew)
         if (req.body.prods) {
             req.body.prods.map(p => {
@@ -48,25 +47,27 @@ const productsByCategory = async (req, res) => {
     }}
 }
 
-const addOrDeleteCategory = async (req, res) => {    // crear ruta para agregar categoria o sacarle a un producto
+const addOrDeleteCategory = async (req, res, next) => {    // crear ruta para agregar categoria o sacarle a un producto
     if(!req.body.id) return res.status(500).send({message: "ID is required"})
     if(!req.body.category) return res.status(500).send({message: "category is required"})
+    const {id, category} = req.body
     try {
-        const {id} = req.body
-        const product= await Product.findByPk(id, {include: Category})
-        const {category} = req.body
-        await product_categories.destroy({
+        const product = await Product.findOne({
             where: {
-                ProductId: id
-            }
+                id: id
+            },
+            include: Category
         })
-        category.forEach(async element => {
-            await product.addCategory(element, {through:'product_categories'})                
-        })
-        return status(200).json({message: 'Catergories updated'})
+        if(!product) return res.status(500).send('The product you are trying to change does no exist')
+        
+        req.body.add ? await product.addCategory(category) : null        
+        req.body.delete ? await product.removeCategory(category) : null
+        
+        return res.status(200).json(product)
+        
     }
-        catch{
-            return res.status(500).json({message: "Internal error in DB"})
+        catch(error) {
+            next(error)
         }
 }
 
@@ -109,7 +110,7 @@ const deleteCategory = async (req, res) => {
 const getAllCategories = async (req, res, next) => {
     if (req.query.name){
         const {name} = req.query
-        const lowercasename = decodeURI(name.toLowerCase()); // chequear si anda bien  // chequear si anda bien 
+        const lowercasename = decodeURI(name.toLowerCase());
         try{
            const prod = await Category.findAll({
                 where: {
