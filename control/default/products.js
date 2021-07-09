@@ -11,35 +11,72 @@ async function getProducts (req, res, next) {
     if(name){
         var lowercasename = decodeURI(name.toLowerCase());
         try{
-           var prod = await Product.findAll({
-                where: {
-                    name:  {[Op.iLike]: `%${lowercasename}%`}
-                },
-                include: {                
-                    model: Category,
-                    through: {
-                        attributes: [],
+            if(req.query.page) {
+                var prod = await Product.findAll({
+                     where: {
+                         name:  {[Op.iLike]: `%${lowercasename}%`}
+                     },
+                     limit: req.query.page * 40,
+                     offset: (req.query.page-1)*40,
+                     include: {                
+                         model: Category,
+                         through: {
+                             attributes: [],
+                         },
+                         attributes: ['name', 'id']
+                     },
+                    attributes: ['name', 'photo', 'id', 'price'] 
+                })
+
+            } else {
+                var prod = await Product.findAll({
+                    where: {
+                        name:  {[Op.iLike]: `%${lowercasename}%`}
                     },
-                    attributes: ['name', 'id']
-                },
-               attributes: ['name', 'photo', 'id', 'price'] 
-           })
+                    include: {                
+                        model: Category,
+                        through: {
+                            attributes: [],
+                        },
+                        attributes: ['name', 'id']
+                    },
+                   attributes: ['name', 'photo', 'id', 'price'] 
+               })
+
+            }
             return res.status(200).send(prod);
         } catch (error){
             next(error)
         }
     } 
     try {
-        const products = await Product.findAll({
-            include: {                
-                    model: Category,
-                    through: {
-                        attributes: [],
+        if(req.query.page) {
+            var products = await Product.findAll({
+                limit: req.query.page * 40,
+                offset: (req.query.page-1)*40,
+                include: {                
+                        model: Category,
+                        through: {
+                            attributes: [],
+                        },
+                        attributes: ['name', 'id']
                     },
-                    attributes: ['name', 'id']
-                },
-            attributes: ['name', 'photo', 'id', 'price']    
-        })
+                attributes: ['name', 'photo', 'id', 'price']    
+            })
+
+        } else {
+            var products = await Product.findAll({
+                include: {                
+                        model: Category,
+                        through: {
+                            attributes: [],
+                        },
+                        attributes: ['name', 'id']
+                    },
+                attributes: ['name', 'photo', 'id', 'price']    
+            })
+
+        }
         return res.status(200).send(products);
     } catch (error) {
         next(error);

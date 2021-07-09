@@ -46,9 +46,10 @@ const productsByCategory = async (req, res) => {
 }
 
 const addOrDeleteCategory = async (req, res, next) => {    // crear ruta para agregar categoria o sacarle a un producto
-    if(!req.body.id) return res.status(500).send({message: "ID is required"})
-    if(!req.body.category) return res.status(500).send({message: "category is required"})
-    const {id, category} = req.body
+    const {id, addCategory, deletedCategory, add, deleteCat} = req.body
+    if(!id) return res.status(500).send({message: "ID is required"})
+    if(add && !addCategory) return res.status(500).send({message: "category to add is required"})
+    if(deleteCat && !deletedCategory) return res.status(500).send({message: "category to delete is required"})
     try {
         const product = await Product.findOne({
             where: {
@@ -58,15 +59,14 @@ const addOrDeleteCategory = async (req, res, next) => {    // crear ruta para ag
         })
         if(!product) return res.status(500).send('The product you are trying to change does no exist')
         
-        req.body.add ? await product.addCategory(category) : null        
-        req.body.delete ? await product.removeCategory(category) : null
+        add ? await product.addCategory(addCategory) : null        
+        deleteCat ? await product.removeCategory(deletedCategory) : null
         
         return res.status(200).json(product)
         
+    }catch(error) {
+        next(error)
     }
-        catch(error) {
-            next(error)
-        }
 }
 
 const updateCategory = async (req, res, next) => {
