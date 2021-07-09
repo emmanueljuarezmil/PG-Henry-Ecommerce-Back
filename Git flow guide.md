@@ -91,7 +91,7 @@ Si la configuracion de github lo permite (no lo se aun si esta bien configurado 
 El autor de la rama mergea los cambios aprobados de su rama a la rama prueba.
 Para que no tengamos 70 ramas, completado esto borrar la rama que creamos para trabajar del repo local, y la misma rama del repo remoto
 - git branch -d {nombre de la rama local}
-- git push origin --delete {nombre de la rama remota}
+- git push origin --delete {nombre de la rama remota}  
 
 
 Y de nuevo se repite el ciclo, eat sleep code repeat. **Maiameeeee**
