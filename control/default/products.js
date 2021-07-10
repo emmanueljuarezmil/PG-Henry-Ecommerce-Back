@@ -110,7 +110,8 @@ async function getProductsById(req, res) {
 }
 
 
-async function addProduct(req, res){
+async function addProduct(req, res, next){
+    console.log(req.body)
     if(!req.body.name || !req.body.name.length || !req.body.price || !req.body.stock) {
         return res.send({      
             message: 'you have to set a name for your product',
@@ -121,7 +122,8 @@ async function addProduct(req, res){
         id: id,
         name: req.body.name,
         price: parseFloat(req.body.price),
-        stock: parseFloat(req.body.stock)
+        stock: parseFloat(req.body.stock),
+        photo: req.body.photo,
     };
 
     try{
@@ -153,7 +155,8 @@ async function addProduct(req, res){
         });
         return res.status(200).json(result);
     }catch(error){
-        return res.status(500).json({message: "internal error DB"});
+        next(error)
+        // return res.status(500).json({message: "internal error DB"});
     }
 }
 
