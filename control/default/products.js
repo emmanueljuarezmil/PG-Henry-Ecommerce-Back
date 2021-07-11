@@ -164,18 +164,21 @@ async function addProduct(req, res, next){
 
 async function updateProduct(req,res){
     if (!req.body.id){
-        return res.status(400).json({message: 'ID of the deleted product is needed', status:400})
+        return res.status(400).json({message: 'ID of the edited product is needed', status:400})
     }
-    const { id, name, photo, description, stock, selled, perc_desc, price} = req.body;
+    const { id, name, photo, descrip, stock, selled, perc_desc, price, category} = req.body;
     try{
         const product = await Product.findByPk(id)
         if (name) {product.name = name}
-        if (description) {product.descrip = description}
+        if (descrip) {product.descrip = descrip}
         if (stock) {product.stock = parseFloat(stock)}
         if (photo) {product.photo = photo}
         if (selled) {product.stock_spell = parseFloat(selled)}
         if (perc_desc) {product.perc_desc = parseFloat(perc_desc)}
         if (price) {product.price = parseFloat(price)}
+        if(category && category.length){
+            await product.addCategory(category)
+        }
         await product.save()
         return res.status(200).json({message: 'El producto ha sido actulizado'})
     } catch (error){
