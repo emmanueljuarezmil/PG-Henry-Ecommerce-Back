@@ -214,8 +214,8 @@ async function deleteProduct(req,res, next){
             next(error);
         }
     }
-    return  res.send('meli products posted ok');
-   
+    if (req) return res.send('meli products posted ok');
+    else return   
 }
 
 
