@@ -28,7 +28,7 @@ module.exports = (sequelize) => {
       type: DataTypes.INTEGER,
       allowNull: false
     },
-    stock_spell:{
+    selled:{
         type: DataTypes.INTEGER,
         defaultValue: 0,
     },

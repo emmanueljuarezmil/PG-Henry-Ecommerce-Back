@@ -112,28 +112,30 @@ async function getProductsById(req, res) {
 
 async function addProduct(req, res, next){
     console.log(req.body)
-    if(!req.body.name || !req.body.name.length || !req.body.price || !req.body.stock) {
-        return res.send({      
-            message: 'you have to set a name for your product',
+    const {name, price, photo, stock, selled, description, category, perc_desc} = req.body
+    if(!name || !name.length || !price || !stock || !category.length) {
+        return res.status(400).send({      
+            message: 'Parámetros incorrectos',
         });
     }
     const id = uuidv4();
     const products = {
-        id: id,
-        name: req.body.name,
-        price: parseFloat(req.body.price),
-        stock: parseFloat(req.body.stock),
-        photo: req.body.photo,
+        id,
+        name,
+        price: parseFloat(price),
+        stock: parseFloat(stock),
+        selled: parseFloat(selled), 
+        photo,
+        description,
+        perc_desc: parseFloat(perc_desc)
     };
 
     try{
         const createdProduct = await Product.create(products);
-        if(req.body.category){
-            const {category} = req.body
+        if(category){
             await createdProduct.addCategory(category)
 
         }
-        const {name} = req.body 
         const result = await Product.findOne({
             where: {
                 name: name
