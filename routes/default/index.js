@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const {getProducts, getProductsById, addProduct, updateProduct, deleteProduct, fullDbproducts} = require('../../control/default/products.js')
-
+const {jwtCheck} = require('../../control/auth/index.js')
 
 const router = Router();
 
@@ -13,7 +13,7 @@ router.get('/', function(req, res, ) {
 router.get('/products', getProducts);
 router.get('/products/p/:idProduct', getProductsById);
 router.post('/products', addProduct);
-router.put('/products/update', updateProduct);
+router.put('/products/update',jwtCheck, updateProduct);
 router.delete('/products', deleteProduct);
 router.get('/prod', fullDbproducts);
 
