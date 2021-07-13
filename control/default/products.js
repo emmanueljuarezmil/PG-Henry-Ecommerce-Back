@@ -166,11 +166,11 @@ async function updateProduct(req,res){
     if (!req.body.id){
         return res.status(400).json({message: 'ID of the edited product is needed', status:400})
     }
-    const { id, name, photo, descrip, stock, selled, perc_desc, price, category} = req.body;
+    const { id, name, photo, description, stock, selled, perc_desc, price, category} = req.body;
     try{
         const product = await Product.findByPk(id)
         if (name) {product.name = name}
-        if (descrip) {product.descrip = descrip}
+        if (description) {product.description = description}
         if (stock) {product.stock = parseFloat(stock)}
         if (photo) {product.photo = photo}
         if (selled) {product.stock_spell = parseFloat(selled)}
@@ -207,7 +207,7 @@ async function deleteProduct(req,res, next){
     for(let i of productosmeli){
         try{
             var id = uuidv4();
-            var prodFinal = await Product.create({name: i.name,id:id, price:i.price, photo: i.photo, descrip: i.descript, stock: i.stock})
+            var prodFinal = await Product.create({name: i.name,id:id, price:i.price, photo: i.photo, description: i.descriptiont, stock: i.stock})
             await prodFinal.setCategories(i.Categorias);
         }catch(error){
             console.log(error);
