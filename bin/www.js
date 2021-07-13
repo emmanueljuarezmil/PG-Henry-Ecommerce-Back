@@ -29,8 +29,8 @@ const server = http.createServer(app);
  */
 // Ya acomodado con sinq a la db
 
-// definir force como true en .env para trabajar con el back localmente y que apenas se levante se carguen las categorias y los productos
-const force = (process.env.FORCE || true)
+// definir force como true en .env para trabajar con la base de datos como no persistente, sino por default esta en false 
+const force = (process.env.FORCE || false)
 
 conn.sync({force}).then(() =>
 server.on('error', onError),
