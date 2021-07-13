@@ -16,8 +16,8 @@ async function getProducts (req, res, next) {
                      where: {
                          name:  {[Op.iLike]: `%${lowercasename}%`}
                      },
-                     limit: req.query.page * 40,
-                     offset: (req.query.page-1)*40,
+                     limit: 40,
+                     offset: req.query.page *40,
                      include: {                
                          model: Category,
                          through: {
@@ -52,8 +52,8 @@ async function getProducts (req, res, next) {
     try {
         if(req.query.page) {
             var products = await Product.findAll({
-                limit: req.query.page * 40,
-                offset: (req.query.page-1)*40,
+                limit:  40,
+                offset: req.query.page * 40,
                 include: {                
                         model: Category,
                         through: {
