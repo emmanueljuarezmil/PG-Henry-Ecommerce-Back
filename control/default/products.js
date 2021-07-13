@@ -207,7 +207,7 @@ async function deleteProduct(req,res, next){
     for(let i of productosmeli){
         try{
             var id = uuidv4();
-            var prodFinal = await Product.create({name: i.name,id:id, price:i.price, photo: i.photo, description: i.description, stock: i.stock})
+            var prodFinal = await Product.create({name: i.name,id:id, price:i.price, photo: i.photo, description: i.descript, stock: i.stock})
             await prodFinal.setCategories(i.Categorias);
         }catch(error){
             console.log(error);
