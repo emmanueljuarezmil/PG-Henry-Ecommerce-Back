@@ -13,7 +13,7 @@ module.exports = (sequelize) => {
       allowNull: false,
       is: /^[a-zA-Z]+(([ ,.-][a-zA-Z ])?[a-zA-Z]*)*$/
     },
-    descrip: {
+    description: {
       type: DataTypes.TEXT,
       is: /[CDATA[^[a-zA-Z0-9 .-]+$]]/
     },
