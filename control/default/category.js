@@ -133,7 +133,8 @@ const getAllCategories = async (req, res, next) => {
 const fulldbCat = async(req, res, next) => {
     try {
         await Category.bulkCreate(categoriesDb);
-        return res.send("created ok");
+        if(req) return res.send("created ok");
+        else return
 
     } catch(error){
         next(error);

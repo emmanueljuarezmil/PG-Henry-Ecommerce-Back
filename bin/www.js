@@ -8,6 +8,9 @@ const app = require('../app');
 const debug = require('debug')('pg-henry-ecommerce-back:server');
 const http = require('http');
 
+const { fullDbproducts } = require('../control/default/products')
+const { fulldbCat } = require('../control/default/category')
+
 /**
  * Get port from environment and store in Express.
  */
@@ -26,13 +29,19 @@ const server = http.createServer(app);
  */
 // Ya acomodado con sinq a la db
 
+// definir force como true en .env para trabajar con el back localmente y que apenas se levante se carguen las categorias y los productos
+const force = (process.env.FORCE || true)
 
-
-conn.sync({force: true}).then(() =>
+conn.sync({force}).then(() =>
 server.on('error', onError),
 server.on('listening', onListening),
 server.listen(port)
-).then(() => { console.log(`funciona en el ${port}`)})
+)
+.then(() => force ? fulldbCat() : null)
+.then(() => force ? fullDbproducts() : null)
+.then(() => force ? console.log('Productos y categorias precargados en la base de datos') : null)
+.then(() => console.log(`funciona en el ${port}`))
+.catch(err => console.log(err))
 
 
 /**
