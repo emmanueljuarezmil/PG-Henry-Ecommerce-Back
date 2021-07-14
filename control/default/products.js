@@ -33,7 +33,7 @@ async function getProducts (req, res, next) {
             where: {
                 name:  {[Op.iLike]: `%${name}%`}
             },
-            attributes: ['name', 'photo', 'id', 'price', 'description'],
+            attributes: ['name', 'photo', 'id', 'price', 'description', 'stock'],
             offset: (page - 1) * itemsPerPage,
             limit: itemsPerPage,
             include: {                
