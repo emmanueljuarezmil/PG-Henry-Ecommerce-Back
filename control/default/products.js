@@ -6,7 +6,13 @@ const productosmeli = require('../../bin/data/productsDB.json');
 const itemsPerPage = 40
 
 async function getProducts (req, res, next) {
-    let { name = '', page = 1, orderBy = 'name', orderType = 'asc', category = '' } = req.body
+    console.log(req.query)
+    let { name, page, orderBy, orderType, category} = req.query
+    if(name === '') name = ''
+    if(page === '') page = 1
+    if(orderBy === '') orderBy = 'name'
+    if(orderType === '' || orderType === 'undefined') orderType = 'asc'
+    if(category === '') category = ''
     name = name.toLowerCase()
     category = category.toLowerCase()
     orderType = orderType.toUpperCase()
@@ -31,7 +37,7 @@ async function getProducts (req, res, next) {
             where: {
                 name:  {[Op.iLike]: `%${name}%`}
             },
-            attributes: ['name', 'photo', 'id', 'price'],
+            attributes: ['name', 'photo', 'id', 'price', 'description'],
             offset: (page - 1) * itemsPerPage,
             limit: itemsPerPage,
             include: {                
