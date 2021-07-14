@@ -11,7 +11,7 @@ const productosmeli = require('../../bin/data/productsDB.json');
 // return res.status(200).send({totalPage: count.length/40, products: prod });
 
 async function getProducts (req, res, next) {
-    let { name = '', page = 1, orderBy = 'name', orderType = 'asc', category = '' } = req.query
+    let { name = '', page = 1, orderBy = 'name', orderType = 'asc', category = '' } = req.body
     name = name.toLowerCase()
     category = category.toLowerCase()
     orderType = orderType.toUpperCase()
