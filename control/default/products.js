@@ -6,16 +6,12 @@ const productosmeli = require('../../bin/data/productsDB.json');
 const itemsPerPage = 40
 
 async function getProducts (req, res, next) {
-    console.log(req.query)
     let { name, page, orderBy, orderType, category} = req.query
-    if(name === '') name = ''
-    if(page === '') page = 1
-    if(orderBy === '') orderBy = 'name'
-    if(orderType === '' || orderType === 'undefined') orderType = 'asc'
-    if(category === '') category = ''
-    name = name.toLowerCase()
-    category = category.toLowerCase()
-    orderType = orderType.toUpperCase()
+    if(name === '' || name === 'undefined' || name === undefined) name = ''
+    if(page === '' || page === 'undefined' || page === undefined) page = 1
+    if(orderBy === '' || orderBy === 'undefined' || orderBy === undefined) orderBy = 'name'
+    if(orderType === '' || orderType === 'undefined' || orderType === undefined) orderType = 'asc'
+    if(category === '' || category === 'undefined' || category === undefined) category = ''
     try {
         const count = await Product.findAll({
             where: {
