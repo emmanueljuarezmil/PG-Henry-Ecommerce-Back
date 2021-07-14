@@ -3,12 +3,7 @@ const { v4: uuidv4 } = require('uuid');
 const { Op } = require("sequelize");
 const productosmeli = require('../../bin/data/productsDB.json');
 
-
-// var count = await Product.findAll({
-//     where: {
-//         name:  {[Op.iLike]: `%${lowercasename}%`}
-//     },
-// return res.status(200).send({totalPage: count.length/40, products: prod });
+const itemsPerPage = 40
 
 async function getProducts (req, res, next) {
     let { name = '', page = 1, orderBy = 'name', orderType = 'asc', category = '' } = req.body
@@ -37,8 +32,8 @@ async function getProducts (req, res, next) {
                 name:  {[Op.iLike]: `%${name}%`}
             },
             attributes: ['name', 'photo', 'id', 'price'],
-            offset: (page - 1) * 40,
-            limit: 40,
+            offset: (page - 1) * itemsPerPage,
+            limit: itemsPerPage,
             include: {                
                 model: Category,
                 where: category ? {
@@ -51,7 +46,7 @@ async function getProducts (req, res, next) {
             },
             order: [[orderBy, orderType]]
         })
-        return res.send({totalPage: count.length/40, products })
+        return res.send({totalPage: Math.ceil(count.length/itemsPerPage), products })
     } catch(err) {
         next(err)
     }
