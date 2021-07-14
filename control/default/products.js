@@ -4,82 +4,56 @@ const { Op } = require("sequelize");
 const productosmeli = require('../../bin/data/productsDB.json');
 
 
-
+// var count = await Product.findAll({
+//     where: {
+//         name:  {[Op.iLike]: `%${lowercasename}%`}
+//     },
+// return res.status(200).send({totalPage: count.length/40, products: prod });
 
 async function getProducts (req, res, next) {
-    const { name } = req.query
-    if(name){
-        var lowercasename = decodeURI(name.toLowerCase());
-        try{
-            if(req.query.page) {
-                var prod = await Product.findAll({
-                     where: {
-                         name:  {[Op.iLike]: `%${lowercasename}%`}
-                     },
-                     limit: 40,
-                     offset: req.query.page *40,
-                     include: {                
-                         model: Category,
-                         through: {
-                             attributes: [],
-                         },
-                         attributes: ['name', 'id']
-                     },
-                    attributes: ['name', 'photo', 'id', 'price'] 
-                })
-
-            } else {
-                var prod = await Product.findAll({
-                    where: {
-                        name:  {[Op.iLike]: `%${lowercasename}%`}
-                    },
-                    include: {                
-                        model: Category,
-                        through: {
-                            attributes: [],
-                        },
-                        attributes: ['name', 'id']
-                    },
-                   attributes: ['name', 'photo', 'id', 'price'] 
-               })
-
-            }
-            return res.status(200).send(prod);
-        } catch (error){
-            next(error)
-        }
-    } 
+    let { name = '', page = 1, orderBy = 'name', orderType = 'asc', category = '' } = req.query
+    name = name.toLowerCase()
+    category = category.toLowerCase()
+    orderType = orderType.toUpperCase()
     try {
-        if(req.query.page) {
-            var products = await Product.findAll({
-                limit:  40,
-                offset: req.query.page * 40,
-                include: {                
-                        model: Category,
-                        through: {
-                            attributes: [],
-                        },
-                        attributes: ['name', 'id']
-                    },
-                attributes: ['name', 'photo', 'id', 'price']    
-            })
-
-        } else {
-            var products = await Product.findAll({
-                include: {                
-                        model: Category,
-                        through: {
-                            attributes: [],
-                        },
-                        attributes: ['name', 'id']
-                    },
-                attributes: ['name', 'photo', 'id', 'price']    
-            })
-
-        }
-        return res.status(200).send(products);
-    } catch (error) {
-        next(error);
+        const count = await Product.findAll({
+            where: {
+                name:  {[Op.iLike]: `%${name}%`}
+            },
+            attributes: [],
+            include: {                
+                model: Category,
+                where: category ? {
+                    id: category
+                } : null,
+                through: {
+                    attributes: [],
+                },
+                attributes: []
+            }
+        })
+        const products = await Product.findAll({
+            where: {
+                name:  {[Op.iLike]: `%${name}%`}
+            },
+            attributes: ['name', 'photo', 'id', 'price'],
+            offset: (page - 1) * 40,
+            limit: 40,
+            include: {                
+                model: Category,
+                where: category ? {
+                    id: category
+                } : null,
+                through: {
+                    attributes: [],
+                },
+                attributes: ['name', 'id']
+            },
+            order: [[orderBy, orderType]]
+        })
+        return res.send({totalPage: count.length/40, products })
+    } catch(err) {
+        next(err)
     }
 }
 
