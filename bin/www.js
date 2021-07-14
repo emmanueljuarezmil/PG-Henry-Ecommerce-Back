@@ -29,7 +29,7 @@ const server = http.createServer(app);
  */
 // Ya acomodado con sinq a la db
 
-// definir force como true en .env para trabajar con la base de datos como no persistente, sino por default esta en false 
+// definir force como true en .env para trabajar con la base de datos como no persistente, sino por default esta enfalse 
 const force = (process.env.FORCE || false)
 
 conn.sync({force}).then(() =>

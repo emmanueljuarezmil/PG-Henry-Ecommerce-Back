@@ -4,14 +4,13 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const cors = require('cors');
-
-
-
+const { auth } = require("express-openid-connect");
 
 
 //const indexRouter = require('./routes/index');
 const cat = require('./routes/default/category')
 const ind = require('./routes/default/index.js')
+const log = require('./routes/user/users.js')
 
 const app = express();
 // view engine setup
@@ -20,6 +19,8 @@ const app = express();
 
 
 
+// app.use(jwtCheck)
+// app.use(auth())
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -28,6 +29,7 @@ app.use(cors())
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', ind)
 app.use('/', cat);
+app.use('/', log)
 
 
 // app.use('/users', usersRouter);
