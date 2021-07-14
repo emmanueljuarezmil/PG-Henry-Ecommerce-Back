@@ -8,8 +8,8 @@ const router = Router();
 
 
 router.get('/users', getAllUsers);
-router.post('/users', newUser);
-router.post('/users/:idUser/passwordreset', userPasswordReset);
+router.post('/users/register', newUser);
+// router.post('/users/:idUser/passwordreset', userPasswordReset);
 router.put('/users/:idUser', updateUser);
 router.delete('/users/:idUser', deleteUser);
 

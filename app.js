@@ -4,34 +4,23 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const cors = require('cors');
+const { auth } = require("express-openid-connect");
 
-const jwt = require('express-jwt');
-const jwks = require('jwks-rsa');
-
-
-const jwtCheck = jwt({
-    secret: jwks.expressJwtSecret({
-        cache: true,
-        rateLimit: true,
-        jwksRequestsPerMinute: 5,
-        jwksUri: 'https://dev-bs5gv-2h.us.auth0.com/.well-known/jwks.json'
-  }),
-  audience: 'eco-music',
-  issuer: 'https://dev-bs5gv-2h.us.auth0.com/',
-  algorithms: ['RS256']
-  });
 
 //const indexRouter = require('./routes/index');
 const cat = require('./routes/default/category')
 const ind = require('./routes/default/index.js')
-const log = require('./routes/auth/index.js')
+const log = require('./routes/user/users.js')
 
 const app = express();
 // view engine setup
 /* app.set('views', path.join(__dirname, 'views')); */
 /* app.use(bodyParser.json()); */
 
-app.use(jwtCheck)
+
+
+// app.use(jwtCheck)
+// app.use(auth())
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

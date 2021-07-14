@@ -1,13 +1,10 @@
-const { Router } = require('express');
+// const { Router } = require('express');
 
 
 
-const router = Router();
-
-// router.post('/login', newUser);
-// router.post('/logout', updateUser)
+// const router = Router();
 
 
 
 
-module.exports = router;
+// module.exports = router;
