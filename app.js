@@ -11,6 +11,7 @@ const { auth } = require("express-openid-connect");
 const cat = require('./routes/default/category')
 const ind = require('./routes/default/index.js')
 const log = require('./routes/user/users.js')
+const cart = require('./routes/user/cart.js')
 
 const app = express();
 // view engine setup
@@ -30,7 +31,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', ind)
 app.use('/', cat);
 app.use('/', log)
-
+app.use('/', cart)
 
 // app.use('/users', usersRouter);
 

@@ -13,13 +13,13 @@ const auth = require('./admin/auth')
 const router = Router();
 
 
+router.use('/', cart);
 router.use('/', products);
 router.use('/', categories);
 router.use('/', reviews);
 router.use('/', user);
 router.use('/', admin); 
 router.use('/', orders);
-router.use('/', cart);
 router.use('/', auth);
 
 

@@ -1,6 +1,6 @@
 const { Router } = require('express');
-const {getAllUsers, newUser, updateUser, deleteUser} = require('../../control/user/users.js') 
-const {userPasswordReset} = require('../../control/admin/auth/auth.js')
+const { getAllUsers, newUser, updateUser, deleteUser } = require('../../control/user/users.js')
+const { userPasswordReset } = require('../../control/admin/auth/auth.js')
 
 
 
