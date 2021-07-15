@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const {getAllOrders, userOrders, getOrderById, updateOrder} = require('../../control/user/orders.js')  //importar funciones para orders
+const { getAllOrders, userOrders, getOrderById, updateOrder } = require('../../control/user/orders.js')  //importar funciones para orders
 
 
 
