@@ -14,7 +14,7 @@ async function newUser(req, res, next) {
         const id = uuidv4()
         const user = { id, userName, hashedPassword, email }
         await User.create(user)
-        return res.redirect('./')
+        return res.redirect('/')
     } catch (error) {
         return res.status(500).json({ message: 'Error with DB' })
     }
