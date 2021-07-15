@@ -12,6 +12,7 @@ const cat = require('./routes/default/category')
 const ind = require('./routes/default/index.js')
 const log = require('./routes/user/users.js')
 const cart = require('./routes/user/cart.js')
+const orders = require('./routes/user/orders.js')
 
 const app = express();
 // view engine setup
@@ -32,6 +33,7 @@ app.use('/', ind)
 app.use('/', cat);
 app.use('/', log)
 app.use('/', cart)
+app.use('/', orders)
 
 // app.use('/users', usersRouter);
 
