@@ -7,8 +7,8 @@ const router = Router();
 
 router.get('/users/:idUser/orders', userOrders);
 router.get('/orders', getAllOrders);
-/* router.get('/orders/:id', getOrderById);
-router.put('/orders/:id', updateOrder); */
+ router.get('/orders/:id', getOrderById);
+// router.put('/orders/:id', updateOrder);
 
 
 module.exports = router;

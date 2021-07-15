@@ -39,7 +39,26 @@ const getAllOrders = async (req, res, next) => {
 };
 
 const getOrderById = async (req, res, next) => {
-    
+    const {id} = req.params
+    if (!id) return res.status(400).send("Order ID is required")
+    try {
+        // const order = await Order.findByPk(id)
+        const order = await Order_Line.findAll({
+            where: {
+                orderID: id
+            },
+            // include: {
+            //     model: Order,
+            //     through: {
+            //         where: {id}
+            //       }
+            // }
+
+        })
+        return res.send(order)
+    }catch(err) {
+        return res.status(400).send(err)
+    }
 };
 
 const updateOrder = async (req, res, next) => {
