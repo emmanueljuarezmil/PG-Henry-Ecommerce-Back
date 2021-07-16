@@ -19,8 +19,8 @@ router.use('/', categories);
 router.use('/', reviews);
 router.use('/', user);
 router.use('/', admin); 
-router.use('/', orders);
 router.use('/', auth);
+router.use('/', orders);
 
 
 module.exports = router;

@@ -1,0 +1,27 @@
+[
+    {
+        "userName": "Papichuli",
+        "hashedPassword": "LamidaDeRaja",
+        "email": "Diego10@gmail.com"
+    },
+    {
+        "userName": "Cosmefulanito",
+        "hashedPassword": "Wsdfldksdf",
+        "email": "Cosmefulanito@gmail.com"
+    },
+    {
+        "userName": "elbarto",
+        "hashedPassword": "LamidaDeRaja",
+        "email": "elbarto@gmail.com"
+    },
+    {
+        "userName": "cartman",
+        "hashedPassword": "LamidaDeRaja",
+        "email": "cartman@gmail.com"
+    },
+    {
+        "userName": "kenny",
+        "hashedPassword": "LamidaDeRaja",
+        "email": "ricardofort@gmail.com"
+    }
+]
