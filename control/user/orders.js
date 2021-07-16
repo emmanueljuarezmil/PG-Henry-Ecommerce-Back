@@ -57,7 +57,7 @@ const updateOrder = async (req, res, next) => {
     const {id} = req.params
     const {products} = req.body    
     if(!id) return res.status(400).send('El id de la orden es requerido')
-    if(!products) return res.status(400).send('Los productos a eliminar son requeridos')
+    if(!products) return res.status(400).send('Los productos a actualizar son requeridos')
     try {
         const orderToDelete = await Order.findByPk(id)
         if(!orderToDelete) return res.status(400).send('El id de la orden enviada es inválido')
@@ -70,8 +70,7 @@ const updateOrder = async (req, res, next) => {
                 if (!product) {
                     return 'El id de alguno de los productos enviados es inválido'
                 };
-                const quantity = productToAdd.quantity;
-                if (product.stock < quantity) {
+                if (product.stock < productToAdd.quantity) {
                     return 'No hay stock suficiente de alguno de los productos'
                 }
             } catch(err){
@@ -80,12 +79,11 @@ const updateOrder = async (req, res, next) => {
             }
         })
         const error = await Promise.all(verifiedProductsPromises).then(result => result).catch(err => err)        
-        const concatError = error.filter(element => element)
-        if(concatError[0]) return res.status(400).send(concatError)
-        orderToDelete.destroy()
+        const concatError = [...new Set(error.filter(element => element))].join('. ')
+        if(concatError) return res.status(400).send(concatError)
+        await orderToDelete.destroy()
         const order = await Order.create()        
-        user.addOrder(order);
-        // order.addUser(user)
+        await user.addOrder(order);
         await products.forEach(async productToAdd => {            
             try {
                 const product = await Product.findByPk(productToAdd.id);
@@ -96,8 +94,7 @@ const updateOrder = async (req, res, next) => {
                 console.error(err)    
             }
         })
-        console.log(order)
-        return res.send(order)
+        return res.send('La orden fue actualizada con éxito')
     }catch(err) {
         return res.status(400).send(err)
     }
