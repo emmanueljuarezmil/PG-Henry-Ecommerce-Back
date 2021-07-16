@@ -5,8 +5,8 @@ const { getAllOrders, userOrders, getOrderById, updateOrder } = require('../../c
 
 const router = Router();
 
-router.get('/orders', getAllOrders);
-router.get('/users/:idUser/orders', userOrders);
+router.get('/orders/users/:idUser', userOrders);
+router.get('/orders/', getAllOrders);
 router.get('/orders/:id', getOrderById);
 router.put('/orders/:id', updateOrder);
 
