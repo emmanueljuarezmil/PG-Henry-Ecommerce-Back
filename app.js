@@ -13,6 +13,9 @@ const ind = require('./routes/default/index.js')
 const log = require('./routes/user/users.js')
 const cart = require('./routes/user/cart.js')
 const orders = require('./routes/user/orders.js')
+const auth0 = require('./routes/auth.js')
+const jwt = require('express-jwt')
+const jwks = require('jwks-rsa')
 
 const app = express();
 // view engine setup
@@ -34,6 +37,33 @@ app.use('/', cat);
 app.use('/', log)
 app.use('/', cart)
 app.use('/', orders)
+app.use('/', auth0)
+
+const verifyjwt = jwt({
+  secret: jwks.expressJwtSecret({
+    cache: true,
+    rateLimit: true,
+    jwksRequestsPerMinute: 5,
+    jwksUri: 'https://dev-8yg4kp4m.us.auth0.com/.well-known/jwks.json'
+  }),
+  audience: "localhost:3000",
+  issuer: 'https://dev-8yg4kp4m.us.auth0.com/',
+  algorithms: ['RS256']
+}).unless({path:['/products']})  
+
+app.use(verifyjwt)
+
+app.use((req, res, next) => {
+  const error = new Error('not found')
+  error.status = 404
+  next(error);
+})
+
+app.use((error, req, res, next) => {
+  const status = error.status || 500;
+  const message = error.message || 'internal server error'
+  res.status(status).send(message)
+})
 
 // app.use('/users', usersRouter);
 
