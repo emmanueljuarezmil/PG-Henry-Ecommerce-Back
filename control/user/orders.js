@@ -3,13 +3,18 @@ const { User, Product, Order, Order_Line } = require('../../db.js');
 const exclude = ['createdAt', 'updatedAt']
 
 const getAllOrders = async (req, res, next) => {
-    if (!req.query.status) return res.status(400).send("Status is required ")
+    // if (!req.query.status) return res.status(400).send("Status is required ")
+    const status = req.query.status
      try {
-         const orderByStatus = await Order.findAll({
-             where: {
-                 status: req.query.status                
-             }          
-         })
+         const orderByStatus = await Order.findAll(
+             status ?
+             {
+                where: {
+                    status: req.query.status                
+                }          
+            } :
+            {}
+         )
          if (!orderByStatus.length) {
              return res.status(400).json({ message: 'There are not orders with that status.' })
          }
@@ -42,9 +47,18 @@ const getOrderById = async (req, res, next) => {
     const {id} = req.params
     if (!id) return res.status(400).send("Order ID is required")
     try {
-        const order = await Order_Line.findAll({
+        const order = await Order.findOne({
             where: {
-                orderID: id
+                id
+            },
+            include: {
+                model: Product,
+                through: {
+                    attributes: []
+                },
+                attributes: {
+                    exclude
+                }
             }
         })
         return res.send(order)
