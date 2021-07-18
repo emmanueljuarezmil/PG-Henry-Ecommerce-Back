@@ -43,7 +43,7 @@ const captureUser = async (req, res, next) => {
 }
 
 const isAuth = async (req, res, next) => {
-  if(!req.headers.id && !req.headers.Authorization) return res.status(400).send('No existen datos de usuario')
+  if(!req.headers.id) return res.status(400).send('No existen datos de usuario')
   if(req.headers.id) {
     const user = await User.findByPk(req.headers.id)
     if(!user) return res.status(400).send('No existen datos de usuario')

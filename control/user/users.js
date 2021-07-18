@@ -71,10 +71,27 @@ async function newAdmin(req, res, next) {
     }
 }
 
+async function loginUser(req, res, next) {
+    if (!req.body.email || !req.body.hashedPassword) { return res.status(400).json({ message: 'Bad Request' }) }
+    try {
+        const { email, hashedPassword } = req.body
+        const user = await User.findOne({
+            where: {
+                email,
+                hashedPassword
+            }
+        })
+        return res.send(user)
+    } catch (error) {
+        return res.status(500).json({ message: 'Internal Error DB' })
+    }
+}
+
 module.exports = {
     newUser,
     updateUser,
     getAllUsers,
     deleteUser,
-    newAdmin
+    newAdmin,
+    loginUser
 }

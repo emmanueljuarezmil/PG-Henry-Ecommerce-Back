@@ -10,7 +10,7 @@ router.get('/', function(req, res, ) {
   });
 
   
-router.get('/products', captureUser, getProducts);
+router.get('/products', getProducts);
 router.get('/products/p/:idProduct', getProductsById);
 router.post('/products',isAuth, isAdmin, addProduct);
 router.put('/products/update',isAuth, isAdmin, updateProduct);
