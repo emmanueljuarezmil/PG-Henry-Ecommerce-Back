@@ -85,7 +85,7 @@ async function getProductsById(req, res) {
 
 
 async function addProduct(req, res, next) {
-    const { name, price, photo, stock, selled, description, category, perc_desc } = req.body
+    const { name, price, photo, stock, selled = 0, description, category, perc_desc = 0 } = req.body
     if (!name || !name.length || !price || !stock || !category.length) {
         return res.status(400).send({
             message: 'Parámetros incorrectos',

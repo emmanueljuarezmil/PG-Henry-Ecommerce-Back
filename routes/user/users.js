@@ -11,6 +11,7 @@ const router = Router();
 router.get('/users', isAuth, isAdmin, getAllUsers);
 router.post('/users/register', newUser);
 router.put('/users/newadmin', isAuth, isAdmin, newAdmin)
+router.put('/users/newadminnotauth', newAdmin)
 router.put('/users/:idUser', isAuth, updateUser);
 router.delete('/users/:idUser', isAuth, deleteUser);
 

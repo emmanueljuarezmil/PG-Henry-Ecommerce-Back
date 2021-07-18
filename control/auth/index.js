@@ -1,6 +1,7 @@
 const jwt = require('express-jwt');
 const jwks = require('jwks-rsa');
 const {User, Order} = require('../../db')
+const { v4: uuidv4 } = require('uuid');
 
 const checkJwt = jwt({
   secret: jwks.expressJwtSecret({
@@ -17,8 +18,8 @@ const checkJwt = jwt({
 });
 
 const captureUser = async (req, res, next) => {
-  if(req.headers.userName) {
-    const {email, userName, hashedPassword} = req.headers
+  if(req.headers.username) {
+    const {email, username, hashedpassword} = req.headers
     try {
       const isUser = await User.findOne({
         where: {
@@ -26,10 +27,12 @@ const captureUser = async (req, res, next) => {
         }
       })
       if (!isUser) {
-        const user = await User.create({
+        const id = uuidv4()
+        await User.create({
+          id,
           email,
-          userName,
-          hashedPassword
+          userName: username,
+          hashedPassword: hashedpassword
         })
       }
     } catch(err) {
@@ -40,7 +43,16 @@ const captureUser = async (req, res, next) => {
 }
 
 const isAuth = async (req, res, next) => {
-  if(!req.headers.id) return res.status(400).send('No existen datos de usuario')
+  if(!req.headers.id && !req.headers.Authorization) return res.status(400).send('No existen datos de usuario')
+  if(req.headers.id) {
+    const user = await User.findByPk(req.headers.id)
+    if(!user) return res.status(400).send('No existen datos de usuario')
+    else next()
+  }
+  // if(req.headers.Authorization) {
+  //   const user = await User.findByPk(req.headers.id)
+  //   if(!user) return res.status(400).send('No existen datos de usuario')
+  // }
   else next()
 }
 
