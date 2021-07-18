@@ -13,7 +13,7 @@ const ind = require('./routes/default/index.js')
 const log = require('./routes/user/users.js')
 const cart = require('./routes/user/cart.js')
 const orders = require('./routes/user/orders.js')
-const auth0 = require('./routes/auth')
+// const auth0 = require('./routes/auth')
 const jwt = require('express-jwt')
 const jwks = require('jwks-rsa')
 
@@ -37,7 +37,7 @@ app.use('/', cat);
 app.use('/', log)
 app.use('/', cart)
 app.use('/', orders)
-app.use('/', auth0)
+// app.use('/', auth0)
 
 const verifyjwt = jwt({
   secret: jwks.expressJwtSecret({
