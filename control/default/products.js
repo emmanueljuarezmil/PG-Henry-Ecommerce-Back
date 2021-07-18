@@ -85,7 +85,6 @@ async function getProductsById(req, res) {
 
 
 async function addProduct(req, res, next) {
-    console.log(req.body)
     const { name, price, photo, stock, selled, description, category, perc_desc } = req.body
     if (!name || !name.length || !price || !stock || !category.length) {
         return res.status(400).send({
@@ -186,7 +185,7 @@ async function fullDbproducts(req, res, next) {
             var prodFinal = await Product.create({ name: i.name, id: id, price: i.price, photo: i.photo, description: i.descript, stock: i.stock })
             await prodFinal.setCategories(i.Categorias);
         } catch (error) {
-            console.log(error);
+            console.error(error);
             next(error);
         }
     }

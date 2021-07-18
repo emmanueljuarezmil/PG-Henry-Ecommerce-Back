@@ -1,17 +1,18 @@
 const { Router } = require('express');
-const { getAllUsers, newUser, updateUser, deleteUser } = require('../../control/user/users.js')
+const { getAllUsers, newUser, updateUser, deleteUser, newAdmin } = require('../../control/user/users.js')
 const { userPasswordReset } = require('../../control/admin/auth/auth.js')
+const {isAdmin, isAuth} = require('../../control/auth')
 
 
 
 const router = Router();
 
 
-router.get('/users', getAllUsers);
+router.get('/users', isAuth, isAdmin, getAllUsers);
 router.post('/users/register', newUser);
-// router.post('/users/:idUser/passwordreset', userPasswordReset);
-router.put('/users/:idUser', updateUser);
-router.delete('/users/:idUser', deleteUser);
+router.put('/users/newadmin', isAuth, isAdmin, newAdmin)
+router.put('/users/:idUser', isAuth, updateUser);
+router.delete('/users/:idUser', isAuth, deleteUser);
 
 
 

@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const cors = require('cors');
 const { auth } = require("express-openid-connect");
+const fs = require('fs')
 
 
 //const indexRouter = require('./routes/index');
@@ -29,9 +30,16 @@ const app = express();
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+// app.use(cookieParser({
+//   user: null
+// }));
 app.use(cookieParser());
 app.use(cors())
 app.use(express.static(path.join(__dirname, 'public')));
+// app.use((req, res, next) => {
+//   console.log(req.cookies);
+//   next();
+// });
 app.use('/', ind)
 app.use('/', cat);
 app.use('/', log)
@@ -39,19 +47,19 @@ app.use('/', cart)
 app.use('/', orders)
 // app.use('/', auth0)
 
-const verifyjwt = jwt({
-  secret: jwks.expressJwtSecret({
-    cache: true,
-    rateLimit: true,
-    jwksRequestsPerMinute: 5,
-    jwksUri: 'https://dev-8yg4kp4m.us.auth0.com/.well-known/jwks.json'
-  }),
-  audience: "localhost:3000",
-  issuer: 'https://dev-8yg4kp4m.us.auth0.com/',
-  algorithms: ['RS256']
-}).unless({path:['/products']})  
+// const verifyjwt = jwt({
+//   secret: jwks.expressJwtSecret({
+//     cache: true,
+//     rateLimit: true,
+//     jwksRequestsPerMinute: 5,
+//     jwksUri: 'https://dev-8yg4kp4m.us.auth0.com/.well-known/jwks.json'
+//   }),
+//   audience: "localhost:3000",
+//   issuer: 'https://dev-8yg4kp4m.us.auth0.com/',
+//   algorithms: ['RS256']
+// }).unless({path:['/products']})  
 
-app.use(verifyjwt)
+// app.use(verifyjwt)
 
 app.use((req, res, next) => {
   const error = new Error('not found')

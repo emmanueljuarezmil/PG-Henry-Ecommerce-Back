@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const {getProducts, getProductsById, addProduct, updateProduct, deleteProduct, fullDbproducts} = require('../../control/default/products.js')
-const {jwtCheck} = require('../../control/auth/index.js')
+const {jwtCheck, isAdmin, isAuth, captureUser} = require('../../control/auth/index.js')
 
 const router = Router();
 
@@ -10,11 +10,11 @@ router.get('/', function(req, res, ) {
   });
 
   
-router.get('/products', getProducts);
+router.get('/products', captureUser, getProducts);
 router.get('/products/p/:idProduct', getProductsById);
-router.post('/products', addProduct);
-router.put('/products/update', updateProduct);
-router.delete('/products', deleteProduct);
+router.post('/products',isAuth, isAdmin, addProduct);
+router.put('/products/update',isAuth, isAdmin, updateProduct);
+router.delete('/products',isAuth, isAdmin, deleteProduct);
 router.get('/prod', fullDbproducts);
 
 
