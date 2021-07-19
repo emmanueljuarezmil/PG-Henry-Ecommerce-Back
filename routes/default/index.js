@@ -12,9 +12,12 @@ router.get('/', function(req, res, ) {
   
 router.get('/products', getProducts);
 router.get('/products/p/:idProduct', getProductsById);
-router.post('/products',isAuth, isAdmin, addProduct);
-router.put('/products/update',isAuth, isAdmin, updateProduct);
-router.delete('/products',isAuth, isAdmin, deleteProduct);
+// router.post('/products',isAuth, isAdmin, addProduct);
+// router.put('/products/update',isAuth, isAdmin, updateProduct);
+// router.delete('/products',isAuth, isAdmin, deleteProduct);
+router.post('/products', addProduct);
+router.put('/products/update', updateProduct);
+router.delete('/products', deleteProduct);
 router.get('/prod', fullDbproducts);
 
 

@@ -16,9 +16,6 @@ const getAllOrders = async (req, res, next) => {
                 } :
                 {}
         )
-        if (!orderByStatus.length) {
-            return res.status(400).json({ message: 'There are not orders with that status.' })
-        }
         return res.status(200).json(orderByStatus)
     } catch (error) {
         next(error);
