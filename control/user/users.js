@@ -7,6 +7,8 @@ async function newUser(req, res, next) {
     }
     const { email, userName, hashedPassword } = req.body
     try {
+        // const existAuth0 = await User.findOne({ where: { email, userName, hashedPassword } })
+        // if(existAuth0) return res.send(existAuth0)
         const exist = await User.findOne({ where: { email: email } })
         if (exist !== null) { return res.status(500).send({ message: 'El email ya existe.' }) }
         const exist2 = await User.findOne({ where: { userName: userName } })
@@ -14,7 +16,7 @@ async function newUser(req, res, next) {
         const id = uuidv4()
         const user = { id, userName, hashedPassword, email }
         await User.create(user)
-        return res.redirect('/')
+        return res.send(user)
     } catch (error) {
         return res.status(500).json({ message: 'Error with DB' })
     }
@@ -71,9 +73,29 @@ async function newAdmin(req, res, next) {
     }
 }
 
+async function loginUser(req, res, next) {
+    console.log(req.body)
+    if (!req.body.email || !req.body.hashedPassword) { return res.status(400).json({ message: 'Bad Request' }) }
+    try {
+        const { email, hashedPassword } = req.body
+        const user = await User.findOne({
+            where: {
+                email,
+                hashedPassword
+            }
+        })
+        if(!user.id) return res.status(500).json({ message: 'Datos incorrectos' })
+        return res.send(user)
+    } catch (error) {
+        return res.status(500).json({ message: 'Internal Error DB' })
+    }
+}
+
 module.exports = {
     newUser,
     updateUser,
     getAllUsers,
-    deleteUser
+    deleteUser,
+    newAdmin,
+    loginUser
 }
