@@ -8,9 +8,9 @@ async function newUser(req, res, next) {
     const { email, userName, hashedPassword } = req.body
     try {
         const exist = await User.findOne({ where: { email: email } })
-        if (exist !== null) { return res.status(500).json({ message: 'The email already exist' }) }
+        if (exist !== null) { return res.status(500).send({ message: 'El email ya existe.' }) }
         const exist2 = await User.findOne({ where: { userName: userName } })
-        if (exist2 !== null) { return res.status(500).json({ message: 'The user already exist' }) }
+        if (exist2 !== null) { return res.status(500).json({ message: 'El nombre de usuario ya existe.' }) }
         const id = uuidv4()
         const user = { id, userName, hashedPassword, email }
         await User.create(user)
