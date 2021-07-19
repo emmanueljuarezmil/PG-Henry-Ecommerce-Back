@@ -18,6 +18,7 @@ const checkJwt = jwt({
 });
 
 const captureUser = async (req, res, next) => {
+  console.log('headers: ', req.headers)
   if(req.headers.username) {
     const {email, username, hashedpassword} = req.headers
     try {
@@ -33,6 +34,27 @@ const captureUser = async (req, res, next) => {
           email,
           userName: username,
           hashedPassword: hashedpassword
+        })
+      }
+    } catch(err) {
+      console.error(err)
+    }
+  }
+  if(req.body.userName) {
+    const {email, userName, hashedPassword} = req.body
+    try {
+      const isUser = await User.findOne({
+        where: {
+          email
+        }
+      })
+      if (!isUser) {
+        const id = uuidv4()
+        await User.create({
+          id,
+          email,
+          userName,
+          hashedPassword
         })
       }
     } catch(err) {

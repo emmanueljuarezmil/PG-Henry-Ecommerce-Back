@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const {getProducts, getProductsById, addProduct, updateProduct, deleteProduct, fullDbproducts} = require('../../control/default/products.js')
-const {jwtCheck, isAdmin, isAuth, captureUser} = require('../../control/auth/index.js')
+const {jwtCheck, isAdmin, isAuth} = require('../../control/auth/index.js')
 
 const router = Router();
 

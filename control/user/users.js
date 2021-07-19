@@ -7,6 +7,8 @@ async function newUser(req, res, next) {
     }
     const { email, userName, hashedPassword } = req.body
     try {
+        // const existAuth0 = await User.findOne({ where: { email, userName, hashedPassword } })
+        // if(existAuth0) return res.send(existAuth0)
         const exist = await User.findOne({ where: { email: email } })
         if (exist !== null) { return res.status(500).json({ message: 'The email already exist' }) }
         const exist2 = await User.findOne({ where: { userName: userName } })
@@ -72,6 +74,7 @@ async function newAdmin(req, res, next) {
 }
 
 async function loginUser(req, res, next) {
+    console.log(req.body)
     if (!req.body.email || !req.body.hashedPassword) { return res.status(400).json({ message: 'Bad Request' }) }
     try {
         const { email, hashedPassword } = req.body
@@ -81,6 +84,7 @@ async function loginUser(req, res, next) {
                 hashedPassword
             }
         })
+        if(!user.id) return res.status(500).json({ message: 'Datos incorrectos' })
         return res.send(user)
     } catch (error) {
         return res.status(500).json({ message: 'Internal Error DB' })
