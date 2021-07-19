@@ -67,7 +67,7 @@ async function newAdmin(req, res, next) {
         const user = await User.findByPk(id)
         user.admin = true;
         user.save();
-        res.redirect('/users')
+        return res.send('Usuario elevado a admin')
     } catch (error) {
         return res.status(500).json({ message: 'Internal Error DB' })
     }
