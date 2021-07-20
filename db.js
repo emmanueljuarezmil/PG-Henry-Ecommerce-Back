@@ -52,7 +52,6 @@ Order.belongsTo(User);
 //Relaciones de las reviews...
 Review.hasMany(Product);
 Product.belongsTo(Review, {through: 'prod_review'});
-
 //
 
 
