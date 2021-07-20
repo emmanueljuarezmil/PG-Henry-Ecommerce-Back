@@ -23,7 +23,7 @@ async function newUser(req, res, next) {
 }
 
 async function updateUser(req, res, next) {
-    const { userName } = req.body
+    const { userName } = req.headers
     try {
         const user = User.findOne({ where: { userName: userName } })
         req.body.name ? user.name = req.body.name : ''
@@ -44,14 +44,14 @@ async function getAllUsers(req, res, next) {
 }
 
 async function deleteUser(req, res, next) {
-    if (!req.body.id) {
+    if (!req.headers.idUser) {
         return res.status(400).json({ message: 'ID of the user is needed', status: 400 })
     }
-    const { id } = req.body;
+    const { idUser } = req.headers;
     try {
         await User.destroy({
             where: {
-                id: id
+                id: idUser
             }
         })
         return res.status(200).send('the user was succesfully deleted')
