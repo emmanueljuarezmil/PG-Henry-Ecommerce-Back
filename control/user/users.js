@@ -23,9 +23,9 @@ async function newUser(req, res, next) {
 }
 
 async function updateUser(req, res, next) {
-    const { userName } = req.headers
+    const { idUser } = req.headers
     try {
-        const user = User.findOne({ where: { userName: userName } })
+        const user = User.findByPk(idUser)
         req.body.name ? user.name = req.body.name : ''
         user.save()
         return res.status(200).json(user)
