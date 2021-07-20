@@ -1,4 +1,4 @@
-const { Product, Category } = require('../../db.js');
+const { Product, Category, Review } = require('../../db.js');
 const { v4: uuidv4 } = require('uuid');
 const { Op } = require("sequelize");
 const productosmeli = require('../../bin/data/productsDB.json');
@@ -64,6 +64,7 @@ async function getProductsById(req, res) {
                 id: idProduct
             },
             include: {
+                model: Review,
                 model: Category,
                 attributes: {
                     include: ['id', 'name'],
