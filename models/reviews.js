@@ -4,6 +4,7 @@ module.exports = (sequelize) => {
     sequelize.define('Review', {
 	    id:{
 	      type: DataTypes.UUID,
+        primaryKey: true,
 	      allowNull: false
 	    },
       comment: {
