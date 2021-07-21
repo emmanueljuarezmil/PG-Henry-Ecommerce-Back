@@ -57,9 +57,9 @@ const captureUser = async (req, res, next) => {
 }
 
 const isAuth = async (req, res, next) => {
-  if(!req.headers.id) return res.status(400).send('No existen datos de usuario')
-  if(req.headers.id) {
-    const user = await User.findByPk(req.headers.id)
+  if(!req.headers.idUser) return res.status(400).send('No existen datos de usuario')
+  if(req.headers.idUser) {
+    const user = await User.findByPk(req.headers.idUser)
     if(!user) return res.status(400).send('No existen datos de usuario')
     else next()
   }
@@ -71,8 +71,8 @@ const isAuth = async (req, res, next) => {
 }
 
 const isAdmin = async (req, res, next) => {
-  const {id} = req.headers
-  const user = await User.findByPk(id)
+  const {idUser} = req.headers
+  const user = await User.findByPk(idUser)
   if(user && user.admin) next()
   else return res.status(401).send('No autorizado')
 }
