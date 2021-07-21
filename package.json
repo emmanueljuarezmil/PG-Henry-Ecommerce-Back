@@ -21,6 +21,7 @@
     "http": "^0.0.1-security",
     "http-errors": "^1.6.3",
     "jwks-rsa": "^2.0.3",
+    "mercadopago": "^1.5.8",
     "morgan": "^1.10.0",
     "node": "^16.4.0",
     "nodemon": "^2.0.9",

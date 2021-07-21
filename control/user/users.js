@@ -2,10 +2,10 @@ const { User } = require('../../db.js');
 const { v4: uuidv4 } = require('uuid');
 
 async function newUser(req, res, next) {
-    if (!req.body.userName || !req.body.email || !req.body.hashedPassword) {
+    if (!req.headers.userName || !req.headers.email || !req.headers.hashedPassword) {
         return res.status(400).json({ message: 'Bad request' })
     }
-    const { email, userName, hashedPassword } = req.body
+    const { email, userName, hashedPassword } = req.headers
     try {
         // const existAuth0 = await User.findOne({ where: { email, userName, hashedPassword } })
         // if(existAuth0) return res.send(existAuth0)
@@ -74,21 +74,30 @@ async function newAdmin(req, res, next) {
 }
 
 async function loginUser(req, res, next) {
-    console.log(req.body)
-    if (!req.body.email || !req.body.hashedPassword) { return res.status(400).json({ message: 'Bad Request' }) }
-    try {
-        const { email, hashedPassword } = req.body
-        const user = await User.findOne({
+    console.log(req.headers)
+    if(req.headers.username) {
+        const {email, username, hashedpassword} = req.headers
+        try {
+          const isUser = await User.findOne({
             where: {
-                email,
-                hashedPassword
+              email
             }
-        })
-        if(!user.id) return res.status(500).json({ message: 'Datos incorrectos' })
-        return res.send(user)
-    } catch (error) {
-        return res.status(500).json({ message: 'Internal Error DB' })
-    }
+          })
+          if (!isUser) {
+            const id = uuidv4()
+            const newUser = await User.create({
+              id,
+              email,
+              userName: username,
+              hashedPassword: hashedpassword
+            })
+            return res.send(newUser)
+          }
+          else return res.send(isUser)
+        } catch(err) {
+          console.error(err)
+        }
+      }
 }
 
 module.exports = {
