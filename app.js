@@ -6,6 +6,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 const { auth } = require("express-openid-connect");
 const fs = require('fs')
+const {checkJwt} = require('./control/auth')
 
 
 //const indexRouter = require('./routes/index');
@@ -14,6 +15,7 @@ const ind = require('./routes/default/index.js')
 const log = require('./routes/user/users.js')
 const cart = require('./routes/user/cart.js')
 const orders = require('./routes/user/orders.js')
+const checkout = require('./routes/user/checkout');
 // const auth0 = require('./routes/auth')
 const jwt = require('express-jwt')
 const jwks = require('jwks-rsa')
@@ -36,15 +38,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors())
 app.use(express.static(path.join(__dirname, 'public')));
-// app.use((req, res, next) => {
-//   if(req.cookies) console.log(req.cookies);
-//   next();
-// });
-app.use('/', ind)
+
+app.use('/', ind);
+
 app.use('/', cat);
-app.use('/', log)
-app.use('/', cart)
-app.use('/', orders)
+app.use('/', log);
+app.use('/', cart);
+app.use('/', orders);
+app.use('/', checkout);
 // app.use('/', auth0)
 
 // const verifyjwt = jwt({
