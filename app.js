@@ -6,6 +6,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 const { auth } = require("express-openid-connect");
 const fs = require('fs')
+const {checkJwt} = require('./control/auth')
 
 
 //const indexRouter = require('./routes/index');
@@ -37,11 +38,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors())
 app.use(express.static(path.join(__dirname, 'public')));
-// app.use((req, res, next) => {
-//   if(req.cookies) console.log(req.cookies);
-//   next();
-// });
+
 app.use('/', ind);
+
 app.use('/', cat);
 app.use('/', log);
 app.use('/', cart);

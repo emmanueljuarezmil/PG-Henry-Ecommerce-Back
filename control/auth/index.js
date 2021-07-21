@@ -3,17 +3,30 @@ const jwks = require('jwks-rsa');
 const {User, Order} = require('../../db')
 const { v4: uuidv4 } = require('uuid');
 
+// const checkJwt = jwt({
+//   secret: jwks.expressJwtSecret({
+//     cache: true,
+//     rateLimit: true,
+//     jwksRequestsPerMinute: 5,
+//     jwksUri: `https://YOUR_DOMAIN/.well-known/jwks.json`
+//   }),
+
+//   // Validate the audience and the issuer.
+//   audience: 'YOUR_API_IDENTIFIER',
+//   issuer: [`https://localhost:3000`],
+//   algorithms: ['RS256']
+// });
+
 const checkJwt = jwt({
   secret: jwks.expressJwtSecret({
     cache: true,
     rateLimit: true,
-    jwksRequestsPerMinute: 5,
-    jwksUri: `https://YOUR_DOMAIN/.well-known/jwks.json`
+    jwksRequestsPerMinute: 50,
+    jwksUri: `https://dev-8yg4kp4m.us.auth0.com/.well-known/jwks.json`
   }),
-
-  // Validate the audience and the issuer.
-  audience: 'YOUR_API_IDENTIFIER',
-  issuer: [`https://localhost:3000`],
+// Validate the audience and the issuer.
+  audience: 'localhost:3000',
+  issuer: [`https://dev-8yg4kp4m.us.auth0.com/`],
   algorithms: ['RS256']
 });
 
@@ -34,27 +47,6 @@ const captureUser = async (req, res, next) => {
           email,
           userName: username,
           hashedPassword: hashedpassword
-        })
-      }
-    } catch(err) {
-      console.error(err)
-    }
-  }
-  if(req.body.userName) {
-    const {email, userName, hashedPassword} = req.body
-    try {
-      const isUser = await User.findOne({
-        where: {
-          email
-        }
-      })
-      if (!isUser) {
-        const id = uuidv4()
-        await User.create({
-          id,
-          email,
-          userName,
-          hashedPassword
         })
       }
     } catch(err) {
