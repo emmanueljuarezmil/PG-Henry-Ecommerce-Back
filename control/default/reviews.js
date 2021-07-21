@@ -19,7 +19,33 @@ const newReview = async(req, res, next) => {
     } catch (error){
         return res.status(500).json(error)
     }
+}
 
+const updateReview = async (req, res, next)  => {
+	const {idRev} = req.body
+	try{
+		const rev = Review.findByPk(idRev)
+		if (req.body.comment) rev.comment = req.body.comment;
+		if (req.body.rating) rev.rating = req.body.rating;
+		rev.save()
+		return res.status(200).json({message: 'Review updated'})
+	}catch(error){
+		return res.status(500).json({message: 'Error DB'})
+	}
+
+}
+
+const deleteReview = async (req, res, next) => {
+	try {
+        	await Review.destroy({
+            	where: {
+                	id: req.body.idRev
+            	}
+        })
+        return res.status(200).send('the review was succesfully deleted')
+    } catch (error) {
+        next(error);
+    }
 }
 
 module.exports = {
