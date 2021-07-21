@@ -1,35 +1,15 @@
-#!/usr/bin/env node
-
-/**
- * Module dependencies.
- */
 const { conn } = require('../db.js');
 const app = require('../app');
 const debug = require('debug')('pg-henry-ecommerce-back:server');
 const http = require('http');
-
 const { fullDbproducts } = require('../control/default/products')
 const { fulldbCat } = require('../control/default/category')
 
-/**
- * Get port from environment and store in Express.
- */
 
 let port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
-/**
- * Create HTTP server.
- */
-
 const server = http.createServer(app);
-
-/**
- * Listen on provided port, on all network interfaces.
- */
-// Ya acomodado con sinq a la db
-
-// definir force como true en .env para trabajar con la base de datos como no persistente, sino por default esta enfalse 
 const force = (process.env.FORCE || false)
 
 conn.sync({force}).then(() =>
@@ -44,29 +24,20 @@ server.listen(port)
 .catch(err => console.log(err))
 
 
-/**
- * Normalize a port into a number, string, or false.
- */
-
 function normalizePort(val) {
   let port = parseInt(val, 10);
 
   if (isNaN(port)) {
-    // named pipe
     return val;
   }
 
   if (port >= 0) {
-    // port number
     return port;
   }
 
   return false;
 }
 
-/**
- * Event listener for HTTP server "error" event.
- */
 
 function onError(error) {
   if (error.syscall !== 'listen') {
@@ -77,7 +48,6 @@ function onError(error) {
     ? 'Pipe ' + port
     : 'Port ' + port;
 
-  // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
       console.error(bind + ' requires elevated privileges');
@@ -92,9 +62,7 @@ function onError(error) {
   }
 }
 
-/**
- * Event listener for HTTP server "listening" event.
- */
+
 
 function onListening() {
   var addr = server.address();
