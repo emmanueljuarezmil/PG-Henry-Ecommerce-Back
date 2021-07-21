@@ -46,7 +46,6 @@ const getCartEmpty = async (req, res, next) => {
             }
         })
         if(orderUser.length < 1) return next({message: "el ID es incorrecto"})
-        console.log(orderUser)
         const cart = await Order.destroy({
             where: {
                 UserId: idUser
