@@ -1,6 +1,5 @@
 const { Router } = require('express');
 const { getAllUsers, newUser, updateUser, deleteUser, newAdmin, loginUser } = require('../../control/user/users.js')
-const { userPasswordReset } = require('../../control/admin/auth/auth.js')
 const {isAdmin, isAuth, captureUser} = require('../../control/auth')
 
 
