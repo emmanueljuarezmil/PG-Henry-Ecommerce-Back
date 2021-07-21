@@ -6,11 +6,11 @@ const categoriesDb = require('../../bin/data/categories.json')
 const exclude = ['createdAt', 'updatedAt']
 
 const newCategory = async (req, res, next) => {
-    if (!req.body.name) next({message: 'La categoria debe tener un nombre'})
+    if (!req.body.name) return next({message: 'La categoria debe tener un nombre'})
     const catExist = await Category.findOne({where: {
         name: req.body.name
     }})
-    if (catExist !== null) next({message: `La categoria ya existe`})
+    if (catExist !== null) return next({message: `La categoria ya existe`})
     try {
         const id = uuidv4();
         const name = req.body.name
@@ -27,7 +27,7 @@ const newCategory = async (req, res, next) => {
 
 const prodByCatId = async(req, res, next) => {
     const {id} = req.params
-    if(!id) next({message: 'El id de la categoria es requerido'})
+    if(!id) return next({message: 'El id de la categoria es requerido'})
     try {
         const prods = await Category.findOne({
             where: {
@@ -49,7 +49,7 @@ const prodByCatId = async(req, res, next) => {
 
 const productsByCategory = async (req, res, next) => {
     const {catName} = req.params
-    if(!catName) next({message: 'El nombre de la categoria es requerido'})
+    if(!catName) return next({message: 'El nombre de la categoria es requerido'})
     try {
         const prod = await Category.findAll({
             where: {
@@ -76,10 +76,10 @@ const productsByCategory = async (req, res, next) => {
 
 const addOrDeleteCategory = async (req, res, next) => {    // crear ruta para agregar categoria o sacarle a un producto
     const {id, addCategory, deletedCategory, add = false, deleteCat = false} = req.body
-    if(!id) next({message: "El id del producto es requerido"})
-    if(!add && !deleteCat) next({message: "Debes realizar al menos una acción, agregar o quitar categorias"})
-    if(add && !addCategory) next({message: "Las categorias a añadir son requeridas"})
-    if(deleteCat && !deletedCategory) next({message: "Las categorias a borrar son requeridas"})
+    if(!id) return next({message: "El id del producto es requerido"})
+    if(!add && !deleteCat) return next({message: "Debes realizar al menos una acción, agregar o quitar categorias"})
+    if(add && !addCategory) return next({message: "Las categorias a añadir son requeridas"})
+    if(deleteCat && !deletedCategory) return next({message: "Las categorias a borrar son requeridas"})
     try {
         const product = await Product.findOne({
             where: {
@@ -96,7 +96,7 @@ const addOrDeleteCategory = async (req, res, next) => {    // crear ruta para ag
                 exclude
             }
         })
-        if(!product) next({message: "No se encontro el producto"})       
+        if(!product) return next({message: "No se encontro el producto"})       
         add ? await product.addCategory(addCategory) : null        
         deleteCat ? await product.removeCategory(deletedCategory) : null
         const productSend = await Product.findOne({
@@ -122,33 +122,39 @@ const addOrDeleteCategory = async (req, res, next) => {    // crear ruta para ag
 
 const updateCategory = async (req, res, next) => {
     const {id, name} = req.body
-    if(!req.body.id) next({message: "El id es requerido"})
+    if(!id) return next({message: "El id es requerido"})
+    if(!name) return next({message: "El nombre nuevo es requerido"})
     try {
-        await Category.update({name: name}, {
+        await Category.update({name}, {
             where: {
                 id
             }
         })
-        return res.send("Category actualizada")
+        return res.send("Categoria actualizada")
     } catch(err) {
         next(err)
     }
 }
 
-const deleteCategory = async (req, res) => {
-    if(!req.body.id) return res.status(400).send("ID is required")
-    const {id} = req.body
+const deleteCategory = async (req, res, next) => {
+    const {id} = req.params
+    if(!id) return next({message: "El id de la categoria es requerido"})
     try {
-            await Category.destroy({
-                where: {
-                    id: id
-                }
-            })
-            return res.send("The category was succesfully deleted")
+            const category = await Category.findByPk(id)
+            console.log(category)
+            if(category) await category.destroy()
+            else return next({message: "El id de la categoria es invalido"})
+            // await Category.destroy({
+            //     where: {
+            //         id
+            //     }
+            // })
+            return res.send("La categoria fue borrada con éxito")
     } catch(err) {
         next(err)
     }
 }
+
 
 const getAllCategories = async (req, res, next) => {
     if (req.query.name){
