@@ -3,12 +3,14 @@ const { Op } = require("sequelize");
 const { v4: uuidv4 } = require('uuid');
 const categoriesDb = require('../../bin/data/categories.json')
 
-const newCategory = async (req, res) => {
-    if (!req.body.name) {return res.status(500).json({message: `The category don't have a name`})};
+const exclude = ['createdAt', 'updatedAt']
+
+const newCategory = async (req, res, next) => {
+    if (!req.body.name) next({message: 'La categoria debe tener un nombre'})
     const catExist = await Category.findOne({where: {
         name: req.body.name
     }})
-    if (catExist !== null) {return res.status(500).json({message: `The category already exist`})}
+    if (catExist !== null) next({message: `La categoria ya existe`})
     try {
         const id = uuidv4();
         const name = req.body.name
@@ -17,73 +19,119 @@ const newCategory = async (req, res) => {
         if (req.body.prods) {
             cat.addProduct(req.body.prods);
         }
-        return res.status(201).json({message: 'Category created'})
-    } catch {
-        return res.status(500).json({message: `Internal server Error`})
+        return res.send('Categoria creada')
+    } catch(err) {
+        next(err)
     }
 }
 
-const prodByCatId = async(req, res) => {
+const prodByCatId = async(req, res, next) => {
     const {id} = req.params
+    if(!id) next({message: 'El id de la categoria es requerido'})
     try {
-        const prods = await Category.findByPk(id, {include: Product})
-        return res.status(200).json(prods)
-    } catch {
-        return res.status(500).json({message: 'Internal Error server'})
+        const prods = await Category.findOne({
+            where: {
+                id
+            },
+            include: {
+                model: Product,
+                through: {
+                    attributes: [],
+                },
+                attributes: ['name', 'id', 'price']
+            }
+        })
+        return res.send(prods)
+    } catch(err) {
+        next(err)
     }
 }
 
-const productsByCategory = async (req, res) => {
-    if (req.params.catName){
+const productsByCategory = async (req, res, next) => {
     const {catName} = req.params
+    if(!catName) next({message: 'El nombre de la categoria es requerido'})
     try {
-        const prod = await Category.findAll({where :{name : {[Op.iLike]: `%${catName}%`}},include: Product})
-        return res.status(200).json(prod)
+        const prod = await Category.findAll({
+            where: {
+                name: {
+                    [Op.iLike]: `%${catName}%`
+                }
+            },
+            include: {
+                model: Product,
+                through: {
+                    attributes: [],
+                },
+                attributes: ['name', 'id', 'price']
+            },
+            attributes:{
+                exclude
+            }
+        })
+        return res.send(prod)
+    } catch(err) {
+        next(err)
     }
-    catch {
-        return res.status(400).json({message: 'Bad request', status: 400})
-    }}
 }
 
 const addOrDeleteCategory = async (req, res, next) => {    // crear ruta para agregar categoria o sacarle a un producto
-    const {id, addCategory, deletedCategory, add, deleteCat} = req.body
-    if(!id) return res.status(500).send({message: "ID is required"})
-    if(add && !addCategory) return res.status(500).send({message: "category to add is required"})
-    if(deleteCat && !deletedCategory) return res.status(500).send({message: "category to delete is required"})
+    const {id, addCategory, deletedCategory, add = false, deleteCat = false} = req.body
+    if(!id) next({message: "El id del producto es requerido"})
+    if(!add && !deleteCat) next({message: "Debes realizar al menos una acción, agregar o quitar categorias"})
+    if(add && !addCategory) next({message: "Las categorias a añadir son requeridas"})
+    if(deleteCat && !deletedCategory) next({message: "Las categorias a borrar son requeridas"})
     try {
         const product = await Product.findOne({
             where: {
                 id: id
             },
-            include: Category
+            include: {
+                model: Category,
+                through: {
+                    attributes: [],
+                },
+                attributes: ['name', 'id']
+            },
+            attributes:{
+                exclude
+            }
         })
-        if(!product) return res.status(500).send('The product you are trying to change does no exist')
-        
+        if(!product) next({message: "No se encontro el producto"})       
         add ? await product.addCategory(addCategory) : null        
         deleteCat ? await product.removeCategory(deletedCategory) : null
-        
-        return res.status(200).json(product)
-        
-    }catch(error) {
-        next(error)
+        const productSend = await Product.findOne({
+            where: {
+                id: id
+            },
+            include: {
+                model: Category,
+                through: {
+                    attributes: [],
+                },
+                attributes: ['name', 'id']
+            },
+            attributes:{
+                exclude
+            }
+        })    
+        return res.send(productSend)      
+    } catch(err) {
+        next(err)
     }
 }
 
 const updateCategory = async (req, res, next) => {
-    if(!req.body.id) return res.status(500).send({message: "id is required"})
+    const {id, name} = req.body
+    if(!req.body.id) next({message: "El id es requerido"})
     try {
-        const {name} = req.body
-        if(name){
-            await Category.update({name: name}, {
-                where: {
-                    id: req.body.id
-                }
-            })
-        }
-        return res.status(501).send("category updated")
-    }
-    catch(error){
-        next(error)
+        await Category.update({name: name}, {
+            where: {
+                id
+            }
+        })
+        return res.send("Category actualizada")
+    } catch(err) {
+        next(err)
     }
 }
 
@@ -97,12 +145,9 @@ const deleteCategory = async (req, res) => {
                 }
             })
             return res.send("The category was succesfully deleted")
+    } catch(err) {
+        next(err)
     }
-    catch (error){
-
-        next(error)
-    }
-
 }
 
 const getAllCategories = async (req, res, next) => {
@@ -116,18 +161,18 @@ const getAllCategories = async (req, res, next) => {
                 },
                 include: Product
            })
-           return res.status(200).json(prod)
+           return res.status(200).send(prod)
         } catch(error) {
-            return res.status(500).json({message:'Error in DB'})
+            return res.status(500).send({message:'Error in DB'})
         }
     } else {
-    try {
-        const cat = await Category.findAll()
-        return res.status(200).json(cat)
-    } catch {
-        return res.status(400).json({message: 'Algo ha fallado'})
-    }
-    }
+        try {
+            const cat = await Category.findAll()
+            return res.status(200).send(cat)
+        } catch(err) {
+            next(err)
+            }
+        }
 }
 
 const fulldbCat = async(req, res, next) => {

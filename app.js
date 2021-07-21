@@ -62,16 +62,16 @@ app.use('/', checkout);
 
 // app.use(verifyjwt)
 
-app.use((req, res, next) => {
-  const error = new Error('not found')
-  error.status = 404
-  next(error);
-})
+// app.use((req, res, next) => {
+//   const error = new Error('not found')
+//   error.status = 404
+//   next(error);
+// })
 
-app.use((error, req, res, next) => {
+app.use('/', (error, req, res, next) => {
   const status = error.status || 500;
-  const message = error.message || 'internal server error'
-  res.status(status).send(message)
+  const message = error.message || 'Internal server error'
+  return res.status(status).send(message)
 })
 
 // app.use('/users', usersRouter);
