@@ -4,13 +4,16 @@ module.exports = (sequelize) => {
     sequelize.define('Review', {
 	    id:{
 	      type: DataTypes.UUID,
+        primaryKey: true,
 	      allowNull: false
 	    },
       comment: {
-        type: DataTypes.TEXT(255)
+        type: DataTypes.TEXT
       },
       rating: {
-        type: DataTypes.ENUM(0,1,2,3,4,5,6,7,8,9,10),
+        type: DataTypes.ENUM({
+        	values: ["0","1","2","3","4","5"]
+        }),
         allowNull: false
       },
     });
