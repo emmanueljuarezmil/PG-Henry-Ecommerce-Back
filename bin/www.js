@@ -15,7 +15,7 @@ const { fulldbCat } = require('../control/default/category')
  * Get port from environment and store in Express.
  */
 
-let port = normalizePort(process.env.PORT || '3001');
+let port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 /**
