@@ -15,6 +15,7 @@ const ind = require('./routes/default/index.js')
 const log = require('./routes/user/users.js')
 const cart = require('./routes/user/cart.js')
 const orders = require('./routes/user/orders.js')
+const checkout = require('./routes/user/checkout');
 // const auth0 = require('./routes/auth')
 const jwt = require('express-jwt')
 const jwks = require('jwks-rsa')
@@ -38,24 +39,13 @@ app.use(cookieParser());
 app.use(cors())
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/', ind);
 
-// app.use('/',checkJwt, (req,res,next) => {
-//   // const token = req.headers.authorization.split(' ')[1]
-//   // const checkJwt(token)
-//   console.log('Paso')
-//   next()
-// })
-
-// app.use('/', (req,res,next) => {
-//   console.log(req.headers)
-//   next()
-// })
-
-app.use('/', ind)
 app.use('/', cat);
-app.use('/', log)
-app.use('/', cart)
-app.use('/', orders)
+app.use('/', log);
+app.use('/', cart);
+app.use('/', orders);
+app.use('/', checkout);
 // app.use('/', auth0)
 
 // const verifyjwt = jwt({

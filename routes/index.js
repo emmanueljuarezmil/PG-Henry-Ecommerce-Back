@@ -9,6 +9,7 @@ const reviews = require('./default/reviews');
 const orders = require('./user/orders');
 const cart = require('./user/cart');
 const auth = require('./admin/auth')
+const checkout = require('./user/checkout');
 
 const router = Router();
 
@@ -21,6 +22,6 @@ router.use('/', user);
 router.use('/', admin); 
 router.use('/', auth);
 router.use('/', orders);
-
+router.use('/checkout', checkout);
 
 module.exports = router;
