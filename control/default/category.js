@@ -38,7 +38,9 @@ const prodByCatId = async(req, res, next) => {
                 through: {
                     attributes: [],
                 },
-                attributes: ['name', 'id', 'price']
+                attributes: {
+                    exclude
+                }
             }
         })
         return res.send(prods)
@@ -144,11 +146,6 @@ const deleteCategory = async (req, res, next) => {
             console.log(category)
             if(category) await category.destroy()
             else return next({message: "El id de la categoria es invalido"})
-            // await Category.destroy({
-            //     where: {
-            //         id
-            //     }
-            // })
             return res.send("La categoria fue borrada con éxito")
     } catch(err) {
         next(err)
@@ -159,26 +156,40 @@ const deleteCategory = async (req, res, next) => {
 const getAllCategories = async (req, res, next) => {
     if (req.query.name){
         const {name} = req.query
-        const lowercasename = decodeURI(name.toLowerCase());
         try{
            const prod = await Category.findAll({
                 where: {
-                    name: {[Op.iLike]: `%${lowercasename}%`}
+                    name: {[Op.iLike]: `%${name}%`}
                 },
-                include: Product
+                include: {
+                    model: Product,
+                    through: {
+                        attributes: [],
+                    },
+                    attributes: {
+                        exclude
+                    }
+                },
+                attributes: {
+                    exclude
+                }
            })
            return res.status(200).send(prod)
-        } catch(error) {
-            return res.status(500).send({message:'Error in DB'})
+        } catch(err) {
+            next(err)
         }
     } else {
         try {
-            const cat = await Category.findAll()
+            const cat = await Category.findAll({
+                attributes: {
+                    exclude
+                }
+            })
             return res.status(200).send(cat)
         } catch(err) {
             next(err)
-            }
         }
+    }
 }
 
 const fulldbCat = async(req, res, next) => {
