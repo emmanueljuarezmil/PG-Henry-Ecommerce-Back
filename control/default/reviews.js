@@ -3,7 +3,7 @@ const { v4: uuidv4 } = require('uuid');
 const { Op } = require("sequelize");
 
 const newReview = async(req, res, next) => {
-    if (!req.body.idProd || !req.body.rating) {return res.status(400).json({message: 'Bad request'})}
+    if (!req.body.comment && !req.body.rating) {return res.status(400).json({message: 'Bad request'})}
     try {
         const id = uuidv4()
         await Review.create({
@@ -13,7 +13,7 @@ const newReview = async(req, res, next) => {
         })
         const Prod = await Product.findByPk(req.body.idProd)
         await Prod.addReview(id)
-        const User = await User.findByPk(req.cookies.id)
+        const User = await User.findByPk(req.headers.idUser)
         await User.addReview(id)
         return res.status(200).json({message: 'Review created'})
     } catch (error){
