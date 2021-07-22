@@ -8,19 +8,17 @@ const categories = require('./default/category');
 const reviews = require('./default/reviews');
 const orders = require('./user/orders');
 const cart = require('./user/cart');
-const auth = require('./admin/auth')
 const checkout = require('./user/checkout');
 
 const router = Router();
 
 
-router.use('/', cart); // in progress fer
-router.use('/', products); // check
-router.use('/', categories); // check
-router.use('/', reviews);
+router.use('/', cart); // check fer
+router.use('/', products); // check emma
+router.use('/', categories); // check emma
+router.use('/', reviews); // in progress fer
 router.use('/', user); // in progress emma
 router.use('/', admin); 
-router.use('/', auth);
 router.use('/', orders);
 router.use('/', checkout);
 
