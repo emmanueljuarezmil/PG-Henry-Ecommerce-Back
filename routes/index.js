@@ -14,14 +14,14 @@ const checkout = require('./user/checkout');
 const router = Router();
 
 
-router.use('/', cart);
-router.use('/', products);
-router.use('/', categories);
+router.use('/', cart); // in progress fer
+router.use('/', products); // check
+router.use('/', categories); // check
 router.use('/', reviews);
-router.use('/', user);
+router.use('/', user); // in progress emma
 router.use('/', admin); 
 router.use('/', auth);
 router.use('/', orders);
-router.use('/checkout', checkout);
+router.use('/', checkout);
 
 module.exports = router;
