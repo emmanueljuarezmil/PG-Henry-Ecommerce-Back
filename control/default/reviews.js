@@ -5,26 +5,19 @@ const { Op } = require("sequelize");
 const newReview = async(req, res, next) => {
     const { comment, rating, idProd } = req.body
     const { idUser } = req.params
-    console.log("req.body", req.body)
-    console.log("req.params", req.params)
     if (!comment) return next({message: "Se precisa comentario"})
     if(!rating ) return next({message: "Se precisa rating"})
     try {
         const id = uuidv4()
-        console.log('entro al try')
         const review = await Review.create({
             id,
             rating: rating.toString(),
             comment
         })
-        console.log(review)
         const Prod = await Product.findByPk(idProd)
         await Prod.addReview(review)
-        console.log('paso el add review de prod')
         const user = await User.findByPk(idUser)
-        console.log('User: ', user)
         await user.addReview(review)
-        console.log('paso el add review de user')
         return res.status(200).json({message: 'Review created'})
     } catch (error){
         return res.status(500).json(error)

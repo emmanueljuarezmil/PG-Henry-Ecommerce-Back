@@ -55,7 +55,7 @@ Review.belongsTo(User, {through: 'user_review'})
 
 Product.belongsToMany(Review, {through: 'prod_review'});
 Review.belongsTo(Product, {through: 'prod_review'});
-//
+
 
 
 module.exports = {
