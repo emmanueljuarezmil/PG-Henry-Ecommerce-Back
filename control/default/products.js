@@ -41,16 +41,25 @@ async function getProducts(req, res, next) {
             },
             offset: (page - 1) * itemsPerPage,
             limit: itemsPerPage,
-            include: {
-                model: Category,
-                where: category ? {
-                    id: category
-                } : null,
-                through: {
-                    attributes: [],
+            include: [
+                {
+                    model: Category,
+                    where: category ? {
+                        id: category
+                    } : null,
+                    through: {
+                        attributes: [],
+                    },
+                    attributes: ['name', 'id']
                 },
-                attributes: ['name', 'id']
-            },
+                {
+                    model: Review,
+                    through: {
+                        attributes: [],
+                    },
+                    attributes: ['rating']
+                }
+            ],
             order: [[orderBy, orderType]]
         })
         return res.send({ totalPage: Math.ceil(count.length / itemsPerPage), products })
@@ -80,7 +89,10 @@ async function getProductsById(req, res, next) {
                 },
                 {
                     model: Review,
-                    attributes: ['comment', 'rating']
+                    attributes: ['comment', 'rating'],
+                    through: {
+                        attributes: [],
+                    },
                 }
             ]
         })
