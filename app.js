@@ -16,6 +16,8 @@ const log = require('./routes/user/users.js')
 const cart = require('./routes/user/cart.js')
 const orders = require('./routes/user/orders.js')
 const checkout = require('./routes/user/checkout');
+//const reviews = require('./default/reviews');
+
 // const auth0 = require('./routes/auth')
 const jwt = require('express-jwt')
 const jwks = require('jwks-rsa')
@@ -46,27 +48,8 @@ app.use('/', log);
 app.use('/', cart);
 app.use('/', orders);
 app.use('/', checkout);
-// app.use('/', auth0)
+//.use('/', reviews);
 
-// const verifyjwt = jwt({
-//   secret: jwks.expressJwtSecret({
-//     cache: true,
-//     rateLimit: true,
-//     jwksRequestsPerMinute: 5,
-//     jwksUri: 'https://dev-8yg4kp4m.us.auth0.com/.well-known/jwks.json'
-//   }),
-//   audience: "localhost:3000",
-//   issuer: 'https://dev-8yg4kp4m.us.auth0.com/',
-//   algorithms: ['RS256']
-// }).unless({path:['/products']})  
-
-// app.use(verifyjwt)
-
-// app.use((req, res, next) => {
-//   const error = new Error('not found')
-//   error.status = 404
-//   next(error);
-// })
 
 app.use('/', (error, req, res, next) => {
   const status = error.status || 500;

@@ -95,17 +95,19 @@ const getAllCartItems = async (req, res, next) => {
 };
 
 const editCartQuantity = async (req, res, next) => {
-    if (!req.params.idUser) return res.status(400).send("Correct idUser is required ")
+    const { idUser } = req.params
+    const{ id, quantity } = req.body
+    if (!idUser) return next({message: " El ID de usuario es requerido "})
     try {
-        const product = await Product.findByPk(req.body.id);
-        const quantity = req.body.quantity;
+        const product = await Product.findByPk(id);
+        const quantityCart = quantity;
         const price = product.price;
-        const user = await User.findByPk(req.params.idUser);
-        let order = await Order.findOne({ where: { UserId: req.params.idUser, status: 'cart' } });
+        const user = await User.findByPk(idUser);
+        let order = await Order.findOne({ where: { UserId: idUser, status: 'cart' } });
         if (!user) {
-            res.status(400).send("User not found")
+            res.status(400).send("No se encontró el usuario")
         };
-        const updatedQuantity = await product.addOrder(order, { through: { orderID: order.id, quantity, price } })
+        const updatedQuantity = await product.addOrder(order, { through: { orderID: order.id, quantityCart, price } })
         return res.send(updatedQuantity);
 
     } catch (error) {

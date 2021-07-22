@@ -3,17 +3,20 @@ const { v4: uuidv4 } = require('uuid');
 const { Op } = require("sequelize");
 
 const newReview = async(req, res, next) => {
-    if (!req.body.comment && !req.body.rating) {return res.status(400).json({message: 'Bad request'})}
+    const { comment, rating, idProd } = req.body
+    const { idUser } = req.params
+    if (!comment) return next({message: "Se precisa comentario"})
+    if(!rating ) return next({message: "Se precisa rating"})
     try {
         const id = uuidv4()
         await Review.create({
             id,
-            rating: req.body.rating,
-            comment: req.body.comment,
+            rating: rating,
+            comment: comment
         })
-        const Prod = await Product.findByPk(req.body.idProd)
+        const Prod = await Product.findByPk(idProd)
         await Prod.addReview(id)
-        const User = await User.findByPk(req.headers.idUser)
+        const User = await User.findByPk(idUser)
         await User.addReview(id)
         return res.status(200).json({message: 'Review created'})
     } catch (error){
@@ -25,8 +28,8 @@ const updateReview = async (req, res, next)  => {
 	const {idRev} = req.body
 	try{
 		const rev = Review.findByPk(idRev)
-		if (req.body.comment) rev.comment = req.body.comment;
-		if (req.body.rating) rev.rating = req.body.rating;
+		if (req.body.comment) rev.comment = comment;
+		if (req.body.rating) rev.rating = rating;
 		rev.save()
 		return res.status(200).json({message: 'Review updated'})
 	}catch(error){

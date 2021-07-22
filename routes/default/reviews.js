@@ -7,7 +7,7 @@ const router = Router();
 
 
 //router.get('/review/:idProduct', getProductReview);   // la ruta decia que sea /product != de la de products
-router.post('/review/:idProduct', newReview);
+router.post('/review/:idUser', newReview);
 router.put('/review/:idReview', updateReview);
 router.delete('/review/:idReview', deleteReview)
 
