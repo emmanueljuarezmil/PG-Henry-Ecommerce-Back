@@ -1,4 +1,4 @@
-const { Product, Review } = require('../../db.js');
+const { Product, Review, User } = require('../../db.js');
 const { v4: uuidv4 } = require('uuid');
 const { Op } = require("sequelize");
 
@@ -9,15 +9,15 @@ const newReview = async(req, res, next) => {
     if(!rating ) return next({message: "Se precisa rating"})
     try {
         const id = uuidv4()
-        await Review.create({
+        const review = await Review.create({
             id,
-            rating: rating,
-            comment: comment
+            rating: rating.toString(),
+            comment
         })
         const Prod = await Product.findByPk(idProd)
-        await Prod.addReview(id)
-        const User = await User.findByPk(idUser)
-        await User.addReview(id)
+        await Prod.addReview(review)
+        const user = await User.findByPk(idUser)
+        await user.addReview(review)
         return res.status(200).json({message: 'Review created'})
     } catch (error){
         return res.status(500).json(error)
