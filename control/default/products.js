@@ -142,9 +142,10 @@ async function addProduct(req, res, next) {
 
 async function updateProduct(req, res, next) {  
     const { id, name, photo, description, stock, selled, perc_desc, price, category } = req.body;
-    if (!id) return next({ message: 'El id del producto requerido es requerido'})
+    if (!id) return next({ message: 'El id del producto es requerido'})
     try {
         const product = await Product.findByPk(id)
+        if (!product) return next({ message: 'El id del producto es incorrecto'})
         if (name) { product.name = name }
         if (description) { product.description = description }
         if (stock) { product.stock = parseFloat(stock) }
@@ -156,24 +157,22 @@ async function updateProduct(req, res, next) {
             await product.addCategory(category)
         }
         await product.save()
-        return res.send({ message: 'El producto ha sido actulizado' })
+        return res.send('El producto ha sido actulizado')
     } catch (error) {
         next(error)
     }
 }
 
 async function deleteProduct(req, res, next) {
-    if (!req.body.id) {
-        return res.status(400).json({ message: 'ID of the deleted product is needed', status: 400 })
-    }
     const { id } = req.body;
+    if (!id) return next({ message: 'El id del producto es requerido'})  
     try {
         await Product.destroy({
             where: {
-                id: id
+                id
             }
         })
-        return res.status(200).send('the product was succesfully deleted')
+        return res.send('El producto fue borrado con éxito')
     } catch (error) {
         next(error);
     }
