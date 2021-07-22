@@ -16,7 +16,7 @@ router.use('/', products); // check emma
 router.use('/', categories); // check emma
 router.use('/', reviews); // check fer
 router.use('/', user); // check emma
-router.use('/', orders);
-router.use('/', checkout);
+router.use('/', orders); // check emma
+router.use('/', checkout); //
 
 module.exports = router;

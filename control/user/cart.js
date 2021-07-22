@@ -51,7 +51,7 @@ const getCartEmpty = async (req, res, next) => {
                 UserId: idUser
             },
         })
-        return next({ message: 'Todos los productos fueron removidos de tu carrito de compras' })
+        return res.send('Todos los productos fueron removidos de tu carrito de compras')
     } catch (error) {
         next(error);
     }
@@ -115,10 +115,27 @@ const editCartQuantity = async (req, res, next) => {
     }
 };
 
+const deleteCartItem = async (req, res, next) => {
+    const { orderID, productID } = req.body
+    if (!orderID && !productID) return next({message: " El ID de la orden y del producto son requeridos "})
+    try {
+        const order = await Order_Line.findOne({
+            where:{
+                productID, orderID
+            }
+        })
+        if(!order) return next({message: " El ID de la orden y del producto son invalidos "});
+        await order.destroy()
+        return res.send("el producto fue eliminado de la orden")
+    } catch (error) {
+        next(error)
+    }
+};
 
 module.exports = {
     addCartItem,
     getCartEmpty,
     getAllCartItems,
-    editCartQuantity
+    editCartQuantity,
+    deleteCartItem
 }
