@@ -24,13 +24,11 @@ async function checkoutMP (req, res, next) {
         },
         auto_return: 'approved',
     };
-    try {
-        const {body} = await mercadopago.preferences.create(preference)
-        return res.send(body)
-    } catch(err) {
-        next(err)
-    }
-    
+    mercadopago.preferences.create(preference)
+    .then(response => {
+        res.send(response.body);
+    })
+    .catch(err => console.log(err));   
 }
 
 module.exports = {
