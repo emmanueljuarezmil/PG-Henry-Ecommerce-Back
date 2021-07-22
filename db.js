@@ -51,8 +51,10 @@ Order.belongsTo(User);
 
 //Relaciones de las reviews...
 User.belongsToMany(Review, {through: 'user_review'})
-Review.hasMany(Product);
-Product.belongsTo(Review, {through: 'prod_review'});
+Review.belongsTo(User, {through: 'user_review'})
+
+Product.belongsToMany(Review, {through: 'prod_review'});
+Review.belongsTo(Product, {through: 'prod_review'});
 //
 
 
