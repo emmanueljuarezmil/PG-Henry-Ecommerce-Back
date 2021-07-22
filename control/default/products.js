@@ -5,6 +5,8 @@ const productosmeli = require('../../bin/data/productsDB.json');
 
 const itemsPerPage = 40
 
+const exclude = ['createdAt', 'updatedAt']
+
 async function getProducts(req, res, next) {
     let { name, page, orderBy, orderType, category } = req.query
     const validate = ['null', undefined, 'undefined', '']
@@ -34,7 +36,9 @@ async function getProducts(req, res, next) {
             where: {
                 name: { [Op.iLike]: `%${name}%` }
             },
-            attributes: ['name', 'photo', 'id', 'price', 'description', 'stock'],
+            attributes: {
+                exclude
+            },
             offset: (page - 1) * itemsPerPage,
             limit: itemsPerPage,
             include: {
@@ -56,42 +60,41 @@ async function getProducts(req, res, next) {
 }
 
 
-async function getProductsById(req, res) {
+async function getProductsById(req, res, next) {
     const { idProduct } = req.params;
+    if(!idProduct) return next({message: "El id es requerido"})
     try {
         const product = await Product.findOne({
             where: {
                 id: idProduct
             },
-            include: {
-                model: Review,
-                model: Category,
-                attributes: {
-                    include: ['id', 'name'],
-                    exclude: ['createdAt', 'updatedAt', 'product_categories']
+            include: [
+                {
+                    model: Category,
+                    through: {
+                        attributes: [],
+                    },
+                    attributes: {
+                        exclude
+                    }
                 },
-                through: {
-                    attributes: []
+                {
+                    model: Review,
+                    attributes: ['comment', 'rating']
                 }
-            },
-            attributes: {
-                exclude: ['createdAt', 'updatedAt', 'product_categories']
-            }
+            ]
         })
+        if(!product) return next({message: "No se ha encontrado un producto con el id enviado"})
         return res.status(200).json(product);
-    } catch (error) {
-        return res.status(400).json({ message: 'bad request', status: 400 })
+    } catch (err) {
+        next(err)
     }
 }
 
 
 async function addProduct(req, res, next) {
-    const { name, price, photo, stock, selled = 0, description, category, perc_desc = 0 } = req.body
-    if (!name || !name.length || !price || !stock || !category.length) {
-        return res.status(400).send({
-            message: 'Parámetros incorrectos',
-        });
-    }
+    const { name, price, photo = [], stock, selled = 0, description, category, perc_desc = 0 } = req.body
+    if (!name || !name.length || !price || !stock || !category || !category.length) return next({message: 'Parámetros incorrectos'});
     const id = uuidv4();
     const products = {
         id,
@@ -105,44 +108,41 @@ async function addProduct(req, res, next) {
     };
 
     try {
+        const verifyName = await Product.findOne({
+            where: {
+                name
+            }
+        })
+        if(verifyName) return next({message: 'Ya existe un producto con el nombre solicitado'});
         const createdProduct = await Product.create(products);
-        if (category) {
-            await createdProduct.addCategory(category)
-
-        }
+        await createdProduct.addCategory(category)
         const result = await Product.findOne({
             where: {
-                name: name
+                name
             },
             include: {
                 model: Category,
-                attributes: {
-                    include: ['id', 'name'],
-                    exclude: ['createdAt', 'updatedAt', 'product_categories']
-                },
+                attributes: ['id', 'name'],
                 through: {
                     attributes: []
                 }
             },
             attributes: {
-                exclude: ['createdAt', 'updatedAt', 'product_categories']
+                exclude
             }
 
         });
-        return res.status(200).json(result);
+        return res.send(result);
     } catch (error) {
         next(error)
-        // return res.status(500).json({message: "internal error DB"});
     }
 }
 
 
 
-async function updateProduct(req, res) {
-    if (!req.body.id) {
-        return res.status(400).json({ message: 'ID of the edited product is needed', status: 400 })
-    }
+async function updateProduct(req, res, next) {  
     const { id, name, photo, description, stock, selled, perc_desc, price, category } = req.body;
+    if (!id) return next({ message: 'El id del producto requerido es requerido'})
     try {
         const product = await Product.findByPk(id)
         if (name) { product.name = name }
@@ -156,7 +156,7 @@ async function updateProduct(req, res) {
             await product.addCategory(category)
         }
         await product.save()
-        return res.status(200).json({ message: 'El producto ha sido actulizado' })
+        return res.send({ message: 'El producto ha sido actulizado' })
     } catch (error) {
         next(error)
     }
