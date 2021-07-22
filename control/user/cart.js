@@ -3,26 +3,29 @@ const { User, Product, Order, Order_Line } = require('../../db.js');
 const exclude = ['createdAt', 'updatedAt']
 
 const addCartItem = async (req, res, next) => {
-    if (!req.params.idUser) return res.status(400).send("Correct idUser is required ")
+    const {idUser} = req.params
+    const{id, quantity} = req.body
+    if (!idUser) return next({message:"el ID no es correcto"})
+    if (!quantity) return next({message:"la cantidad es requerida"})
     try {
-        const product = await Product.findByPk(req.body.id);
+        const product = await Product.findByPk(id);
         if (!product) {
-            return res.status(400).send("product not found")
+            return next({message:"Producto no encontrado"})
         };
-        const quantity = Number(req.body.quantity);
-        if (product.stock < quantity) {
-            return res.status(400).send("Stock unavaiable")
+        const quantityStock = Number(quantity);
+        if (product.stock < quantityStock) {
+            return next({mesaage: "No hay stock suficiente"})
         };
-        const price = product.price //- (product.price * (product.discount / 100));
+        const price = product.price 
         const user = await User.findOne({
             where: {
-                id: req.params.idUser
+                id: idUser
             }
         });
         if (!user) {
-            return res.status(400).send("user not found")
+            next({message: "usuario no encontrado"})
         };
-        let order = await Order.findOne({ where: { UserId: req.params.idUser, status: 'cart' } });
+        let order = await Order.findOne({ where: { UserId: idUser, status: 'cart' } });
         if (!order) {
             order = await Order.create()
             user.addOrder(order);
@@ -35,31 +38,45 @@ const addCartItem = async (req, res, next) => {
 };
 
 const getCartEmpty = async (req, res, next) => {
-    if (!req.params.idUser) return res.status(400).send("Correct idUser is required ")
+    const { idUser } = req.params   
     try {
+        const orderUser = await Order.findAll({
+            where: {
+                UserId: idUser
+            }
+        })
+        if(orderUser.length < 1) return next({message: "el ID es incorrecto"})
         const cart = await Order.destroy({
             where: {
-                UserId: req.params.idUser
+                UserId: idUser
             },
         })
-        return res.status(200).json({ message: 'All products in your cart have been removed' })
+        return next({ message: 'Todos los productos fueron removidos de tu carrito de compras' })
     } catch (error) {
         next(error);
     }
 };
 
 const getAllCartItems = async (req, res, next) => {
-    if (!req.params.idUser) return res.status(400).send("Correct idUser is required ")
+    const { idUser } = req.params
+    if (!idUser) return next({message: "el ID de usuario es requerido"})
     try {
+        const orderUser = await Order.findAll({
+            where: {
+                UserId: idUser
+            }
+        })
+        if(orderUser.length < 0) return next({message: "No existen órdenes asociadas con ese ID"})
         const order = await Order.findOne({
             where: {
-                UserId: req.params.idUser,
+                UserId: idUser,
                 status: 'cart'
             },
             attributes: {
                 exclude
             }
         })
+        if(Object.keys(order).length === 0) return next({message: "No existen órdenes asociadas con ese usuario"})
         const cart = await Order_Line.findAll({
             where: {
                 orderID: order.id
@@ -69,7 +86,7 @@ const getAllCartItems = async (req, res, next) => {
             }
         })
         if (!cart.length) {
-            return res.status(400).json({ message: 'There are not products in your cart yet.' })
+            return next({ message: "Aún no tienes productos en tu carrito de compras" })
         }
         return res.status(200).json(cart)
     } catch (error) {

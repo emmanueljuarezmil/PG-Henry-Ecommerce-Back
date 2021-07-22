@@ -74,7 +74,6 @@ async function newAdmin(req, res, next) {
 }
 
 async function loginUser(req, res, next) {
-    console.log(req.headers)
     if(req.headers.username) {
         const {email, username, hashedpassword} = req.headers
         try {

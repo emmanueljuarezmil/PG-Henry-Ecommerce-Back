@@ -143,7 +143,6 @@ const deleteCategory = async (req, res, next) => {
     if(!id) return next({message: "El id de la categoria es requerido"})
     try {
             const category = await Category.findByPk(id)
-            console.log(category)
             if(category) await category.destroy()
             else return next({message: "El id de la categoria es invalido"})
             return res.send("La categoria fue borrada con éxito")
