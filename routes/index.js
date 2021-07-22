@@ -17,7 +17,7 @@ router.use('/', cart); // check fer
 router.use('/', products); // check emma
 router.use('/', categories); // check emma
 router.use('/', reviews); // in progress fer
-router.use('/', user); // in progress emma
+router.use('/', user); // check emma
 router.use('/', admin); 
 router.use('/', orders);
 router.use('/', checkout);
