@@ -1,28 +1,14 @@
 const { Router } = require('express');
-const { getAllUsers, newUser, updateUser, deleteUser, newAdmin, loginUser } = require('../../control/user/users.js')
+const { getAllUsers, updateUser, deleteUser, newAdmin, loginUser } = require('../../control/user/users.js')
 const {isAdmin, isAuth, captureUser} = require('../../control/auth')
-
-
 
 const router = Router();
 
-
-// router.get('/users', isAuth, isAdmin, getAllUsers);
-// router.post('/users/register', newUser);
-// router.post('/users/login', captureUser, loginUser);
-// router.put('/users/newadmin', isAuth, isAdmin, newAdmin)
-// router.put('/users/newadminnotauth', newAdmin)
-// router.put('/users/:idUser', isAuth, updateUser);
-// router.delete('/users/:idUser', isAuth, isAdmin, deleteUser);
-
 router.get('/users', getAllUsers);
-router.post('/users/register', newUser);
 router.get('/users/login', loginUser);
 router.put('/users/newadmin', newAdmin)
-router.put('/users/newadminnotauth', newAdmin)
-router.put('/users/:idUser', updateUser);
-router.delete('/users/:idUser', deleteUser);
-
-
+router.put('/users/newadminforpostman', newAdmin) // ruta sin control para crear admin desde postman o desde telegrafo
+router.put('/users/:idUser', updateUser); // updatear cuando integremos auth0
+router.delete('/users/:idUser', deleteUser); // updatear cuando integremos auth0
 
 module.exports = router;

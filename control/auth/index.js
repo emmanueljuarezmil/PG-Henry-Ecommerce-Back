@@ -1,7 +1,7 @@
 const jwt = require('express-jwt');
 const jwks = require('jwks-rsa');
 const {User, Order} = require('../../db')
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require('uuid')
 
 
 const checkJwt = jwt({

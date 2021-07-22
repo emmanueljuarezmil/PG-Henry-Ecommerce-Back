@@ -1,6 +1,8 @@
 const { User } = require('../../db.js');
 const { v4: uuidv4 } = require('uuid');
 
+const exclude = ['createdAt', 'updatedAt']
+
 async function newUser(req, res, next) {
     if (!req.headers.userName || !req.headers.email || !req.headers.hashedPassword) {
         return res.status(400).json({ message: 'Bad request' })
@@ -36,10 +38,14 @@ async function updateUser(req, res, next) {
 
 async function getAllUsers(req, res, next) {
     try {
-        const user = await User.findAll();
-        return res.status(200).json(user)
+        const user = await User.findAll({
+            attributes: {
+                exclude
+            }
+        });
+        return res.send(user)
     } catch (error) {
-        return res.status(400).json({ message: 'Bad Request' })
+        next({ message: 'Bad Request' })
     }
 }
 
@@ -61,21 +67,22 @@ async function deleteUser(req, res, next) {
 }
 
 async function newAdmin(req, res, next) {
-    if (!req.body.id) { return res.status(400).json({ message: 'Bad Request' }) }
+    const { id } = req.body
+    if (!id) return next({ message: 'El id del nuevo admin es necesario' })
     try {
-        const { id } = req.body
         const user = await User.findByPk(id)
+        if (!user) return next({message: 'El usuario no fue encontrado'})
         user.admin = true;
         user.save();
         return res.send('Usuario elevado a admin')
     } catch (error) {
-        return res.status(500).json({ message: 'Internal Error DB' })
+        next(error)
     }
 }
 
 async function loginUser(req, res, next) {
-    if(req.headers.username) {
-        const {email, username, hashedpassword} = req.headers
+    const {email, username, hashedpassword} = req.headers
+    if(username) {
         try {
           const isUser = await User.findOne({
             where: {
@@ -94,13 +101,12 @@ async function loginUser(req, res, next) {
           }
           else return res.send(isUser)
         } catch(err) {
-          console.error(err)
+          next(err)
         }
       }
 }
 
 module.exports = {
-    newUser,
     updateUser,
     getAllUsers,
     deleteUser,
