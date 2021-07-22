@@ -23,12 +23,12 @@ const addCartItem = async (req, res, next) => {
             }
         });
         if (!user) {
-            next({message: "usuario no encontrado"})
+            return next({message: "usuario no encontrado"})
         };
         let order = await Order.findOne({ where: { UserId: idUser, status: 'cart' } });
         if (!order) {
             order = await Order.create()
-            user.addOrder(order);
+            await user.addOrder(order);
         };
         const createdProduct = await product.addOrder(order, { through: { orderId: order.id, quantity, price } })
         return res.send(createdProduct);
