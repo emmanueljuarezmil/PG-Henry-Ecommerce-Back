@@ -82,6 +82,7 @@ async function newAdmin(req, res, next) {
 
 async function loginUser(req, res, next) {
     const {email, username, hashedpassword} = req.headers
+    console.log(req.headers)
     if(username) {
         try {
           const isUser = await User.findOne({

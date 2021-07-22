@@ -2,20 +2,21 @@ const jwt = require('express-jwt');
 const jwks = require('jwks-rsa');
 const {User, Order} = require('../../db')
 const { v4: uuidv4 } = require('uuid')
-const {APPLY_MIDDLEWARES} = process.env
-const applyMiddlewares = JSON.parse(APPLY_MIDDLEWARES)
+const applyMiddlewares = JSON.parse(process.env.APPLY_MIDDLEWARES)
+const {jwksUri, issuer, audience} = process.env
 
-const checkJwt = jwt({
+const checkJwt = applyMiddlewares ? jwt({
   secret: jwks.expressJwtSecret({
-    cache: true,
-    rateLimit: true,
-    jwksRequestsPerMinute: 50,
-    jwksUri: `https://dev-8yg4kp4m.us.auth0.com/.well-known/jwks.json`
-  }),
-  audience: 'localhost:3000',
-  issuer: [`https://dev-8yg4kp4m.us.auth0.com/`],
-  algorithms: ['RS256']
-});
+      cache: true,
+      rateLimit: true,
+      jwksRequestsPerMinute: 5,
+      jwksUri
+}),
+audience,
+issuer,
+algorithms: ['RS256']
+}) :
+(req,res,next) => next()
 
 const captureUser = async (req, res, next) => {
   if(applyMiddlewares) {
@@ -37,7 +38,7 @@ const captureUser = async (req, res, next) => {
           })
         }
       } catch(err) {
-        console.error(err)
+        return next(err)
       }
     }
     next()
