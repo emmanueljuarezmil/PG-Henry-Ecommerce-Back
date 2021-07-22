@@ -5,10 +5,7 @@ const {checkJwt, isAdmin, isAuth} = require('../../control/auth/index.js')
 const router = Router();
 
 router.get('/users', checkJwt, isAdmin, getAllUsers);
-router.get('/users/login',(req,res,next) => {
-    console.log(req.headers)
-    next()
-},checkJwt, loginUser);
+router.get('/users/login',checkJwt, loginUser);
 router.put('/users/newadmin', checkJwt, isAdmin, newAdmin)
 router.put('/users/newadminforpostman', newAdmin) // ruta sin control para crear admin desde postman o desde telegrafo
 router.put('/users/:idUser', checkJwt, isAuth, updateUser); // updatear cuando integremos auth0
