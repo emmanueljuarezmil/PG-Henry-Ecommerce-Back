@@ -1,6 +1,8 @@
 const { Product, Category, Review, User } = require('../../db.js');
 const { v4: uuidv4 } = require('uuid');
 const { Op } = require("sequelize");
+const sequelize = require('sequelize')
+// const sequelize = require("sequelize")
 const productosmeli = require('../../bin/data/productsDB.json');
 
 const itemsPerPage = 40
@@ -94,7 +96,8 @@ async function getProductsById(req, res, next) {
                         attributes: [],
                     },
                     include: {
-                        model: User
+                        model: User,
+                        attributes: ['name', 'userName']
                     }
                 }
             ]
