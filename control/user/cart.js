@@ -58,8 +58,7 @@ const getCartEmpty = async (req, res, next) => {
     }
 };
 
-
-const getAllCartItems = async (req, res, next) => {
+const getAllCartItems = async (req, res, next, idUser = null) => {
     try {
         if (!req.params.idUser) return next({message: "el ID de usuario es requerido"})
         const order = await Order.findOne({
@@ -80,7 +79,6 @@ const getAllCartItems = async (req, res, next) => {
         if (!raw_cart.length) {
             // return next({ message: "Aún no tienes productos en tu carrito de compras" })
             return res.send([])
-
         }
 
         let cart = []
@@ -127,18 +125,21 @@ const editCartQuantity = async (req, res, next) => {
 };
 
 const deleteCartItem = async (req, res, next) => {
-    if (!req.params.idUser) return next({message: " El ID de la orden y del producto son requeridos "})
+    console.log("ESTOY ACA MANNNNNNN");
+    const { idUser, idProduct } = req.params;
+    if (!req.params.idUser) return res.json({message: " El ID de la orden y del producto son requeridos "})
     try {
-        const orderId = await Order.findOne({ where: { UserId: req.params.idUser } });
+        const orderId = await Order.findOne({ where: { UserId: idUser, status: 'cart' } });
+        console.log("ORDER: ", orderId);
         if (!orderId) {
-            res.status(400).send("Usuario no encontrado")
+            return res.status(400).send("Orden no encontrado")
         };
-        let order = await Order_Line.findOne({ where: { orderID: orderId.dataValues.id, productID: req.params.idProduct } });
+        let order = await Order_Line.findOne({ where: { orderID: orderId.dataValues.id, productID: idProduct } });
         if(!order) return next({message: " El ID de la orden y del producto son invalidos "});
         await Order_Line.destroy({ where: { productID: order.dataValues.productID, orderID: orderId.dataValues.id } })
-        next()
+        return res.json({ message: "Item borrado" });
     } catch (error) {
-        next(error)
+        next(error);
     }
 };
 
