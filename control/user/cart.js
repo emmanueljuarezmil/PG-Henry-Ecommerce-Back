@@ -76,7 +76,7 @@ const getAllCartItems = async (req, res, next) => {
         })
 
         if (!raw_cart.length) {
-            return next({ message: "Aún no tienes productos en tu carrito de compras" })
+            return res.json({ message: "Aún no tienes productos en tu carrito de compras" })
         }
 
         let cart = []
