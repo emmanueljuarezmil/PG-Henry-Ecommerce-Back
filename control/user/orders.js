@@ -4,38 +4,43 @@ const { Op } = require('sequelize')
 const exclude = ['createdAt', 'updatedAt']
 
 const getAllOrders = async (req, res, next) => {
-    // if (!req.query.status) return res.status(400).send("Status is required ")
-    const status = req.query.status
+    const {status} = req.query
     try {
         const orderByStatus = await Order.findAll(
             status ?
                 {
                     where: {
-                        status: req.query.status
+                        status
+                    },
+                    attributes: {
+                        exclude
                     }
                 } :
-                {}
+                {
+                    attributes: {
+                        exclude
+                    }
+                }
         )
-        return res.status(200).json(orderByStatus)
+        return res.send(orderByStatus)
     } catch (error) {
         next(error);
     }
 };
 
 const userOrders = async (req, res, next) => {
-    if (!req.params.idUser) return res.status(400).send("Correct idUser is required ")
+    const {idUser} = req.params
     try {
         const userOrders = await Order.findAll({
             where: {
-                UserId: req.params.idUser,
+                UserId: idUser,
                 status: 'cart'
             }
         })
         if (!userOrders.length) {
-            return res.status(400).json({ message: 'The user has not any order' })
+            return res.status(201).send('El usuario requerido no tiene ninguna orden')
         }
-
-        return res.status(200).json(userOrders)
+        return res.send(userOrders)
     } catch (error) {
         next(error);
     }
@@ -43,38 +48,28 @@ const userOrders = async (req, res, next) => {
 
 const getOrderById = async (req, res, next) => {
     const { id } = req.params
-    if (!id) return res.status(400).send("Order ID is required")
     try {
-        const order = await Order_Line.findAll({
+        const order = await Order.findAll({
             where: {
-                orderID: id
-            }
-        })
-
-        const ids = order.map(element => {
-            return {
-                id: element.productID,
-            }
-        })
-
-        const products = await Product.findAll({
-            where: {
-                [Op.or]: ids
+                id
             },
-            attributes: ['name', 'photo', 'id', 'price']
-        })
-
-        for (let i = 0; i < order.length; i++) {
-            for (let j = 0; j < products.length; j++) {
-                if (order[i].productID === products[j].id) {
-                    products[j].dataValues.quantity = order[i].quantity
+            attributes: {
+                exclude
+            },
+            include: {
+                model: Product,
+                attributes: {
+                    exclude
+                },
+                through: {
+                    model: Order_Line,
+                    attributes: []
                 }
             }
-        }
-
-        return res.send(products)
+        })
+        return res.send(order)
     } catch (err) {
-        return res.status(400).send(err)
+        next(err)
     }
 };
 
