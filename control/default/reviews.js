@@ -5,22 +5,31 @@ const { Op } = require("sequelize");
 const newReview = async(req, res, next) => {
     const { comment, rating, idProd } = req.body
     const { idUser } = req.params
-    if (!comment) return next({message: "Se precisa comentario"})
-    if(!rating ) return next({message: "Se precisa rating"})
+    if (!comment) return res.send({message: "Se precisa comentario"})
+    if(!rating ) return res.send({message: "Se precisa rating"})
     try {
         const id = uuidv4()
-        const review = await Review.create({
+        const verifyDuplicate = await Review.findOne({
+            where: {
+                UserId: idUser,
+                ProductId: idProd
+            }
+        })
+        if(verifyDuplicate) return res.send({message: "Ya has realizado una reseña de este producto"})
+        await Review.create({
             id,
-            rating: rating.toString(),
-            comment
+            rating,
+            comment,
+            UserId: idUser,
+            ProductId: idProd
         })
         const Prod = await Product.findByPk(idProd)
-        await Prod.addReview(review)
+        await Prod.addReview(id)
         const user = await User.findByPk(idUser)
-        await user.addReview(review)
-        return res.status(200).json({message: 'Review created'})
+        await user.addReview(id)
+        return res.send({message: 'Gracias por tu reseña'})
     } catch (error){
-        return res.status(500).json(error)
+        next(error)
     }
 }
 
