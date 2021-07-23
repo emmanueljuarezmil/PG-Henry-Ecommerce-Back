@@ -48,9 +48,9 @@ const captureUser = async (req, res, next) => {
 
 const isAuth = async (req, res, next) => {
   if(applyMiddlewares) {
-    if(!req.headers.idUser) return res.status(400).send('Id de usuario no enviado')
+    if(!req.headers.iduser) return res.status(400).send('Id de usuario no enviado')
     else {
-      const user = await User.findByPk(req.headers.idUser)
+      const user = await User.findByPk(req.headers.iduser)
       if(!user) return res.status(400).send('No existen datos de usuario')
       else next()
     }
@@ -60,8 +60,8 @@ const isAuth = async (req, res, next) => {
 
 const isAdmin = async (req, res, next) => {
   if(applyMiddlewares) {
-    const {idUser} = req.headers
-    const user = await User.findByPk(idUser)
+    const {iduser} = req.headers
+    const user = await User.findByPk(iduser)
     if(user && user.admin) next()
     else return res.status(401).send('No autorizado')
   }
