@@ -58,15 +58,13 @@ const getCartEmpty = async (req, res, next) => {
     }
 };
 
-const getAllCartItems = async (req, res, next, idUser = null) => {
-    // console.log('Pre try')
+
+const getAllCartItems = async (req, res, next) => {
     try {
-        if (!req.params.idUser && !idUser) return next({message: "el ID de usuario es requerido"})
-        // console.log(req.params, 'req.params')
-        // console.log(idUser, 'idUser')
+        if (!req.params.idUser) return next({message: "el ID de usuario es requerido"})
         const order = await Order.findOne({
             where: {
-                UserId: req.params.idUser || idUser,
+                UserId: req.params.idUser,
                 status: 'cart'
             },
             attributes: {
@@ -82,6 +80,7 @@ const getAllCartItems = async (req, res, next, idUser = null) => {
         if (!raw_cart.length) {
             // return next({ message: "Aún no tienes productos en tu carrito de compras" })
             return res.send([])
+
         }
 
         let cart = []
@@ -121,7 +120,7 @@ const editCartQuantity = async (req, res, next) => {
         const price = product.price;
         let order = await Order.findOne({ where: { UserId: req.params.idUser, status: 'cart' } });
         const updatedQuantity = await product.addOrder(order, { through: { orderID: order.id, quantity, price } })
-        return getAllCartItems(req, res, next, req.params.idUser);
+        next();
     } catch (error) {
         next(error)
     }
@@ -137,7 +136,7 @@ const deleteCartItem = async (req, res, next) => {
         let order = await Order_Line.findOne({ where: { orderID: orderId.dataValues.id, productID: req.params.idProduct } });
         if(!order) return next({message: " El ID de la orden y del producto son invalidos "});
         await Order_Line.destroy({ where: { productID: order.dataValues.productID, orderID: orderId.dataValues.id } })
-        return getAllCartItems(req, res, next, req.params.idUser);
+        next()
     } catch (error) {
         next(error)
     }
