@@ -25,14 +25,15 @@ const addCartItem = async (req, res, next) => {
         if (!user) {
             return next({message: "usuario no encontrado"})
         };
-        let order = await Order.findOne({ where: { UserId: idUser, status: 'cart' } });
+                let order = await Order.findOne({ where: { UserId: idUser, status: 'cart' } });
         if (!order) {
             order = await Order.create()
             await user.addOrder(order);
         };
-        const createdProduct = await product.addOrder(order, { through: { orderId: order.id, quantity, price } })
-        return res.send("Producto agregado con exito", createdProduct);
+                const createdProduct = await product.addOrder(order, { through: { orderId: order.id, quantity, price } })
+                return res.send(createdProduct);
     } catch (err) {
+        console.log(err)
         next(err)
     }
 };
@@ -58,27 +59,26 @@ const getCartEmpty = async (req, res, next) => {
 };
 
 const getAllCartItems = async (req, res, next, idUser = null) => {
-    console.log("ESTOY ACA GETTT");
     try {
-        if (!req.params.idUser && !idUser) return next({message: "el ID de usuario es requerido"})
+        if (!req.params.idUser) return next({message: "el ID de usuario es requerido"})
         const order = await Order.findOne({
             where: {
-                UserId: req.params.idUser || idUser,
+                UserId: req.params.idUser,
                 status: 'cart'
             },
             attributes: {
                 exclude
             }
         })
-
+        console.log(order, 'order')
         const raw_cart = await Product.findAll({
             include: { model: Order, where: { id: order.id } },
             order: ['name']
         })
-
+        // console.log(req.params, 'req.params')
         if (!raw_cart.length) {
             // return next({ message: "Aún no tienes productos en tu carrito de compras" })
-            return res.json({ message: "No hay elementos en el carrito" });
+            return res.send([])
         }
 
         let cart = []
@@ -118,7 +118,7 @@ const editCartQuantity = async (req, res, next) => {
         const price = product.price;
         let order = await Order.findOne({ where: { UserId: req.params.idUser, status: 'cart' } });
         const updatedQuantity = await product.addOrder(order, { through: { orderID: order.id, quantity, price } })
-        return getAllCartItems(req, res, next, req.params.idUser);
+        next();
     } catch (error) {
         next(error)
     }
@@ -137,9 +137,7 @@ const deleteCartItem = async (req, res, next) => {
         let order = await Order_Line.findOne({ where: { orderID: orderId.dataValues.id, productID: idProduct } });
         if(!order) return next({message: " El ID de la orden y del producto son invalidos "});
         await Order_Line.destroy({ where: { productID: order.dataValues.productID, orderID: orderId.dataValues.id } })
-        // return getAllCartItems(req, res, next, req.params.idUser);
-        
-        res.json({ message: "Item borrado" });
+        return res.json({ message: "Item borrado" });
     } catch (error) {
         next(error);
     }
