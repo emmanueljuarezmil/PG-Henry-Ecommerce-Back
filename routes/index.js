@@ -7,6 +7,7 @@ const reviews = require('./default/reviews');
 const orders = require('./user/orders');
 const cart = require('./user/cart');
 const checkout = require('./user/checkout');
+const sendMail = require('./user/sendMail')
 
 const router = Router();
 
@@ -18,5 +19,6 @@ router.use('/', reviews); // check fer
 router.use('/', user); // check emma
 router.use('/', orders); // check emma
 router.use('/', checkout); //
+router.use('/', sendMail)
 
 module.exports = router;
