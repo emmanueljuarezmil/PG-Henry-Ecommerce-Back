@@ -40,7 +40,7 @@ const sendMail = async (req, res, next) => {
                     `        
                     const mailOptions = { 
                         from: 'Musical Ecommerce <ecommercemusical@gmail.com>',
-                        to: email,//req.body.email,
+                        to: email,
                         subject: "Gracias por registrarte a Musical Ecommerce",
                         html: templateHTML,
                     }    
@@ -59,50 +59,6 @@ const sendMail = async (req, res, next) => {
 }
 
 
-
-/* const sendMail = (req, res, next) => {
-
-     
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 587,
-        auth: {
-            user: 'adriana.king@ethereal.email',
-            pass: 'rpYd7Pv5SFxy41dMau'
-        }
-    });
-
-    const {type} = req.query
-
-    if(type === 'welcome'){
-        let templateHtml = `
-        <h1 style="color: red">Te damos la bienvenida ${req.body.name}</h1>
-        <p>Gracias por registrarte con nosotros. <br>
-        Esperamos que podamos ayudarte a encontrar el intrumento de tus sueños <br>    
-        </p>
-        `
-     
-        var mailOptions = {
-            from: "Ecommerce",
-            to: req.body.email,
-            subject: "Mail de prueba",
-            html: templateHtml
-        }
-    
-        transporter.sendMail(mailOptions, (err) => {
-            if(err) next(err)
-            else{
-                console.log('Envío exitoso')
-                 res.send(mailOptions)
-            }
-        })
-
-    }
-
-
-
-
-} */
 
 module.exports = {
     sendMail
