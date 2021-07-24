@@ -5,7 +5,7 @@ const sequelize = require('sequelize')
 // const sequelize = require("sequelize")
 const productosmeli = require('../../bin/data/productsDB.json');
 
-const itemsPerPage = 40
+const itemsPerPage = 10
 
 const exclude = ['createdAt', 'updatedAt']
 
