@@ -1,27 +1,33 @@
 [
     {
-        "userName": "Papichuli",
-        "hashedPassword": "LamidaDeRaja",
-        "email": "Diego10@gmail.com"
+        "userName": "JonDoe",
+        "name": "Jon Doe",
+        "hashedPassword": "jskxx45Swsxff",
+        "email": "JonDoe@gmail.com"
     },
     {
         "userName": "Cosmefulanito",
+        "name": "Cosme Fulanito",
         "hashedPassword": "Wsdfldksdf",
         "email": "Cosmefulanito@gmail.com"
     },
     {
-        "userName": "elbarto",
-        "hashedPassword": "LamidaDeRaja",
-        "email": "elbarto@gmail.com"
+        "userName": "Elbarto",
+        "name": "Elbarto",
+        "hashedPassword": "jskxx45Swsxff",
+        "email": "elbarto@gmail.com",
+        "admin": true
     },
     {
-        "userName": "cartman",
-        "hashedPassword": "LamidaDeRaja",
-        "email": "cartman@gmail.com"
+        "userName": "Elviajerodeltiempo",
+        "name": "El viajero del tiempo",
+        "hashedPassword": "jskxx45Swsxff",
+        "email": "viajerodeltiempo@gmail.com"
     },
     {
         "userName": "kenny",
-        "hashedPassword": "LamidaDeRaja",
+        "name": "kenny",
+        "hashedPassword": "jskxx45Swsxff",
         "email": "ricardofort@gmail.com"
     }
 ]
