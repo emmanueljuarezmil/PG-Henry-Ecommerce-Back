@@ -157,9 +157,6 @@ async function fullDbOrders() {
                 let product1 = products[Math.round(Math.random()*products.length)]
                 let product2 = products[Math.round(Math.random()*products.length)]
                 let product3 = products[Math.round(Math.random()*products.length)]
-                // let product1 = products[Math.round(Math.random()*products.length)]
-                // let product2 = products[Math.round(Math.random()*products.length)]
-                // let product3 = products[Math.round(Math.random()*products.length)]
                 const order = await Order.create()
                 await user.addOrder(order);
                 await Order_Line.create({
@@ -180,8 +177,6 @@ async function fullDbOrders() {
                     quantity: 1,
                     price: product3.price
                 })
-                // await product2.addOrder(order, { through: { orderId: order.id, quantity: 1} })
-                // await product3.addOrder(order, { through: { orderId: order.id, quantity: 1} })
             } catch (error) {
                 console.error(error);
             }
