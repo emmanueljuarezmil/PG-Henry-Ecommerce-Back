@@ -74,28 +74,41 @@ const getOrderById = async (req, res, next) => {
 };
 
 const updateOrder = async (req, res, next) => {
-    const { id } = req.params
+    const { UserId } = req.params
     const products = req.body
-    if (!id) return res.status(400).send('El id de la orden es requerido')
+    if (!UserId) return res.status(400).send('El id del usuario es requerido')
     try {
-        await Order_Line.destroy({
+        const [order, created] = await Order.findOrCreate({
             where: {
-                orderID: id
+                UserId
             }
         })
-        if(products && products.length) {
+        if(products && products.length) {         
             for(let product of products) {
-                await Order_Line.create({
-                    orderID: id,
-                    productID: product.id,
-                    quantity: product.quantity,
-                    price: product.price
+                const item = await Order_Line.findOne({
+                    where: {
+                        orderID: order.id,
+                        productID: product.id,
+                    }
                 })
+                if(item) {
+                    
+                    item.quantity = product.quantity
+                    await item.save()
+                }
+                else {  
+                    await Order_Line.create({
+                            orderID: order.id,
+                            productID: product.id,
+                            quantity: product.quantity,
+                            price: product.price
+                    })
+                }
             }
         }
-        const order = await Order.findOne({
+        const orderToSend = await Order.findOne({
             where: {
-                id
+                id: order.id
             },
             include: {
                 model: Product,
@@ -105,9 +118,12 @@ const updateOrder = async (req, res, next) => {
                 through: {
                     attributes: []
                 }
+            },
+            attributes: {
+                exclude
             }
         })
-        return res.send(order)
+        return res.send(orderToSend)
     } catch (err) {
         next(err)
     }

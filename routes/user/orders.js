@@ -7,6 +7,6 @@ const router = Router();
 router.get('/orders/users/:idUser', checkJwt, isAuth, userOrders);
 router.get('/orders', checkJwt, isAdmin, getAllOrders);
 router.get('/orders/:id', checkJwt, isAuth, getOrderById);
-router.put('/orders/:id', checkJwt, isAuth, updateOrder)
+router.put('/orders/:UserId', checkJwt, isAuth, updateOrder)
 
 module.exports = router;
