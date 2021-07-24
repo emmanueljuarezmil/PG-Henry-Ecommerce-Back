@@ -1,6 +1,8 @@
 const { User } = require('../../db.js');
 const { v4: uuidv4 } = require('uuid');
+const axios = require('axios')
 const usersDBJson = require('../../bin/data/users.json')
+
 
 const exclude = ['createdAt', 'updatedAt']
 
@@ -97,6 +99,10 @@ async function loginUser(req, res, next) {
               email,
               userName: username,
               hashedPassword: hashedpassword
+            })
+            await axios.post(`http://localhost:3000/user/sendmail?type=welcome`,{
+            name: username,
+            email
             })
             return res.send(newUser)
           }

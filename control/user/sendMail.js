@@ -11,11 +11,13 @@ const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_U
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN});
 
 
-async function sendMail(){
+const sendMail = async (req, res, next) => {
+    const {type} = req.query
+    const { name, email } = req.body    
     try{
         const accessToken = await oAuth2Client.getAccessToken();
 
-        const transport = nodemailer.createTransport({
+        const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
                 type: 'OAuth2',
@@ -27,27 +29,36 @@ async function sendMail(){
             }
         })
 
-        const mailOptions = { 
-            from: 'Musical Ecommerce <ecommercemusical@gmail.com>',
-            to: 'rodrigoignacio932@gmail.com',//req.body.email,
-            subject: "prueba",
-            text: 'ezequiel aguilera la tenes adentro',
-            html: '<h1>ezequiel aguilera la tenes adentro</h1>',
-        }
+        switch (type){
+            case 'welcome':               
+                    const templateHTML = `
+                    <div style="justify-content: center">
+                        <h3>Hola ${name}, te damos la bienvenida a Musical Instrument</h3>
+                        <p> Gracias por registrarte en nuestro sitio! <br>
+                        Deseamos que puedas encontrar el instrumento de tus sueños. </p>
+                    </div>
+                    `        
+                    const mailOptions = { 
+                        from: 'Musical Ecommerce <ecommercemusical@gmail.com>',
+                        to: email,//req.body.email,
+                        subject: "Gracias por registrarte a Musical Ecommerce",
+                        html: templateHTML,
+                    }    
+                    await transporter.sendMail(mailOptions, (err) => {
+                        if(err) next(err)
+                        else{
+                            console.log('Envío exitoso')
+                            return res.send(mailOptions)
+                        }
+                    })
+                       
+            }
+    }catch(error){ next(error) }
 
-        const result = await transport.sendMail(mailOptions)
-        return result
-
-    
-
-    }catch(error){
-        return error; 
-    }
+                
 }
 
-sendMail()
-    .then((result) => console.log('Email sent...', result))
-    .catch((error)=> console.log(error.message))
+
 
 /* const sendMail = (req, res, next) => {
 
