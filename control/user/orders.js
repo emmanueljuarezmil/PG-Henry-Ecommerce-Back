@@ -91,12 +91,14 @@ const updateOrder = async (req, res, next) => {
                         productID: product.id,
                     }
                 })
-                if(item) {
-                    
+                if(item && product.quantity > 0) {                   
                     item.quantity = product.quantity
                     await item.save()
                 }
-                else {  
+                else if(item && product.quantity === 0) {                   
+                    await item.destroy()
+                }
+                else if (!item && product.quantity > 0) {  
                     await Order_Line.create({
                             orderID: order.id,
                             productID: product.id,
