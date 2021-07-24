@@ -45,10 +45,9 @@ async function sendMail(){
     }
 }
 
-sendMail()
-    // .then((result) => console.log('Email sent...', result))
-    .then((result) => result)
-    .catch((error)=> console.log(error.message))
+// sendMail()
+//     .then((result) => console.log('Email sent...', result))
+//     .catch((error)=> console.log(error.message))
 
 /* const sendMail = (req, res, next) => {
 
