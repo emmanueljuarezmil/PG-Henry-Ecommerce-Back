@@ -5,6 +5,7 @@ const http = require('http');
 const { fullDbproducts } = require('../control/default/products')
 const { fulldbCat } = require('../control/default/category')
 const { fullDbUsers} = require('../control/user/users')
+const { fullDbOrders } = require('../control/user/cart')
 
 
 let port = normalizePort(process.env.PORT || '3000');
@@ -21,7 +22,8 @@ server.listen(port)
 .then(() => force ? fulldbCat() : null)
 .then(() => force ? fullDbproducts() : null)
 .then(() => force ? fullDbUsers() : null)
-.then(() => force ? console.log('Productos, categorias, y usuarios precargados en la base de datos') : null)
+.then(() => force ? fullDbOrders() : null)
+.then(() => force ? console.log('Productos, categorias, usuarios, y ordenes precargados en la base de datos') : null)
 .then(() => console.log(`funciona en el ${port}`))
 .catch(err => console.log(err))
 

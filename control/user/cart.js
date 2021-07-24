@@ -1,4 +1,5 @@
 const { User, Product, Order, Order_Line } = require('../../db.js');
+const usersDBJson = require('../../bin/data/users.json')
 
 const exclude = ['createdAt', 'updatedAt']
 
@@ -25,13 +26,13 @@ const addCartItem = async (req, res, next) => {
         if (!user) {
             return next({message: "usuario no encontrado"})
         };
-                let order = await Order.findOne({ where: { UserId: idUser, status: 'cart' } });
+        let order = await Order.findOne({ where: { UserId: idUser, status: 'cart' } });
         if (!order) {
             order = await Order.create()
             await user.addOrder(order);
         };
-                const createdProduct = await product.addOrder(order, { through: { orderId: order.id, quantity, price } })
-                return res.send(createdProduct);
+        const createdProduct = await product.addOrder(order, { through: { orderId: order.id, quantity, price } })
+        return res.send(createdProduct);
     } catch (err) {
         console.log(err)
         next(err)
@@ -143,10 +144,58 @@ const deleteCartItem = async (req, res, next) => {
     }
 };
 
+async function fullDbOrders() {
+    try {
+        const products = await Product.findAll()
+        for (let i of usersDBJson) {
+            try {
+                const user = await User.findOne({
+                    where: {
+                        name: i.name
+                    }
+                })
+                let product1 = products[Math.round(Math.random()*products.length)]
+                let product2 = products[Math.round(Math.random()*products.length)]
+                let product3 = products[Math.round(Math.random()*products.length)]
+                // let product1 = products[Math.round(Math.random()*products.length)]
+                // let product2 = products[Math.round(Math.random()*products.length)]
+                // let product3 = products[Math.round(Math.random()*products.length)]
+                const order = await Order.create()
+                await user.addOrder(order);
+                await Order_Line.create({
+                    orderID: order.id,
+                    productID: product1.id,
+                    quantity: 1,
+                    price: product1.price
+                })
+                await Order_Line.create({
+                    orderID: order.id,
+                    productID: product2.id,
+                    quantity: 1,
+                    price: product2.price
+                })
+                await Order_Line.create({
+                    orderID: order.id,
+                    productID: product3.id,
+                    quantity: 1,
+                    price: product3.price
+                })
+                // await product2.addOrder(order, { through: { orderId: order.id, quantity: 1} })
+                // await product3.addOrder(order, { through: { orderId: order.id, quantity: 1} })
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    } catch(err) {
+        console.error(err)
+    }
+}
+
 module.exports = {
     addCartItem,
     getCartEmpty,
     getAllCartItems,
     editCartQuantity,
-    deleteCartItem
+    deleteCartItem,
+    fullDbOrders
 }

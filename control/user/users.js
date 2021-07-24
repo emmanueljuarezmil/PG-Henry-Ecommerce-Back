@@ -1,6 +1,6 @@
 const { User } = require('../../db.js');
 const { v4: uuidv4 } = require('uuid');
-const users = require('../../bin/data/users.json')
+const usersDBJson = require('../../bin/data/users.json')
 
 const exclude = ['createdAt', 'updatedAt']
 
@@ -108,7 +108,7 @@ async function loginUser(req, res, next) {
 }
 
 async function fullDbUsers() {
-    for (let i of users) {
+    for (let i of usersDBJson) {
         try {
             var id = uuidv4();
             i.id = id
