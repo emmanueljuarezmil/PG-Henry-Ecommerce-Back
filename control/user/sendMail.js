@@ -13,10 +13,9 @@ oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN});
 
 const sendMail = async (req, res, next) => {
     const {type} = req.query
-    const { name, email } = req.body    
     try{
         const accessToken = await oAuth2Client.getAccessToken();
-
+        
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -28,10 +27,11 @@ const sendMail = async (req, res, next) => {
                 accessToken: accessToken
             }
         })
-
+        
         switch (type){
             case 'welcome':               
-                    const templateHTML = `
+            const { name, email } = req.headers              
+            const templateHTML = `
                     <div style="justify-content: center">
                         <h3>Hola ${name}, te damos la bienvenida a Musical Instrument</h3>
                         <p> Gracias por registrarte en nuestro sitio! <br>
@@ -51,7 +51,8 @@ const sendMail = async (req, res, next) => {
                             return res.send(mailOptions)
                         }
                     })
-                       
+            case 'status':
+                    return console.log('entro', req.headers.idUser)
             }
     }catch(error){ next(error) }
 
