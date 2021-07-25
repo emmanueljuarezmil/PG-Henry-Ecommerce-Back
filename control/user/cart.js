@@ -88,7 +88,7 @@ const getCartEmpty = async (req, res, next) => {
 const getAllCartItems = async (req, res, next, idUser = null) => {
     try {
         if (!req.params.idUser) return next({message: "el ID de usuario es requerido"})
-        const order = await Order.findOne({
+        let order = await Order.findOne({
             where: {
                 UserId: req.params.idUser,
                 status: 'cart'
@@ -97,6 +97,11 @@ const getAllCartItems = async (req, res, next, idUser = null) => {
                 exclude
             }
         })
+        if(!order) {
+            order = await Order.create({
+                UserId: req.params.idUser,
+            })
+        }
         const raw_cart = await Product.findAll({
             include: { model: Order, where: { id: order.id } },
             order: ['name']
@@ -104,7 +109,10 @@ const getAllCartItems = async (req, res, next, idUser = null) => {
         // console.log(req.params, 'req.params')
         if (!raw_cart.length) {
             // return next({ message: "Aún no tienes productos en tu carrito de compras" })
-            return res.send([])
+            return res.status(200).send({
+                products: [],
+                orderId: order.id
+            })
         }
 
         let cart = []
@@ -125,7 +133,10 @@ const getAllCartItems = async (req, res, next, idUser = null) => {
             })
             cart.push(prod)
         })
-        return res.status(200).json(cart)
+        return res.status(200).send({
+            products: cart,
+            orderId: order.id
+        })
     } catch (error) {
         next(error);
     }

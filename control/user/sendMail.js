@@ -59,12 +59,14 @@ const sendMail = async (req, res, next) => {
                         
                     }
                 });
-
+                console.log('ORDER ID!!!!!!', req.query.orderId)
                 const order_approved = await Order.findOne({
                     where: {
-                        UserId: req.query.idUser
+                        UserId: req.query.idUser,
+                        id: req.query.orderId
                     }
                 })
+
                 order_approved.status = type
                 await order_approved.save()
                 const name_approved = user_approved.dataValues.userName.split(' ')
@@ -97,7 +99,8 @@ const sendMail = async (req, res, next) => {
 
                 const order_rejected = await Order.findOne({
                     where: {
-                        UserId: req.query.idUser
+                        UserId: req.query.idUser,
+                        id: req.query.orderId
                     }
                 })
                 order_rejected.status = type
