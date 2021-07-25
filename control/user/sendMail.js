@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
-const { User, Order } = require('../../db.js');
+const { User, Order, Order_Line, Product } = require('../../db.js');
 
 
 const CLIENT_ID = '441550001644-9qv5e6d6nttu9t128tf3vq9ujucncprg.apps.googleusercontent.com';
@@ -67,7 +67,22 @@ const sendMail = async (req, res, next) => {
                 })
 
                 order_approved.status = type
+                console.log('id de la orden: ', order_approved.id)
                 await order_approved.save()
+                const productsStock = await Order_Line.findAll({
+                    where: {
+                        orderID: order_approved.id
+                    }
+                })
+                console.log("productsstock: ", productsStock)
+                const promises = productsStock.map(async productOrder => {
+                    const product = await Product.findByPk(productOrder.productID)
+                    console.log('product : ', product)
+                    console.log('product.stock : ', product.stock)
+                    product.stock = product.stock - productOrder.quantity
+                    await product.save()
+                })
+                await Promise.all(promises).then(result => console.log(result)).catch(err => console.error(err))
                 const name_approved = user_approved.dataValues.userName.split(' ')
                 const templateHTML_approved = `
                     <div style="justify-content: center">
