@@ -67,7 +67,6 @@ const sendMail = async (req, res, next) => {
                 })
 
                 order_approved.status = type
-                console.log('id de la orden: ', order_approved.id)
                 await order_approved.save()
                 const productsStock = await Order_Line.findAll({
                     where: {
@@ -77,12 +76,10 @@ const sendMail = async (req, res, next) => {
                 console.log("productsstock: ", productsStock)
                 const promises = productsStock.map(async productOrder => {
                     const product = await Product.findByPk(productOrder.productID)
-                    console.log('product : ', product)
-                    console.log('product.stock : ', product.stock)
                     product.stock = product.stock - productOrder.quantity
                     await product.save()
                 })
-                await Promise.all(promises).then(result => console.log(result)).catch(err => console.error(err))
+                await Promise.all(promises).then(result => result).catch(err => console.error(err))
                 const name_approved = user_approved.dataValues.userName.split(' ')
                 const templateHTML_approved = `
                     <div style="justify-content: center">
