@@ -71,7 +71,6 @@ const getAllCartItems = async (req, res, next, idUser = null) => {
                 exclude
             }
         })
-        console.log(order, 'order')
         const raw_cart = await Product.findAll({
             include: { model: Order, where: { id: order.id } },
             order: ['name']
@@ -126,7 +125,6 @@ const editCartQuantity = async (req, res, next) => {
 };
 
 const deleteCartItem = async (req, res, next) => {
-    console.log("ESTOY ACA MANNNNNNN");
     const { idUser, idProduct } = req.params;
     if (!req.params.idUser) return res.json({message: " El ID de la orden y del producto son requeridos "})
     try {

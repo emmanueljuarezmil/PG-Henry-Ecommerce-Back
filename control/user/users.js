@@ -100,9 +100,11 @@ async function loginUser(req, res, next) {
               userName: username,
               hashedPassword: hashedpassword
             })
-            await axios.post(`http://localhost:3000/user/sendmail?type=welcome`,{
-            name: username,
-            email
+            await axios(`http://localhost:3000/user/sendmail?type=welcome`,{
+                headers: {
+                    name: username,
+                    email
+                }
             })
             return res.send(newUser)
           }
