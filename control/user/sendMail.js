@@ -59,7 +59,6 @@ const sendMail = async (req, res, next) => {
                         
                     }
                 });
-                console.log('ORDER ID!!!!!!', req.query.orderId)
                 const order_approved = await Order.findOne({
                     where: {
                         UserId: req.query.idUser,
@@ -129,7 +128,7 @@ const sendMail = async (req, res, next) => {
                     }
                 })
             default:
-                return console.log('JEJEJEJEJE')
+                return
         }
     } catch (error) { 
         next(error) 
