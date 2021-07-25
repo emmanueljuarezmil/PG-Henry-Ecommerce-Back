@@ -40,7 +40,6 @@ const userOrders = async (req, res, next) => {
 
 const getOrderById = async (req, res, next) => {
     const { id = false } = req.params
-    console.log('id de getorderby id ', id)
     if(!id || id === 'undefined' ) return next('Se requiere el id de una orden')
     try {
         const orderToSend = await Order.findOne({

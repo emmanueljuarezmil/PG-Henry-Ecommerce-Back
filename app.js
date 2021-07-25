@@ -24,12 +24,12 @@ app.use(cookieParser());
 app.use(cors())
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', (req,res,next) => {
-  console.log('req.params: ', req.params)
-  console.log('req.body: ', req.body)
-  console.log('req.headers: ', req.headers)
-  next()
-})
+// app.use('/', (req,res,next) => {
+//   console.log('req.params: ', req.params)
+//   console.log('req.body: ', req.body)
+//   console.log('req.headers: ', req.headers)
+//   next()
+// })
 
 app.use('/', indexRouter);
 
