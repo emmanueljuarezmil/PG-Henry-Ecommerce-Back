@@ -11,16 +11,8 @@ const getAllOrders = async (req, res, next) => {
                 {
                     where: {
                         status
-                    },
-                    attributes: {
-                        exclude
                     }
-                } :
-                {
-                    attributes: {
-                        exclude
-                    }
-                }
+                } : { }
         )
         return res.send(orderByStatus)
     } catch (error) {
@@ -47,14 +39,13 @@ const userOrders = async (req, res, next) => {
 };
 
 const getOrderById = async (req, res, next) => {
-    const { id } = req.params
+    const { id = false } = req.params
+    console.log('id de getorderby id ', id)
+    if(!id || id === 'undefined' ) return next('Se requiere el id de una orden')
     try {
-        const order = await Order.findAll({
+        const orderToSend = await Order.findOne({
             where: {
                 id
-            },
-            attributes: {
-                exclude
             },
             include: {
                 model: Product,
@@ -62,12 +53,36 @@ const getOrderById = async (req, res, next) => {
                     exclude
                 },
                 through: {
-                    model: Order_Line,
                     attributes: []
                 }
+            },
+            attributes: {
+                exclude
             }
         })
-        return res.send(order)
+        if(!orderToSend) {
+            const order = await Order.create()
+            // await order.addUser(id)
+            return res.send({
+                products: [],
+                orderId: order.id
+            })
+        }
+        const prodtosend = orderToSend.Products
+        const promises = prodtosend.map(async (element, index) => {
+            const {quantity} = await Order_Line.findOne({
+                where: {
+                    productID: element.id
+                }
+            })
+            await prodtosend[index].setDataValue('quantity', quantity)
+            return element
+        })
+        const prodToSendWithQuantity = await Promise.all(promises).then(result => result).catch(err => console.error(err))
+        return res.send({
+            products: prodToSendWithQuantity,
+            orderId: id
+        })
     } catch (err) {
         next(err)
     }
@@ -125,7 +140,21 @@ const updateOrder = async (req, res, next) => {
                 exclude
             }
         })
-        return res.send(orderToSend)
+        const prodtosend = orderToSend.Products
+        const promises = prodtosend.map(async (element, index) => {
+            const {quantity} = await Order_Line.findOne({
+                where: {
+                    productID: element.id
+                }
+            })
+            await prodtosend[index].setDataValue('quantity', quantity)
+            return element
+        })
+        const prodToSendWithQuantity = await Promise.all(promises).then(result => result).catch(err => console.error(err))
+        return res.send({
+            products: prodToSendWithQuantity,
+            orderId: order.id
+        })
     } catch (err) {
         next(err)
     }

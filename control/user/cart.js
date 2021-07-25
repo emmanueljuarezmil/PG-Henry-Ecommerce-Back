@@ -31,10 +31,36 @@ const addCartItem = async (req, res, next) => {
             order = await Order.create()
             await user.addOrder(order);
         };
-        const createdProduct = await product.addOrder(order, { through: { orderId: order.id, quantity, price } })
+        let orderItem = await Order_Line.findOne({
+            where: {
+                orderID: order.id,
+                productID: id,
+            }
+        })
+        if(!orderItem) {
+            orderItem = await Order_Line.create({
+                orderID: order.id,
+                productID: id,
+                quantity,
+                price: product.price
+            })
+        }
+        else {
+            orderItem.quantity+=quantity
+            await orderItem.save()
+        }
+        const createdProduct = await Product.findOne({
+            where: {
+                id
+            },
+            attributes: {
+                exclude
+            }
+        })
+        await createdProduct.setDataValue('quantity', orderItem.quantity)
         return res.send(createdProduct);
     } catch (err) {
-        console.log(err)
+        console.error(err)
         next(err)
     }
 };
