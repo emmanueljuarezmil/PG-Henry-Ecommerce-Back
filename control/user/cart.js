@@ -31,10 +31,36 @@ const addCartItem = async (req, res, next) => {
             order = await Order.create()
             await user.addOrder(order);
         };
-        const createdProduct = await product.addOrder(order, { through: { orderId: order.id, quantity, price } })
+        let orderItem = await Order_Line.findOne({
+            where: {
+                orderID: order.id,
+                productID: id,
+            }
+        })
+        if(!orderItem) {
+            orderItem = await Order_Line.create({
+                orderID: order.id,
+                productID: id,
+                quantity,
+                price: product.price
+            })
+        }
+        else {
+            orderItem.quantity+=quantity
+            await orderItem.save()
+        }
+        const createdProduct = await Product.findOne({
+            where: {
+                id
+            },
+            attributes: {
+                exclude
+            }
+        })
+        await createdProduct.setDataValue('quantity', orderItem.quantity)
         return res.send(createdProduct);
     } catch (err) {
-        console.log(err)
+        console.error(err)
         next(err)
     }
 };
@@ -129,7 +155,6 @@ const deleteCartItem = async (req, res, next) => {
     if (!req.params.idUser) return res.json({message: " El ID de la orden y del producto son requeridos "})
     try {
         const orderId = await Order.findOne({ where: { UserId: idUser, status: 'cart' } });
-        console.log("ORDER: ", orderId);
         if (!orderId) {
             return res.status(400).send("Orden no encontrado")
         };
@@ -155,9 +180,6 @@ async function fullDbOrders() {
                 let product1 = products[Math.round(Math.random()*products.length)]
                 let product2 = products[Math.round(Math.random()*products.length)]
                 let product3 = products[Math.round(Math.random()*products.length)]
-                // let product1 = products[Math.round(Math.random()*products.length)]
-                // let product2 = products[Math.round(Math.random()*products.length)]
-                // let product3 = products[Math.round(Math.random()*products.length)]
                 const order = await Order.create()
                 await user.addOrder(order);
                 await Order_Line.create({
@@ -178,8 +200,6 @@ async function fullDbOrders() {
                     quantity: 1,
                     price: product3.price
                 })
-                // await product2.addOrder(order, { through: { orderId: order.id, quantity: 1} })
-                // await product3.addOrder(order, { through: { orderId: order.id, quantity: 1} })
             } catch (error) {
                 console.error(error);
             }
