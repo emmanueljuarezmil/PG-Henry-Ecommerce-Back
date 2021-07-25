@@ -94,7 +94,8 @@ const updateOrder = async (req, res, next) => {
     try {
         const [order, created] = await Order.findOrCreate({
             where: {
-                UserId
+                UserId,
+                status: 'cart'
             }
         })
         if(products && products.length) {         
