@@ -120,9 +120,44 @@ const updateOrder = async (req, res, next) => {
     }
 };
 
+
+const updateOrderStatus = async (req, res, next) => {
+    const {UserId} = req.params;
+    const {status} = req.body;
+    if (!UserId) return res.status(400).send('El id del usuario es requerido')
+    if (!status) return res.status(400).send('El status a actualizar es requerido');
+    if(!['approved', 'cancelled','pending'].includes(status)) return res.status(400).send('El status a actualizar es invalido');
+
+    try {
+        const orderToUpdate = await Order.findOne({
+            where: {
+                UserId
+            }
+        })
+        if (!orderToUpdate) return res.status(400).send('El id de la orden enviada es inválido');
+        if(orderToUpdate.status === 'cart') {
+            orderToUpdate.status = status
+            await orderToUpdate.save()
+        }
+        if(status === 'approved') {
+            orderToUpdate.shippingStatus === 'approved'
+            await orderToUpdate.save()
+        }
+    } catch (err) {
+        next(error)
+        /* return res.status(400).send(err) */
+    }
+
+
+
+
+
+}
+
 module.exports = {
     getAllOrders,
     userOrders,
     getOrderById,
-    updateOrder
+    updateOrder,
+    updateOrderStatus
 }
