@@ -476,7 +476,7 @@ const sendMail = async (req, res, next) => {
                         id: req.query.orderId
                     }
                 })
-
+                order_approved.shippingStatus = 'processing'
                 order_approved.status = type
                 await order_approved.save()
                 const productsStock = await Order_Line.findAll({
