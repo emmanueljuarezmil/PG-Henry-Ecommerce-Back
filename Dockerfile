@@ -1,4 +1,4 @@
-FROM node:12.21.0
+FROM node:14.16.0
 ENV NODE_ENV=production
 WORKDIR ./BACKD
 COPY ["package.json", "package-lock.json", "./"]
