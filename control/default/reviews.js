@@ -1,7 +1,6 @@
 const { Product, Review, User } = require('../../db.js');
 const { v4: uuidv4 } = require('uuid');
 const { Op } = require("sequelize");
-const reviewsDBJson = require('../../bin/data/reviews.json')
 
 const newReview = async(req, res, next) => {
     const { comment, rating, idProd } = req.body
