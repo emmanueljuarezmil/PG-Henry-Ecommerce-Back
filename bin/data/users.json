@@ -6,28 +6,40 @@
         "email": "JonDoe@gmail.com"
     },
     {
-        "userName": "Cosmefulanito",
+        "userName": "CosmeFulanito",
         "name": "Cosme Fulanito",
         "hashedPassword": "Wsdfldksdf",
         "email": "Cosmefulanito@gmail.com"
     },
     {
-        "userName": "Elbarto",
-        "name": "Elbarto",
+        "userName": "AlbertoPerez",
+        "name": "Alberto Perez",
         "hashedPassword": "jskxx45Swsxff",
-        "email": "elbarto@gmail.com",
+        "email": "albertoperezzzzz@gmail.com",
         "admin": true
     },
     {
-        "userName": "Elviajerodeltiempo",
-        "name": "El viajero del tiempo",
+        "userName": "JuanaDeArco3",
+        "name": "Juana de Arco",
         "hashedPassword": "jskxx45Swsxff",
-        "email": "viajerodeltiempo@gmail.com"
+        "email": "juanadearcooo@gmail.com"
     },
     {
-        "userName": "kenny",
-        "name": "kenny",
-        "hashedPassword": "jskxx45Swsxff",
-        "email": "ricardofort@gmail.com"
+        "userName": "RicardoFort4",
+        "name": "Ricardo Fort",
+        "hashedPassword": "jskdf3xx45Swsxff",
+        "email": "ricardoforrrrrt@gmail.com"
+    },
+    {
+        "userName": "AntonioRios432",
+        "name": "Ricardo Fort",
+        "hashedPassword": "jskxasdx45Swsxff",
+        "email": "antoniorios432@gmail.com"
+    },
+    {
+        "userName": "JamesHetfield",
+        "name": "James Hetfield",
+        "hashedPassword": "js234zxkxx45Swsxff",
+        "email": "jameshetfield2232@gmail.com"
     }
 ]

@@ -182,15 +182,18 @@ async function fullDbOrders() {
     try {
         const products = await Product.findAll()
         for (let i of usersDBJson) {
+            let productIndex1=0
+            let productIndex2=5
+            let productIndex3=10
             try {
                 const user = await User.findOne({
                     where: {
                         name: i.name
                     }
                 })
-                let product1 = products[Math.round(Math.random()*products.length)]
-                let product2 = products[Math.round(Math.random()*products.length)]
-                let product3 = products[Math.round(Math.random()*products.length)]
+                let product1 = products[productIndex1++]
+                let product2 = products[productIndex2++]
+                let product3 = products[productIndex3++]
                 const order = await Order.create()
                 await user.addOrder(order);
                 await Order_Line.create({
