@@ -6,26 +6,26 @@ const usersDBJson = require('../../bin/data/users.json')
 
 const exclude = ['createdAt', 'updatedAt']
 
-async function newUser(req, res, next) {
-    if (!req.headers.userName || !req.headers.email || !req.headers.hashedPassword) {
-        return res.status(400).json({ message: 'Bad request' })
-    }
-    const { email, userName, hashedPassword } = req.headers
-    try {
-        // const existAuth0 = await User.findOne({ where: { email, userName, hashedPassword } })
-        // if(existAuth0) return res.send(existAuth0)
-        const exist = await User.findOne({ where: { email: email } })
-        if (exist !== null) { return res.status(500).send({ message: 'El email ya existe.' }) }
-        const exist2 = await User.findOne({ where: { userName: userName } })
-        if (exist2 !== null) { return res.status(500).json({ message: 'El nombre de usuario ya existe.' }) }
-        const id = uuidv4()
-        const user = { id, userName, hashedPassword, email }
-        await User.create(user)
-        return res.send(user)
-    } catch (error) {
-        return res.status(500).json({ message: 'Error with DB' })
-    }
-}
+// async function newUser(req, res, next) {
+//     if (!req.headers.userName || !req.headers.email || !req.headers.hashedPassword) {
+//         return res.status(400).json({ message: 'Bad request' })
+//     }
+//     const { email, userName, hashedPassword } = req.headers
+//     try {
+//         // const existAuth0 = await User.findOne({ where: { email, userName, hashedPassword } })
+//         // if(existAuth0) return res.send(existAuth0)
+//         const exist = await User.findOne({ where: { email: email } })
+//         if (exist !== null) { return res.status(500).send({ message: 'El email ya existe.' }) }
+//         const exist2 = await User.findOne({ where: { userName: userName } })
+//         if (exist2 !== null) { return res.status(500).json({ message: 'El nombre de usuario ya existe.' }) }
+//         const id = uuidv4()
+//         const user = { id, userName, hashedPassword, email }
+//         await User.create(user)
+//         return res.send(user)
+//     } catch (error) {
+//         return next(eror)
+//     }
+// };
 
 async function updateUser(req, res, next) {
     const { idUser } = req.headers
@@ -35,9 +35,9 @@ async function updateUser(req, res, next) {
         user.save()
         return res.status(200).json(user)
     } catch (error) {
-        return res.status(500).json({ message: 'Error with DB' })
+        return next(error)
     }
-}
+};
 
 async function getAllUsers(req, res, next) {
     try {
@@ -48,9 +48,9 @@ async function getAllUsers(req, res, next) {
         });
         return res.send(user)
     } catch (error) {
-        next({ message: 'Bad Request' })
+        return next(error)
     }
-}
+};
 
 async function deleteUser(req, res, next) {
     if (!req.headers.idUser) {
@@ -67,13 +67,14 @@ async function deleteUser(req, res, next) {
     } catch (error) {
         next(error);
     }
-}
+};
 
 async function newAdmin(req, res, next) {
     const { id } = req.body
     if (!id) return next({ message: 'El id del nuevo admin es necesario' })
     try {
         const user = await User.findByPk(id)
+        console.log('admin!!!!', user)
         if (!user) return next({message: 'El usuario no fue encontrado'})
         user.admin = true;
         user.save();
@@ -81,7 +82,7 @@ async function newAdmin(req, res, next) {
     } catch (error) {
         next(error)
     }
-}
+};
 
 async function loginUser(req, res, next) {
     const {email, username, hashedpassword} = req.headers
@@ -109,11 +110,11 @@ async function loginUser(req, res, next) {
             return res.send(newUser)
           }
           else return res.send(isUser)
-        } catch(err) {
-          next(err)
+        } catch(error) {
+          next(error)
         }
       }
-}
+};
 
 async function fullDbUsers() {
     for (let i of usersDBJson) {
@@ -126,7 +127,7 @@ async function fullDbUsers() {
             next(error);
         }
     }
-}
+};
 
 module.exports = {
     updateUser,
@@ -135,4 +136,4 @@ module.exports = {
     newAdmin,
     loginUser,
     fullDbUsers
-}
+};
