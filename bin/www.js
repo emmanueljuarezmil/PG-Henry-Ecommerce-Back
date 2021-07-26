@@ -6,6 +6,7 @@ const { fullDbproducts } = require('../control/default/products')
 const { fulldbCat } = require('../control/default/category')
 const { fullDbUsers} = require('../control/user/users')
 const { fullDbOrders } = require('../control/user/cart')
+const { addReviewsAutomatic } = require('../control/default/reviews')
 
 
 let port = normalizePort(process.env.PORT || '3000');
@@ -23,7 +24,8 @@ server.listen(port)
 .then(async () => force ? await fullDbproducts() : null)
 .then(async () => force ? await fullDbUsers() : null)
 .then(async () => force ? await fullDbOrders() : null)
-.then(() => force ? console.log('Productos, categorias, usuarios, y ordenes precargados en la base de datos') : null)
+.then(async () => force ? await addReviewsAutomatic() : null)
+.then(() => force ? console.log('Productos, categorias, usuarios, ordenes, reviews precargados en la base de datos') : null)
 .then(() => console.log(`funciona en el ${port}`))
 .catch(err => console.log(err))
 

@@ -60,8 +60,40 @@ const deleteReview = async (req, res, next) => {
     }
 }
 
+const addReviewsAutomatic = async () => {
+    const randomComments = ['Muy bueno', "Excelente calidad", "Excelente Susana, me encanto el instrumento", "Excelente atención y excelente el producto"]
+    try {
+        const users = await User.findAll()
+        const products = await Product.findAll()
+        const promises = users.map(async user => {
+            try {
+                const id1 = uuidv4()
+                const prod1 = await Product.findByPk(products[Math.floor(Math.random()*products.length)].id)
+                const review1 = {
+                    id: id1,
+                    comment: randomComments[Math.round(Math.random()*randomComments.length)],
+                    rating: Math.floor(Math.random()*3+3),
+                    UserId: user.id,
+                    ProductId: prod1.id
+                }
+                await Review.create(review1) 
+                await prod1.addReview(review1.id)
+                await user.addReview(review1.id)
+            } catch(err) {
+                console.error(err)
+            }      
+        })
+        await Promise.all(promises)
+        .then(result => result)
+        .catch(err => console.error(err))
+    } catch(err) {
+        console.error(err)
+    }
+}
+
 module.exports = {
     newReview, 
     updateReview, 
-    deleteReview
+    deleteReview,
+    addReviewsAutomatic
 }

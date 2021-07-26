@@ -73,7 +73,6 @@ const sendMail = async (req, res, next) => {
                         orderID: order_approved.id
                     }
                 })
-                console.log("productsstock: ", productsStock)
                 const promises = productsStock.map(async productOrder => {
                     const product = await Product.findByPk(productOrder.productID)
                     product.stock = product.stock - productOrder.quantity
