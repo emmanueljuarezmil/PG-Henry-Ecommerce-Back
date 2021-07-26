@@ -1,6 +1,8 @@
 const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
-const { User, Order } = require('../../db.js');
+
+const { User, Order, Order_Line, Product } = require('../../db.js');
+
 const CLIENT_ID = '441550001644-9qv5e6d6nttu9t128tf3vq9ujucncprg.apps.googleusercontent.com';
 const CLIENT_SECRET = '4_j2C8A-6mjglGzIoHNdNfic';
 const REDIRECT_URI = 'https://developers.google.com/oauthplayground ';
@@ -477,7 +479,18 @@ const sendMail = async (req, res, next) => {
 
                 order_approved.status = type
                 await order_approved.save()
-                const name_approved = user_approved.dataValues.userName.split(' ') //${name_approved[0]}
+                const productsStock = await Order_Line.findAll({
+                    where: {
+                        orderID: order_approved.id
+                    }
+                })
+                const promises = productsStock.map(async productOrder => {
+                    const product = await Product.findByPk(productOrder.productID)
+                    product.stock = product.stock - productOrder.quantity
+                    await product.save()
+                })
+                await Promise.all(promises).then(result => result).catch(err => console.error(err))
+                const name_approved = user_approved.dataValues.userName.split(' ')
                 const templateHTML_approved = `
                 <table style="border-collapse: collapse;table-layout: fixed;border-spacing: 0;mso-table-lspace: 0pt;mso-table-rspace: 0pt;vertical-align: top;min-width: 320px;Margin: 0 auto;background-color: #f9f9f9;width:100%" cellpadding="0" cellspacing="0">
                 <tbody>
