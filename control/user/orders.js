@@ -8,11 +8,25 @@ const getAllOrders = async (req, res, next) => {
     try {
         const orderByStatus = await Order.findAll(
             status ?
-                {
-                    where: {
-                        status
+            {
+                where: {
+                    status
+                },
+                include: {
+                    model: User,
+                    attributes: {
+                        exclude: [...exclude, 'hashedPassword']
                     }
-                } : { }
+                },
+            } : 
+            {
+                include: {
+                    model: User,
+                    attributes: {
+                        exclude: [...exclude, 'hashedPassword']
+                    }
+                },
+            }
         )
         return res.send(orderByStatus)
     } catch (error) {
@@ -59,14 +73,8 @@ const getOrderById = async (req, res, next) => {
                 exclude
             }
         })
-        if(!orderToSend) {
-            const order = await Order.create()
-            // await order.addUser(id)
-            return res.send({
-                products: [],
-                orderId: order.id
-            })
-        }
+        if(!orderToSend) return res.send('No existe una orden con el Id indicado')
+        
         const prodtosend = orderToSend.Products
         const promises = prodtosend.map(async (element, index) => {
             const {quantity} = await Order_Line.findOne({
@@ -78,9 +86,16 @@ const getOrderById = async (req, res, next) => {
             return element
         })
         const prodToSendWithQuantity = await Promise.all(promises).then(result => result).catch(err => console.error(err))
+        const user = await User.findOne({
+            where: {
+                id: orderToSend.UserId
+            },
+            attributes: ['name', 'userName', 'email', 'admin']
+        })
         return res.send({
             products: prodToSendWithQuantity,
-            orderId: id
+            orderId: id,
+            User: user
         })
     } catch (err) {
         next(err)

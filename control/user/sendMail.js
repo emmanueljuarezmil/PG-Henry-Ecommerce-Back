@@ -3,10 +3,9 @@ const { google } = require('googleapis');
 
 const { User, Order, Order_Line, Product } = require('../../db.js');
 
-const CLIENT_ID = '441550001644-9qv5e6d6nttu9t128tf3vq9ujucncprg.apps.googleusercontent.com';
-const CLIENT_SECRET = '4_j2C8A-6mjglGzIoHNdNfic';
+const {CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN} = process.env
+
 const REDIRECT_URI = 'https://developers.google.com/oauthplayground ';
-const REFRESH_TOKEN = '1//04dRb0VQkWJgJCgYIARAAGAQSNwF-L9IrxNMdf0oHAvhlERkk-eHevsiFqhxFCxnsm4Sff5UatSLEchDT_IkwsbYgRIpnEalxlEg';
 
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
