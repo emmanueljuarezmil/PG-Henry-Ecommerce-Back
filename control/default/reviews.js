@@ -63,12 +63,14 @@ const deleteReview = async (req, res, next) => {
 const addReviewsAutomatic = async () => {
     const randomComments = ['Muy bueno',
         "Excelente calidad",
-        "Excelente Susana, me encanto el instrumento",
+        "Excelente, me encanto el instrumento",
         "Excelente atención y excelente el producto",
         "Suena excelente, recomendadisimo",
         "Muy buena relación precio calidad",
         "Suena muy lindo",
-        "Me compraria 5 más"
+        "Me compraria 5 más",
+        "Me encanta",
+        "Muy bueno"
     ]
     try {
         const users = await User.findAll()
