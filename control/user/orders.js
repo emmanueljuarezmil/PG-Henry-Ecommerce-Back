@@ -1,5 +1,6 @@
 const { User, Product, Order, Order_Line } = require('../../db.js');
 const { Op } = require('sequelize')
+const axios = require('axios')
 
 const exclude = ['createdAt', 'updatedAt']
 
@@ -205,9 +206,6 @@ const updateOrderStatus = async (req, res, next) => {
     }
 };
 
-
-}
-
 const updateShipStatus = async (req, res, next) => {
     const {name, email} = req.headers
     const {id} = req.body;
@@ -233,9 +231,9 @@ const updateShipStatus = async (req, res, next) => {
             },
             order: ['id']
         })
-        const products = await Order_Lines.findAll({
+        const products = await Order.findOne({
             where: {
-                orderID: id
+                id
             },
             include: {
                 model: Product,
@@ -247,18 +245,31 @@ const updateShipStatus = async (req, res, next) => {
                 }
             },
         })
+        let templateproductsshippingapproved = ''
+        products.Products.forEach(el => templateproductsshippingapproved+=`<li>${el.name}</li>`)
         if(status === 'approved') {
-            await axios(`http://localhost:3000/user/sendmail?type=approved`,{
-                headers: {
-                    name,
-                    email,
-                    products: products.Products
+            const user = await User.findOne({
+                where: {
+                    id: orderToUpdate.UserId
                 }
             })
+            try {
+                await axios(`http://localhost:3000/user/sendmail?type=shippingApproved`,{
+                    headers: {
+                        nameshippingapproved: name,
+                        emailshippingapproved: email,
+                        templateproductsshippingapproved,
+                        // shippingAddress: user.shippingAddress
+                        shippingaddress: 'Y eiaaaaa'
+                    }
+                })
+            } catch(error) {
+                console.error(error)
+            }
         }
         return res.send(orders)        
     } catch (err) {
-        next(error)
+        next(err)
         /* return res.status(400).send(err) */
     }
 }
