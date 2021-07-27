@@ -200,11 +200,8 @@ const updateOrderStatus = async (req, res, next) => {
         }
     } catch (err) {
         next(error)
-        /* return res.status(400).send(err) */
     }
-
-
-
+};
 
 
 }
