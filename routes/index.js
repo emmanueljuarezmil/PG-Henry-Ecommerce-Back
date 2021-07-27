@@ -11,7 +11,9 @@ const sendMail = require('./user/sendMail')
 
 const router = Router();
 
-
+router.get('/', (req,res,next) => {
+    return res.send('Response with a resource')
+})
 router.use('/', cart); // check fer
 router.use('/', products); // check emma
 router.use('/', categories); // check emma
