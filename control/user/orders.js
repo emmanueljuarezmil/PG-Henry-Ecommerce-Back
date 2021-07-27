@@ -212,12 +212,12 @@ const updateOrderStatus = async (req, res, next) => {
 }
 
 const updateShipStatus = async (req, res, next) => {
+    const {name, email} = req.headers
     const {id} = req.body;
     const {status} = req.body;    
     if (!id) return res.status(400).send('El id de la orden es requerida')
     if (!status) return res.status(400).send('El status a actualizar es requerido');
     if(!['uninitiated', 'processing','approved', 'cancelled'].includes(status)) return res.status(400).send('El status a actualizar es invalido');
-
     try {
         const orderToUpdate = await Order.findOne({
             where: {
@@ -236,6 +236,29 @@ const updateShipStatus = async (req, res, next) => {
             },
             order: ['id']
         })
+        const products = await Order_Lines.findAll({
+            where: {
+                orderID: id
+            },
+            include: {
+                model: Product,
+                attributes: {
+                    exclude
+                },
+                through: {
+                    attributes: []
+                }
+            },
+        })
+        if(status === 'approved') {
+            await axios(`http://localhost:3000/user/sendmail?type=approved`,{
+                headers: {
+                    name,
+                    email,
+                    products: products.Products
+                }
+            })
+        }
         return res.send(orders)        
     } catch (err) {
         next(error)

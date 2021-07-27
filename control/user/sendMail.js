@@ -24,6 +24,7 @@ const imagen9 = 'https://i.ibb.co/ZXVkYmH/rechazado.png';
 
 const sendMail = async (req, res, next) => {
     const { type } = req.query;
+    const {address} = await axios.get
     try {
         const accessToken = await oAuth2Client.getAccessToken();
 
@@ -450,9 +451,9 @@ const sendMail = async (req, res, next) => {
                 </table>
                     `
                 const mailOptions_welcome = {
-                    from: 'Musical Ecommerce <ecommercemusical@gmail.com>',
+                    from: 'El Gramófono instrumentos <contacto@elgramofono.com>',
                     to: email,//req.body.email,
-                    subject: "Gracias por registrarte a Musical Ecommerce",
+                    subject: "Gracias por registrarte a El Gramófono",
                     html: templateHTML_welcome,
                 }
                 return await transporter.sendMail(mailOptions_welcome, (err) => {
@@ -466,7 +467,6 @@ const sendMail = async (req, res, next) => {
                 const user_approved = await User.findOne({
                     where: {
                         id: req.query.idUser,
-                        
                     }
                 });
                 const order_approved = await Order.findOne({
@@ -904,7 +904,7 @@ const sendMail = async (req, res, next) => {
                         Ante cualquier duda, no dude en escribirnos.</p>
                     </div>*/
                 const mailOptions_approved = {
-                    from: 'Musical Ecommerce <ecommercemusical@gmail.com>',
+                    from: 'El Gramófono instrumentos <contacto@elgramofono.com>',
                     to: user_approved.dataValues.email,
                     subject: "Gracias por tu compra!",
                     html: templateHTML_approved,
@@ -1347,9 +1347,9 @@ const sendMail = async (req, res, next) => {
                         Este es un mail automático, no es necesario responderlo.</h3>
                     </div>*/
                 const mailOptions_rejected = {
-                    from: 'Musical Ecommerce <ecommercemusical@gmail.com>',
+                    from: 'El Gramófono instrumentos <contacto@elgramofono.com>',
                     to: user_rejected.dataValues.email,
-                    subject: "Hubo un problema con tu pago",
+                    subject: "No se pudo confirmar tu compra",
                     html: templateHTML_rejected,
                 }
                 return await transporter.sendMail(mailOptions_rejected, (err) => {
