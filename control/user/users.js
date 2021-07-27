@@ -36,6 +36,31 @@ async function updateUser(req, res, next) {
         return res.status(200).json(user)
     } catch (error) {
         return res.status(500).json({ message: 'Error with DB' })
+    };
+};
+
+async function updateShippingAddress(req, res, next) {
+    const { idUser } = req.params
+    try {
+        const user = await User.findByPk(idUser)
+        user.shippingAddress = req.body.shippingAddress
+        user.save()
+        return res.status(200).json(user)
+    } catch (error) {
+        return next(error);
+    };
+}
+
+async function getShippingAddress(req, res, next) {
+    const { idUser } = req.params
+    try {
+        const address = await User.findOne({
+            where: {id: idUser},
+            attributes: {exclude: ['createdAt', 'updatedAt', 'name', 'userName', 'email', 'admin', 'hashedPassword']}
+        })
+        return res.status(200).json(address)
+    } catch (error) {
+        return next(error);
     }
 }
 
@@ -134,5 +159,7 @@ module.exports = {
     deleteUser,
     newAdmin,
     loginUser,
-    fullDbUsers
+    fullDbUsers,
+    updateShippingAddress,
+    getShippingAddress
 }
