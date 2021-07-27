@@ -209,10 +209,34 @@ const updateOrderStatus = async (req, res, next) => {
 
 }
 
+const updateShipStatus = async (req, res, next) => {
+    const {id} = req.body;
+    const {status} = req.body;    
+    if (!id) return res.status(400).send('El id de la orden es requerida')
+    if (!status) return res.status(400).send('El status a actualizar es requerido');
+    if(!['uninitiated', 'processing','approved', 'cancelled'].includes(status)) return res.status(400).send('El status a actualizar es invalido');
+
+    try {
+        const orderToUpdate = await Order.findOne({
+            where: {
+                id
+            }
+        })
+        if (!orderToUpdate) return res.status(400).send('El id de la orden enviada es inválido');        
+        orderToUpdate.shippingStatus = status
+        await orderToUpdate.save()  
+        
+    } catch (err) {
+        next(error)
+        /* return res.status(400).send(err) */
+    }
+}
+
 module.exports = {
     getAllOrders,
     userOrders,
     getOrderById,
     updateOrder,
-    updateOrderStatus
+    updateOrderStatus,
+    updateShipStatus
 }
