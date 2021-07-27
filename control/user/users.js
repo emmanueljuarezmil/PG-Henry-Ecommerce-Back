@@ -1,6 +1,7 @@
 const { User } = require('../../db.js');
 const { v4: uuidv4 } = require('uuid');
 const axios = require('axios')
+const { Op } = require("sequelize");
 const usersDBJson = require('../../bin/data/users.json')
 
 
@@ -64,12 +65,33 @@ async function getShippingAddress(req, res, next) {
     }
 }
 
+
+
+// const validate = ['null', undefined, 'undefined', '']
+//     if (validate.includes(name)) name = ''
+//     if (validate.includes(page)) page = 1
+//     if (validate.includes(orderBy)) orderBy = 'name'
+//     if (validate.includes(orderType)) orderType = 'asc'
+//     if (validate.includes(category)) category = ''
+
 async function getAllUsers(req, res, next) {
+    let {name, admin} = req.query
+    console.log(req.query)
+    if(name === 'undefined') name = ''
+    if(admin === 'undefined') admin = undefined
     try {
         const user = await User.findAll({
+            where: admin !== undefined ?
+            {
+                name: { [Op.iLike]: `%${name}%` },
+                admin
+            } : {
+                name: { [Op.iLike]: `%${name}%` }
+            },
             attributes: {
-                exclude
-            }
+                exclude: [...exclude,'hashedPassword','shippingAddress']
+            },
+            order: ['name']
         });
         return res.send(user)
     } catch (error) {
@@ -78,35 +100,40 @@ async function getAllUsers(req, res, next) {
 }
 
 async function deleteUser(req, res, next) {
-    if (!req.headers.idUser) {
+    if (!req.params.idUser) {
         return res.status(400).json({ message: 'ID of the user is needed', status: 400 })
     }
-    const { idUser } = req.headers;
+    const { idUser } = req.params;
     try {
         await User.destroy({
             where: {
                 id: idUser
             }
         })
-        return res.status(200).send('the user was succesfully deleted')
+        const users = await User.findAll()
+        return res.send(users)
     } catch (error) {
         next(error);
     }
 }
 
 async function newAdmin(req, res, next) {
-    const { id } = req.body
+    let { id, value } = req.body
+    value = JSON.parse(value)
     if (!id) return next({ message: 'El id del nuevo admin es necesario' })
     try {
         const user = await User.findByPk(id)
-        if (!user) return next({message: 'El usuario no fue encontrado'})
-        user.admin = true;
+        if (!user) return res.send({message: 'El usuario no fue encontrado'})
+        if(user.admin === value) return res.send({message: 'El usuario ya tiene esta credencial'})
+        user.admin = value;
         user.save();
-        return res.send('Usuario elevado a admin')
+        return value === true ? res.send('Usuario elevado a admin') : res.send('Usuario dejo de ser admin')
     } catch (error) {
         next(error)
     }
 }
+
+
 
 async function loginUser(req, res, next) {
     const {email, username, hashedpassword, name} = req.headers
@@ -162,5 +189,5 @@ module.exports = {
     loginUser,
     fullDbUsers,
     updateShippingAddress,
-    getShippingAddress
+    getShippingAddress,
 }
