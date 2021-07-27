@@ -18,6 +18,7 @@ const getAllOrders = async (req, res, next) => {
                         exclude: [...exclude, 'hashedPassword']
                     }
                 },
+                order: ['id']
             } : 
             {
                 include: {
@@ -26,6 +27,7 @@ const getAllOrders = async (req, res, next) => {
                         exclude: [...exclude, 'hashedPassword']
                     }
                 },
+                order: ['id']
             }
         )
         return res.send(orderByStatus)
@@ -224,8 +226,17 @@ const updateShipStatus = async (req, res, next) => {
         })
         if (!orderToUpdate) return res.status(400).send('El id de la orden enviada es inválido');        
         orderToUpdate.shippingStatus = status
-        await orderToUpdate.save()  
-        
+        await orderToUpdate.save()
+        const orders = await Order.findAll({
+            include: {
+                model: User,
+                attributes: {
+                    exclude: [...exclude, 'hashedPassword']
+                }
+            },
+            order: ['id']
+        })
+        return res.send(orders)        
     } catch (err) {
         next(error)
         /* return res.status(400).send(err) */
