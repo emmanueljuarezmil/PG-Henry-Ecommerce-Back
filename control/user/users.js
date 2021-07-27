@@ -109,7 +109,7 @@ async function newAdmin(req, res, next) {
 }
 
 async function loginUser(req, res, next) {
-    const {email, username, hashedpassword} = req.headers
+    const {email, username, hashedpassword, name} = req.headers
     if(username) {
         try {
           const isUser = await User.findOne({
@@ -123,7 +123,8 @@ async function loginUser(req, res, next) {
               id,
               email,
               userName: username,
-              hashedPassword: hashedpassword
+              hashedPassword: hashedpassword,
+              name
             })
             await axios(`http://localhost:3000/user/sendmail?type=welcome`,{
                 headers: {
