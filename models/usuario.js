@@ -34,6 +34,13 @@ module.exports = (sequelize) => {
     },
     shippingAddress: {
       type: DataTypes.ARRAY(DataTypes.TEXT)
+    },
+    authenticationCode: {
+      type: DataTypes.INTEGER
+    },
+    authenticatedByCode: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
     }
   });
 };

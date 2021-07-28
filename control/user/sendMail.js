@@ -4,7 +4,7 @@ const { v4: uuidv4 } = require('uuid');
 
 const { User, Order, Order_Line, Product } = require('../../db.js');
 
-const {CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN} = process.env
+const { CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN } = process.env
 
 const REDIRECT_URI = 'https://developers.google.com/oauthplayground ';
 
@@ -22,26 +22,31 @@ const imagen8 = 'https://i.ibb.co/yN4B20z/aceptado.png';
 const imagen9 = 'https://i.ibb.co/ZXVkYmH/rechazado.png';
 
 const sendMail = async (req, res, next) => {
-    const { type } = req.query;
-    try {
-        const accessToken = await oAuth2Client.getAccessToken();
+  const { type } = req.query;
+  try {
+    const accessToken = await oAuth2Client.getAccessToken();
 
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                type: 'OAuth2',
-                user: 'ecommercemusical@gmail.com',
-                clientId: CLIENT_ID,
-                clientSecret: CLIENT_SECRET,
-                refreshToken: REFRESH_TOKEN,
-                accessToken: accessToken
-            }
-        })
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        type: 'OAuth2',
+        user: 'ecommercemusical@gmail.com',
+        clientId: CLIENT_ID,
+        clientSecret: CLIENT_SECRET,
+        refreshToken: REFRESH_TOKEN,
+        accessToken: accessToken
+      }
+    })
 
-        switch (type) {
-            case 'welcome':
-                const { name, email } = req.headers;
-                const templateHTML_welcome = `
+    switch (type) {
+      case 'welcome':
+        const user_code = await User.findOne({
+          where: {
+            id: req.query.idUser,
+          }
+        });
+        const { name, email } = req.headers;
+        const templateHTML_welcome = `
                 <table style="border-collapse: collapse;table-layout: fixed;border-spacing: 0;mso-table-lspace: 0pt;mso-table-rspace: 0pt;vertical-align: top;min-width: 320px;Margin: 0 auto;background-color: #f9f9f9;width:100%" cellpadding="0" cellspacing="0">
                 <tbody>
                 <tr style="vertical-align: top">
@@ -230,6 +235,7 @@ const sendMail = async (req, res, next) => {
                       
                 <div style="color: #3d3030; line-height: 140%; text-align: center; word-wrap: break-word;">
                   <p style="font-size: 14px; line-height: 140%; text-align: center;"><span style="font-size: 40px; line-height: 56px; font-family: impact, chicago;"><span style="line-height: 56px; font-size: 40px;"><span style="line-height: 56px; font-size: 40px;">TE DAMOS LA BIENVENIDA ${name}!</span></span></span></p>
+                  <p style="font-size: 14px; line-height: 140%; text-align: center;"><span style="font-size: 40px; line-height: 56px; font-family: impact, chicago;"><span style="line-height: 56px; font-size: 40px;"><span style="line-height: 56px; font-size: 40px;">Por favor, verifica tu cuenta con este codigo para continuar: ${user_code.authenticationCode}</span></span></span></p>
                 </div>
               
                     </td>
@@ -448,47 +454,47 @@ const sendMail = async (req, res, next) => {
                 </tbody>
                 </table>
                     `
-                const mailOptions_welcome = {
-                    from: 'El Gramófono instrumentos <contacto@elgramofono.com>',
-                    to: email,//req.body.email,
-                    subject: "Gracias por registrarte a El Gramófono",
-                    html: templateHTML_welcome,
-                }
-                return await transporter.sendMail(mailOptions_welcome, (err) => {
-                    if (err) next(err)
-                    else {
-                        console.log('Envío exitoso');
-                        return res.send(mailOptions_welcome);
-                    }
-                })
-            case 'approved':
-                const user_approved = await User.findOne({
-                    where: {
-                        id: req.query.idUser,
-                    }
-                });
-                const order_approved = await Order.findOne({
-                    where: {
-                        UserId: req.query.idUser,
-                        id: req.query.orderId
-                    }
-                })
-                order_approved.shippingStatus = 'processing'
-                order_approved.status = type
-                await order_approved.save()
-                const productsStock = await Order_Line.findAll({
-                    where: {
-                        orderID: order_approved.id
-                    }
-                })
-                const promises = productsStock.map(async productOrder => {
-                    const product = await Product.findByPk(productOrder.productID)
-                    product.stock = product.stock - productOrder.quantity
-                    await product.save()
-                })
-                await Promise.all(promises).then(result => result).catch(err => console.error(err))
-                const name_approved = user_approved.dataValues.userName.split(' ')
-                const templateHTML_approved = `
+        const mailOptions_welcome = {
+          from: 'El Gramófono instrumentos <contacto@elgramofono.com>',
+          to: email,//req.body.email,
+          subject: "Gracias por registrarte a El Gramófono",
+          html: templateHTML_welcome,
+        }
+        return await transporter.sendMail(mailOptions_welcome, (err) => {
+          if (err) next(err)
+          else {
+            console.log('Envío exitoso');
+            return res.send(mailOptions_welcome);
+          }
+        })
+      case 'approved':
+        const user_approved = await User.findOne({
+          where: {
+            id: req.query.idUser,
+          }
+        });
+        const order_approved = await Order.findOne({
+          where: {
+            UserId: req.query.idUser,
+            id: req.query.orderId
+          }
+        })
+        order_approved.shippingStatus = 'processing'
+        order_approved.status = type
+        await order_approved.save()
+        const productsStock = await Order_Line.findAll({
+          where: {
+            orderID: order_approved.id
+          }
+        })
+        const promises = productsStock.map(async productOrder => {
+          const product = await Product.findByPk(productOrder.productID)
+          product.stock = product.stock - productOrder.quantity
+          await product.save()
+        })
+        await Promise.all(promises).then(result => result).catch(err => console.error(err))
+        const name_approved = user_approved.dataValues.userName.split(' ')
+        const templateHTML_approved = `
                 <table style="border-collapse: collapse;table-layout: fixed;border-spacing: 0;mso-table-lspace: 0pt;mso-table-rspace: 0pt;vertical-align: top;min-width: 320px;Margin: 0 auto;background-color: #f9f9f9;width:100%" cellpadding="0" cellspacing="0">
                 <tbody>
                 <tr style="vertical-align: top">
@@ -895,42 +901,42 @@ const sendMail = async (req, res, next) => {
                 </tbody>
                 </table>
                 `
-                   /* <div style="justify-content: center">
-                        <h3>Hola ${name_approved[0]}, tu compra en Musical Instrument fue realizada con exito!</h3>
-                        <p> El envio ser realizará dentro de los primeros 10 días hábiles de 9:00 a 18:00 hs. <br>
-                        Al momento de despacharse tu producto recibirá un correo informandole el envío.<br>
-                        Ante cualquier duda, no dude en escribirnos.</p>
-                    </div>*/
-                const mailOptions_approved = {
-                    from: 'El Gramófono instrumentos <contacto@elgramofono.com>',
-                    to: user_approved.dataValues.email,
-                    subject: "Gracias por tu compra!",
-                    html: templateHTML_approved,
-                }
-                return await transporter.sendMail(mailOptions_approved, (err) => {
-                    if (err) next(err)
-                    else {
-                        return res.send(mailOptions_approved);
-                    }
-                })
-            case 'rejected':
-                const user_rejected = await User.findOne({
-                    where: {
-                        id: req.query.idUser
-                    }
-                });
+        /* <div style="justify-content: center">
+             <h3>Hola ${name_approved[0]}, tu compra en Musical Instrument fue realizada con exito!</h3>
+             <p> El envio ser realizará dentro de los primeros 10 días hábiles de 9:00 a 18:00 hs. <br>
+             Al momento de despacharse tu producto recibirá un correo informandole el envío.<br>
+             Ante cualquier duda, no dude en escribirnos.</p>
+         </div>*/
+        const mailOptions_approved = {
+          from: 'El Gramófono instrumentos <contacto@elgramofono.com>',
+          to: user_approved.dataValues.email,
+          subject: "Gracias por tu compra!",
+          html: templateHTML_approved,
+        }
+        return await transporter.sendMail(mailOptions_approved, (err) => {
+          if (err) next(err)
+          else {
+            return res.send(mailOptions_approved);
+          }
+        })
+      case 'rejected':
+        const user_rejected = await User.findOne({
+          where: {
+            id: req.query.idUser
+          }
+        });
 
-                const order_rejected = await Order.findOne({
-                    where: {
-                        UserId: req.query.idUser,
-                        id: req.query.orderId
-                    }
-                })
-                order_rejected.status = type
-                await order_rejected.save()
+        const order_rejected = await Order.findOne({
+          where: {
+            UserId: req.query.idUser,
+            id: req.query.orderId
+          }
+        })
+        order_rejected.status = type
+        await order_rejected.save()
 
-                const name_rejected = user_rejected.dataValues.userName.split(' ')
-                const templateHTML_rejected = `
+        const name_rejected = user_rejected.dataValues.userName.split(' ')
+        const templateHTML_rejected = `
                 <table style="border-collapse: collapse;table-layout: fixed;border-spacing: 0;mso-table-lspace: 0pt;mso-table-rspace: 0pt;vertical-align: top;min-width: 320px;Margin: 0 auto;background-color: #f9f9f9;width:100%" cellpadding="0" cellspacing="0">
                 <tbody>
                 <tr style="vertical-align: top">
@@ -1337,30 +1343,30 @@ const sendMail = async (req, res, next) => {
                 </tbody>
                 </table>
                 `
-                  /*  <div style="justify-content: center">
-                        <h1>Hola ${name_rejected[0]}, lamentablemente tu compra en Musical Instrument fue rechazada.</h1>
-                        <h3> Ningún monto fue descontado de su cuenta. <br>
-                        Ante cualquier duda, no dude en escribirnos.<br>
-                        En caso de no estar suscripto a nuestro Newsletter<br>
-                        Este es un mail automático, no es necesario responderlo.</h3>
-                    </div>*/
-                const mailOptions_rejected = {
-                    from: 'El Gramófono instrumentos <contacto@elgramofono.com>',
-                    to: user_rejected.dataValues.email,
-                    subject: "No se pudo confirmar tu compra",
-                    html: templateHTML_rejected,
-                }
-                return await transporter.sendMail(mailOptions_rejected, (err) => {
-                    if (err) next(err)
-                    else {
-                        return res.send(mailOptions_rejected);
-                    }
-                })
-            case 'shippingApproved':
-              let { nameshippingapproved, emailshippingapproved, templateproductsshippingapproved, shippingaddress } = req.headers;
-              nameshippingapproved = nameshippingapproved.split(' ')[0]
-              const orderidshippingapproved = uuidv4();
-              const templateHTML_shippingApproved = `
+        /*  <div style="justify-content: center">
+              <h1>Hola ${name_rejected[0]}, lamentablemente tu compra en Musical Instrument fue rechazada.</h1>
+              <h3> Ningún monto fue descontado de su cuenta. <br>
+              Ante cualquier duda, no dude en escribirnos.<br>
+              En caso de no estar suscripto a nuestro Newsletter<br>
+              Este es un mail automático, no es necesario responderlo.</h3>
+          </div>*/
+        const mailOptions_rejected = {
+          from: 'El Gramófono instrumentos <contacto@elgramofono.com>',
+          to: user_rejected.dataValues.email,
+          subject: "No se pudo confirmar tu compra",
+          html: templateHTML_rejected,
+        }
+        return await transporter.sendMail(mailOptions_rejected, (err) => {
+          if (err) next(err)
+          else {
+            return res.send(mailOptions_rejected);
+          }
+        })
+      case 'shippingApproved':
+        let { nameshippingapproved, emailshippingapproved, templateproductsshippingapproved, shippingaddress } = req.headers;
+        nameshippingapproved = nameshippingapproved.split(' ')[0]
+        const orderidshippingapproved = uuidv4();
+        const templateHTML_shippingApproved = `
                 <table style="border-collapse: collapse;table-layout: fixed;border-spacing: 0;mso-table-lspace: 0pt;mso-table-rspace: 0pt;vertical-align: top;min-width: 320px;Margin: 0 auto;background-color: #f9f9f9;width:100%" cellpadding="0" cellspacing="0">
                 <tbody>
                 <tr style="vertical-align: top">
@@ -1770,26 +1776,27 @@ const sendMail = async (req, res, next) => {
                 </tbody>
                 </table>
                 `
-              const mailOptions_shippingApproved = {
-                from: 'El Gramófono instrumentos <contacto@elgramofono.com>',
-                to: emailshippingapproved,
-                subject: "Se ha despachado tu pedido",
-                html: templateHTML_shippingApproved,
-              }
-              return await transporter.sendMail(mailOptions_shippingApproved, (err) => {
-                  if (err) next(err)
-                  else {
-                      return res.send(mailOptions_shippingApproved);
-                  }
-              })
-            default:
-                return
+        const mailOptions_shippingApproved = {
+          from: 'El Gramófono instrumentos <contacto@elgramofono.com>',
+          to: emailshippingapproved,
+          subject: "Se ha despachado tu pedido",
+          html: templateHTML_shippingApproved,
         }
-    } catch (error) { 
-        next(error) 
+        return await transporter.sendMail(mailOptions_shippingApproved, (err) => {
+          if (err) next(err)
+          else {
+            return res.send(mailOptions_shippingApproved);
+          }
+        })
+      default:
+        return
     }
+  } catch (error) {
+    // next(error)
+    console.log('Error de sendmail: ', error)
+  }
 }
 
 module.exports = {
-    sendMail
+  sendMail
 }
