@@ -168,14 +168,14 @@ async function fullDbUsers() {
 
 async function addFavs(req, res, next) {
     const { idProduct } = req.body
-    const {idUser} = req.headers
+    const {iduser} = req.headers
     try {        
-        const userE = await User.findByPk(idUser)
+        const userE = await User.findByPk(iduser)
         await userE.addProduct(idProduct)
         
         const fav = await User.findOne({
             where: {
-                id: idUser
+                id: iduser
             },
             include: Product
         })        
@@ -187,9 +187,9 @@ async function addFavs(req, res, next) {
 
 const quitFav= async(req, res, next) => {
     const {idProduct} = req.body
-    const {idUser} = req.headers
+    const {iduser} = req.headers
     try{
-        await Favourites.destroy({ where: { UserId: idUser, ProductId: idProduct } })
+        await User.removeProduct({ where: { UserId: iduser, ProductId: idProduct } })
         return res.send('se borro')
     } catch(error){
         next(error)
