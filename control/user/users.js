@@ -67,7 +67,6 @@ async function getShippingAddress(req, res, next) {
 
 async function getAllUsers(req, res, next) {
     let {name, admin} = req.query
-    console.log(req.query)
     if(name === 'undefined') name = ''
     if(admin === 'undefined') admin = undefined
     try {
@@ -130,33 +129,19 @@ async function loginUser(req, res, next) {
     const {email, username, hashedpassword, name} = req.headers
     if(username) {
         try {
-          const isUser = await User.findOne({
-            where: {
-              email
-            }
-          })
-          if (!isUser) {
-            const id = uuidv4()
-            const newUser = await User.create({
-              id,
-              email,
-              userName: username,
-              hashedPassword: hashedpassword,
-              name
-            })
-            await axios(`http://localhost:3000/user/sendmail?type=welcome`,{
-                headers: {
-                    name: username,
-                    email
+            const isUser = await User.findOne({
+                where: {
+                email
                 }
             })
             if (!isUser) {
                 const id = uuidv4()
                 const newUser = await User.create({
-                    id,
-                    email,
-                    userName: username,
-                    hashedPassword: hashedpassword
+                id,
+                email,
+                userName: username,
+                hashedPassword: hashedpassword,
+                name
                 })
                 return res.send(newUser)
             }
@@ -185,7 +170,6 @@ async function addFavs(req, res, next) {
     const { idUser, productId } = req.body
     try {        
         const userE = await User.findByPk(idUser)
-        console.log(userE)
         await userE.addProduct(productId)
         
         const fav = await User.findOne({
@@ -200,7 +184,6 @@ async function addFavs(req, res, next) {
     }
 }
 async function authenticationByCode(req, res, next) {
-    console.log('Entro a authenticationByCode')
     try {
         let user = await User.findOne({
             where: {
@@ -217,7 +200,6 @@ async function authenticationByCode(req, res, next) {
             else if (user.authenticatedByCode == false && user.authenticationCode == req.query.authenticationCode) {
                 user.authenticatedByCode = true
                 await user.save()
-                console.log('User', user.authenticatedByCode)
                 return res.status(200).send(user.authenticatedByCode)
             }
             else if (user.authenticatedByCode == false && user.authenticationCode != req.query.authenticationCode) {
@@ -230,7 +212,6 @@ async function authenticationByCode(req, res, next) {
 };
 
 async function authenticationCode(req, res, next) {
-    console.log('Entro a authenticationCode')
     const { email, username } = req.headers
     try {
         let user = await User.findOne({
