@@ -73,7 +73,6 @@ const addCartItem = async (req, res, next) => {
             await product.setDataValue('quantity', productsOrderLines[index].quantity)
         })
         await Promise.all(addQuantity).then(() => {return}).catch(err => console.error(err))
-        console.log(productsToSend)
         return res.send(productsToSend);
     } catch (err) {
         console.error(err)
