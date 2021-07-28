@@ -1,4 +1,4 @@
-const { User, Product } = require('../../db.js');
+const { User, Product, Favourites } = require('../../db.js');
 const { v4: uuidv4 } = require('uuid');
 const axios = require('axios')
 const { Op } = require("sequelize");
@@ -167,10 +167,11 @@ async function fullDbUsers() {
 
 
 async function addFavs(req, res, next) {
-    const { idUser, productId } = req.body
+    const { idProduct } = req.body
+    const {idUser} = req.headers
     try {        
         const userE = await User.findByPk(idUser)
-        await userE.addProduct(productId)
+        await userE.addProduct(idProduct)
         
         const fav = await User.findOne({
             where: {
@@ -183,6 +184,19 @@ async function addFavs(req, res, next) {
         return next(error)
     }
 }
+
+const quitFav= async(req, res, next) => {
+    const {idProduct} = req.body
+    const {idUser} = req.headers
+    try{
+        await Favourites.destroy({ where: { UserId: idUser, ProductId: idProduct } })
+        return res.send('se borro')
+    } catch(error){
+        next(error)
+    }
+
+}
+
 async function authenticationByCode(req, res, next) {
     try {
         let user = await User.findOne({
@@ -247,6 +261,7 @@ module.exports = {
     updateShippingAddress,
     getShippingAddress,
     addFavs,
+    quitFav,
     authenticationByCode,
     authenticationCode
 }
