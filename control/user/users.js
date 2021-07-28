@@ -1,4 +1,4 @@
-const { User } = require('../../db.js');
+const { User, Product } = require('../../db.js');
 const { v4: uuidv4 } = require('uuid');
 const axios = require('axios')
 const { Op } = require("sequelize");
@@ -30,7 +30,7 @@ async function newUser(req, res, next) {
 async function updateUser(req, res, next) {
     const { idUser } = req.headers
     try {
-        const user = User.findByPk(idUser)
+        const user = await User.findByPk(idUser)
         req.body.name ? user.name = req.body.name : ''
         user.save()
         return res.status(200).json(user)
@@ -188,6 +188,25 @@ async function fullDbUsers() {
     }
 }
 
+
+async function addFavs(req, res, next) {
+    const { idUser, productId } = req.body
+    try {        
+        const userE = await User.findByPk(idUser)
+        console.log(userE)
+        await userE.addProduct(productId)
+        
+        const fav = await User.findOne({
+            where: {
+                id: idUser
+            },
+            include: Product
+        })        
+        return res.status(200).json(fav)
+    } catch (error) {
+        return next(error)
+    }
+}
 async function authenticationByCode(req, res, next) {
     console.log('Entro a authenticationByCode')
     try {
@@ -241,6 +260,7 @@ async function authenticationCode(req, res, next) {
         }
     } catch (error) {
         console.error(error);
+
     };
 };
 
@@ -253,7 +273,7 @@ module.exports = {
     fullDbUsers,
     updateShippingAddress,
     getShippingAddress,
+    addFavs,
     authenticationByCode,
     authenticationCode
-
 }
