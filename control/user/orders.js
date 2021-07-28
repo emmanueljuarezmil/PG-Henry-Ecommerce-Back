@@ -1,37 +1,54 @@
 const { User, Product, Order, Order_Line } = require('../../db.js');
 const { Op } = require('sequelize')
-const axios = require('axios')
 
 const exclude = ['createdAt', 'updatedAt']
 
-const getAllOrders = async (req, res, next) => {
-    const {status} = req.query
+ const getAllOrders = async (req, res, next) => {
+    let {status = '', shippingStatus = ''} = req.query
+    if(status === 'undefined' || status === '' || status === null) status= false
+    if(shippingStatus === 'undefined' || shippingStatus === '' || shippingStatus === null) shippingStatus = false
     try {
         const orderByStatus = await Order.findAll(
-            status ?
-            {
-                where: {
-                    status
-                },
-                include: {
-                    model: User,
-                    attributes: {
-                        exclude: [...exclude, 'hashedPassword']
-                    }
-                },
-                order: ['id']
-            } : 
-            {
-                include: {
-                    model: User,
-                    attributes: {
-                        exclude: [...exclude, 'hashedPassword']
-                    }
-                },
-                order: ['id']
-            }
+             (status && shippingStatus) ?
+                 {
+                     where: {
+                         status,
+                         shippingStatus
+                     },
+                     attributes: {
+                         exclude
+                     }
+                 } :
+                 (!shippingStatus && status) ?
+                 {
+                     where: {
+                         status
+                     },
+                     attributes: {
+                         exclude
+                     }
+                 } :
+                  (!status  && shippingStatus) ?
+                 {
+                     where: {
+                         shippingStatus
+                     },
+                     attributes: {
+                         exclude
+                     }
+                 } :
+                 {
+                    include: {
+                        model: User,
+                        attributes: {
+                            exclude: [...exclude, 'hashedPassword']
+                        }
+                    },
+                    order: ['id']
+                }
         )
-        return res.send(orderByStatus)
+        if(orderByStatus.length) return res.status(200).send(orderByStatus)
+        else return res.send([])        
     } catch (error) {
         next(error);
     }
@@ -56,12 +73,14 @@ const userOrders = async (req, res, next) => {
 };
 
 const getOrderById = async (req, res, next) => {
-    const { id = false } = req.params
-    if(!id || id === 'undefined' ) return next('Se requiere el id de una orden')
+    const { id } = req.params
     try {
-        const orderToSend = await Order.findOne({
+        const order = await Order.findAll({
             where: {
                 id
+            },
+            attributes: {
+                exclude
             },
             include: {
                 model: Product,
@@ -69,112 +88,61 @@ const getOrderById = async (req, res, next) => {
                     exclude
                 },
                 through: {
+                    model: Order_Line,
                     attributes: []
                 }
-            },
-            attributes: {
-                exclude
             }
         })
-        if(!orderToSend) return res.send('No existe una orden con el Id indicado')
-        
-        const prodtosend = orderToSend.Products
-        const promises = prodtosend.map(async (element, index) => {
-            const {quantity} = await Order_Line.findOne({
-                where: {
-                    productID: element.id
-                }
-            })
-            await prodtosend[index].setDataValue('quantity', quantity)
-            return element
-        })
-        const prodToSendWithQuantity = await Promise.all(promises).then(result => result).catch(err => console.error(err))
-        const user = await User.findOne({
-            where: {
-                id: orderToSend.UserId
-            },
-            attributes: ['name', 'userName', 'email', 'admin']
-        })
-        return res.send({
-            products: prodToSendWithQuantity,
-            orderId: id,
-            User: user
-        })
+        return res.send(order)
     } catch (err) {
         next(err)
     }
 };
 
 const updateOrder = async (req, res, next) => {
-    const { UserId } = req.params
-    const products = req.body
-    if (!UserId) return res.status(400).send('El id del usuario es requerido')
+    const { id } = req.params
+    const { products } = req.body
+    if (!id) return res.status(400).send('El id de la orden es requerido')
+    if (!products) return res.status(400).send('Los productos a actualizar son requeridos')
     try {
-        const [order, created] = await Order.findOrCreate({
-            where: {
-                UserId,
-                status: 'cart'
+        const orderToDelete = await Order.findByPk(id)
+        if (!orderToDelete) return res.status(400).send('El id de la orden enviada es inválido')
+        const UserId = orderToDelete.UserId
+        const user = await User.findByPk(UserId);
+        if (!user) return res.status(400).send('El usuario es inválido')
+        const verifiedProductsPromises = products.map(async productToAdd => {
+            try {
+                const product = await Product.findByPk(productToAdd.id);
+                if (!product) {
+                    return 'El id de alguno de los productos enviados es inválido'
+                };
+                if (product.stock < productToAdd.quantity) {
+                    return 'No hay stock suficiente de alguno de los productos'
+                }
+            } catch (err) {
+                console.error(err)
+                return err
             }
         })
-        if(products && products.length) {         
-            for(let product of products) {
-                const item = await Order_Line.findOne({
-                    where: {
-                        orderID: order.id,
-                        productID: product.id,
-                    }
-                })
-                if(item && product.quantity > 0) {                   
-                    item.quantity = product.quantity
-                    await item.save()
-                }
-                else if(item && product.quantity === 0) {                   
-                    await item.destroy()
-                }
-                else if (!item && product.quantity > 0) {  
-                    await Order_Line.create({
-                            orderID: order.id,
-                            productID: product.id,
-                            quantity: product.quantity,
-                            price: product.price
-                    })
-                }
-            }
-        }
-        const orderToSend = await Order.findOne({
-            where: {
-                id: order.id
-            },
-            include: {
-                model: Product,
-                attributes: {
-                    exclude
-                },
-                through: {
-                    attributes: []
-                }
-            },
-            attributes: {
-                exclude
+        const error = await Promise.all(verifiedProductsPromises).then(result => result).catch(err => err)
+        const concatError = [...new Set(error.filter(element => element))].join('. ')
+        if (concatError) return res.status(400).send(concatError)
+        await orderToDelete.destroy()
+        const order = await Order.create()
+        await user.addOrder(order);
+        await products.forEach(async productToAdd => {
+            try {
+                const product = await Product.findByPk(productToAdd.id);
+                const quantity = Number(productToAdd.quantity);
+                const price = product.price
+                await product.addOrder(order, { through: { orderId: order.id, quantity, price } })
+            } catch (err) {
+                console.error(err)
             }
         })
-        const prodtosend = orderToSend.Products
-        const promises = prodtosend.map(async (element, index) => {
-            const {quantity} = await Order_Line.findOne({
-                where: {
-                    productID: element.id
-                }
-            })
-            await prodtosend[index].setDataValue('quantity', quantity)
-            return element
-        })
-        const prodToSendWithQuantity = await Promise.all(promises).then(result => result).catch(err => console.error(err))
-        return res.send({
-            products: prodToSendWithQuantity,
-            orderId: order.id
-        })
+        return res.send('La orden fue actualizada con éxito')
     } catch (err) {
-        next(err)
+        return res.status(400).send(err)
     }
 };
 
@@ -204,7 +172,7 @@ const updateOrderStatus = async (req, res, next) => {
     } catch (err) {
         next(error)
     }
-};
+}
 
 const updateShipStatus = async (req, res, next) => {
     const {name, email} = req.headers
@@ -270,7 +238,6 @@ const updateShipStatus = async (req, res, next) => {
         return res.send(orders)        
     } catch (err) {
         next(err)
-        /* return res.status(400).send(err) */
     }
 }
 

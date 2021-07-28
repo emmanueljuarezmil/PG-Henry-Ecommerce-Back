@@ -66,14 +66,6 @@ async function getShippingAddress(req, res, next) {
 }
 
 
-
-// const validate = ['null', undefined, 'undefined', '']
-//     if (validate.includes(name)) name = ''
-//     if (validate.includes(page)) page = 1
-//     if (validate.includes(orderBy)) orderBy = 'name'
-//     if (validate.includes(orderType)) orderType = 'asc'
-//     if (validate.includes(category)) category = ''
-
 async function getAllUsers(req, res, next) {
     let {name, admin} = req.query
     console.log(req.query)
