@@ -1,5 +1,6 @@
 const { User, Product, Order, Order_Line } = require('../../db.js');
 const usersDBJson = require('../../bin/data/users.json')
+const { Op } = require('sequelize')
 
 const exclude = ['createdAt', 'updatedAt']
 
@@ -49,16 +50,31 @@ const addCartItem = async (req, res, next) => {
             orderItem.quantity+=quantity
             await orderItem.save()
         }
-        const createdProduct = await Product.findOne({
+        const productsOrderLines = await Order_Line.findAll({
             where: {
-                id
+                orderID: order.id
+            }
+        })
+        const productsIds = productsOrderLines.map(order => {
+            return {
+                id: order.productID
+            }
+        })
+        const productsToSend = await Product.findAll({
+            where: {
+                [Op.or]: productsIds
             },
             attributes: {
                 exclude
             }
         })
-        await createdProduct.setDataValue('quantity', orderItem.quantity)
-        return res.send(createdProduct);
+        const addQuantity = productsToSend.map(async product => {
+            const index = productsOrderLines.findIndex(productOrderLine => productOrderLine.productID === product.id)
+            await product.setDataValue('quantity', productsOrderLines[index].quantity)
+        })
+        await Promise.all(addQuantity).then(() => {return}).catch(err => console.error(err))
+        console.log(productsToSend)
+        return res.send(productsToSend);
     } catch (err) {
         console.error(err)
         next(err)
