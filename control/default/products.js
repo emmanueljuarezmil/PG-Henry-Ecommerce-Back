@@ -209,6 +209,17 @@ async function fullDbproducts(req, res, next) {
     else return
 }
 
+async function getProductsForSearchBar(req,res,next) {
+    try {
+        const products = await Product.findAll({
+            attributes: ['name', 'id']
+        })
+        res.send(products)
+    } catch (err) {
+        console.error(err)
+    }
+}
+
 
 module.exports = {
     getProducts,
@@ -216,7 +227,8 @@ module.exports = {
     addProduct,
     updateProduct,
     deleteProduct,
-    fullDbproducts
+    fullDbproducts,
+    getProductsForSearchBar
 }
 
 
