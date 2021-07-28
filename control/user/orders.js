@@ -3,52 +3,35 @@ const { Op } = require('sequelize')
 
 const exclude = ['createdAt', 'updatedAt']
 
- const getAllOrders = async (req, res, next) => {
-    let {status = '', shippingStatus = ''} = req.query
-    if(status === 'undefined' || status === '' || status === null) status= false
-    if(shippingStatus === 'undefined' || shippingStatus === '' || shippingStatus === null) shippingStatus = false
+const getAllOrders = async (req, res, next) => {
+    let {status, shippingStatus} = req.query
+    if(status === '' || status === 'undefined') status = null
+    if(shippingStatus === '' || shippingStatus === 'undefined') shippingStatus = null
+    const where = status && shippingStatus ?
+    {
+        status,
+        shippingStatus
+    } : !status && shippingStatus ?
+    {
+        shippingStatus
+    } : status && !shippingStatus ?
+    {
+        status
+    } : {}
     try {
         const orderByStatus = await Order.findAll(
-             (status && shippingStatus) ?
-                 {
-                     where: {
-                         status,
-                         shippingStatus
-                     },
-                     attributes: {
-                         exclude
-                     }
-                 } :
-                 (!shippingStatus && status) ?
-                 {
-                     where: {
-                         status
-                     },
-                     attributes: {
-                         exclude
-                     }
-                 } :
-                  (!status  && shippingStatus) ?
-                 {
-                     where: {
-                         shippingStatus
-                     },
-                     attributes: {
-                         exclude
-                     }
-                 } :
-                 {
-                    include: {
-                        model: User,
-                        attributes: {
-                            exclude: [...exclude, 'hashedPassword']
-                        }
-                    },
-                    order: ['id']
-                }
+            {
+                where,
+                include: {
+                    model: User,
+                    attributes: {
+                        exclude: [...exclude, 'hashedPassword']
+                    }
+                },
+                order: ['id']
+            }
         )
-        if(orderByStatus.length) return res.status(200).send(orderByStatus)
-        else return res.send([])        
+        return res.send(orderByStatus)
     } catch (error) {
         next(error);
     }
