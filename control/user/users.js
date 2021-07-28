@@ -189,12 +189,22 @@ const quitFav= async(req, res, next) => {
     const {idProduct} = req.body
     const {iduser} = req.headers
     try{
-        await User.removeProduct({ where: { UserId: iduser, ProductId: idProduct } })
+        const user = User.findByPk(iduser)
+        await user.removeProduct(idProduct)
         return res.send('se borro')
     } catch(error){
         next(error)
     }
+}
 
+const getFavs = async(req, res, next) => {
+    const {iduser} = req.headers
+    try {
+        const user = User.findByPk(iduser, {include: Product})
+
+    }catch(error){
+        next(error)
+    }
 }
 
 async function authenticationByCode(req, res, next) {
@@ -262,6 +272,7 @@ module.exports = {
     getShippingAddress,
     addFavs,
     quitFav,
+    getFavs,
     authenticationByCode,
     authenticationCode
 }
