@@ -1,7 +1,8 @@
 const { User } = require('../../db.js');
 const { v4: uuidv4 } = require('uuid');
 const axios = require('axios')
-const usersDBJson = require('../../bin/data/users.json')
+const usersDBJson = require('../../bin/data/users.json');
+//const { Sequelize } = require('sequelize/types');
 
 
 const exclude = ['createdAt', 'updatedAt']
@@ -55,8 +56,8 @@ async function getShippingAddress(req, res, next) {
     const { idUser } = req.params
     try {
         const address = await User.findOne({
-            where: {id: idUser},
-            attributes: {exclude: ['createdAt', 'updatedAt', 'name', 'userName', 'email', 'admin', 'hashedPassword']}
+            where: { id: idUser },
+            attributes: { exclude: ['createdAt', 'updatedAt', 'name', 'userName', 'email', 'admin', 'hashedPassword'] }
         })
         return res.status(200).json(address)
     } catch (error) {
@@ -99,7 +100,7 @@ async function newAdmin(req, res, next) {
     if (!id) return next({ message: 'El id del nuevo admin es necesario' })
     try {
         const user = await User.findByPk(id)
-        if (!user) return next({message: 'El usuario no fue encontrado'})
+        if (!user) return next({ message: 'El usuario no fue encontrado' })
         user.admin = true;
         user.save();
         return res.send('Usuario elevado a admin')
@@ -109,35 +110,29 @@ async function newAdmin(req, res, next) {
 }
 
 async function loginUser(req, res, next) {
-    const {email, username, hashedpassword} = req.headers
-    if(username) {
+    const { email, username, hashedpassword } = req.headers
+    if (username) {
         try {
-          const isUser = await User.findOne({
-            where: {
-              email
-            }
-          })
-          if (!isUser) {
-            const id = uuidv4()
-            const newUser = await User.create({
-              id,
-              email,
-              userName: username,
-              hashedPassword: hashedpassword
-            })
-            await axios(`http://localhost:3000/user/sendmail?type=welcome`,{
-                headers: {
-                    name: username,
+            const isUser = await User.findOne({
+                where: {
                     email
                 }
             })
-            return res.send(newUser)
-          }
-          else return res.send(isUser)
-        } catch(err) {
-          next(err)
+            if (!isUser) {
+                const id = uuidv4()
+                const newUser = await User.create({
+                    id,
+                    email,
+                    userName: username,
+                    hashedPassword: hashedpassword
+                })
+                return res.send(newUser)
+            }
+            else return res.send(isUser)
+        } catch (err) {
+            next(err)
         }
-      }
+    }
 }
 
 async function fullDbUsers() {
@@ -153,6 +148,62 @@ async function fullDbUsers() {
     }
 }
 
+async function authenticationByCode(req, res, next) {
+    console.log('Entro a authenticationByCode')
+    try {
+        let user = await User.findOne({
+            where: {
+                id: req.params.idUser,
+            },
+        })
+        if (!req.query.authenticationCode) {
+            return res.status(200).send(user.authenticatedByCode)
+        }
+        if (req.query.authenticationCode) {
+            if (user.authenticatedByCode == true) {
+                return res.status(200).send(user.authenticatedByCode)
+            }
+            else if (user.authenticatedByCode == false && user.authenticationCode == req.query.authenticationCode) {
+                user.authenticatedByCode = true
+                await user.save()
+                console.log('User', user.authenticatedByCode)
+                return res.status(200).send(user.authenticatedByCode)
+            }
+            else if (user.authenticatedByCode == false && user.authenticationCode != req.query.authenticationCode) {
+                return res.status(401).send(user.athenticatedByCode)
+            }
+        }
+    } catch (error) {
+        next(error);
+    };
+};
+
+async function authenticationCode(req, res, next) {
+    console.log('Entro a authenticationCode')
+    const { email, username } = req.headers
+    try {
+        let user = await User.findOne({
+            where: {
+                id: req.params.idUser,
+            },
+        })
+        if (user.authenticationCode) return res.send('Codigo de autenticacion ya existente')
+        else if (!user.authenticationCode) {
+            user.authenticationCode = req.query.authenticationCode
+            await user.save()
+            await axios(`http://localhost:3000/user/sendmail?type=welcome&idUser=${user.id}`, {
+                headers: {
+                    name: user.userName,
+                    email: user.email
+                }
+            })
+            return res.status(200).send('Codigo de autenticacion recibido');
+        }
+    } catch (error) {
+        console.error(error);
+    };
+};
+
 module.exports = {
     updateUser,
     getAllUsers,
@@ -161,5 +212,7 @@ module.exports = {
     loginUser,
     fullDbUsers,
     updateShippingAddress,
-    getShippingAddress
+    getShippingAddress,
+    authenticationByCode,
+    authenticationCode
 }
