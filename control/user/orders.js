@@ -44,6 +44,9 @@ const userOrders = async (req, res, next) => {
             where: {
                 UserId: idUser,
                 status: 'cart'
+            },
+            include:{
+                model: Product
             }
         })
         if (!userOrders.length) {

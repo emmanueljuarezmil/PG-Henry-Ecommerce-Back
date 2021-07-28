@@ -3,7 +3,7 @@ const { v4: uuidv4 } = require('uuid');
 const { Op } = require("sequelize");
 const productosmeli = require('../../bin/data/productsDB.json');
 
-const itemsPerPage = 9
+const itemsPerPage = 10
 
 const exclude = ['createdAt', 'updatedAt']
 
