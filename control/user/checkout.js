@@ -1,5 +1,5 @@
 const mercadopago = require('mercadopago');
-const {access_token} = process.env
+const {access_token, frontURL} = process.env
 
 mercadopago.configure({
     access_token
@@ -19,9 +19,12 @@ async function checkoutMP (req, res, next) {
     const preference = {
         items: itemsToMP,
         back_urls: {
-            success: 'http://localhost:3001',
-            failure: 'http://localhost:3001',
-            pending: 'http://localhost:3001',
+            success: frontURL,
+            failure: frontURL,
+            pending: frontURL,
+            // success: 'http://localhost:3001',
+            // failure: 'http://localhost:3001',
+            // pending: 'http://localhost:3001',
         },
         auto_return: 'approved',
     };

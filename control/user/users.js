@@ -3,6 +3,7 @@ const { v4: uuidv4 } = require('uuid');
 const axios = require('axios')
 const { Op } = require("sequelize");
 const usersDBJson = require('../../bin/data/users.json')
+const {backendURL} = process.env
 
 const exclude = ['createdAt', 'updatedAt']
 
@@ -251,7 +252,7 @@ async function authenticationCode(req, res, next) {
         else if (!user.authenticationCode) {
             user.authenticationCode = req.query.authenticationCode
             await user.save()
-            await axios(`http://localhost:3000/user/sendmail?type=welcome&idUser=${user.id}`, {
+            axios(`${backendURL}/user/sendmail?type=welcome&idUser=${user.id}`, {
                 headers: {
                     name: user.userName,
                     email: user.email
