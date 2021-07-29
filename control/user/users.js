@@ -1,4 +1,4 @@
-const { User, Product, Favourites } = require('../../db.js');
+const { User, Product, favourites } = require('../../db.js');
 const { v4: uuidv4 } = require('uuid');
 const axios = require('axios')
 const { Op } = require("sequelize");
@@ -189,8 +189,12 @@ const quitFav= async(req, res, next) => {
     const {idProduct} = req.body
     const {iduser} = req.headers
     try{
-        const user = User.findByPk(iduser)
-        await user.removeProduct(idProduct)
+        // const user = User.findByPk(iduser)
+        // await user.remove Product(idProduct)
+        await favourites.destroy({where: {
+            UserId: iduser,
+            ProductId: idProduct
+        }})
         return res.send('se borro')
     } catch(error){
         next(error)
@@ -200,8 +204,8 @@ const quitFav= async(req, res, next) => {
 const getFavs = async(req, res, next) => {
     const {iduser} = req.headers
     try {
-        const user = User.findByPk(iduser, {include: Product})
-
+        const user = await User.findByPk(iduser, {include: Product})
+        return res.json(user)
     }catch(error){
         next(error)
     }
