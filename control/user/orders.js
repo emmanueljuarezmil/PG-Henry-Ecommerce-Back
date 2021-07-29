@@ -43,16 +43,45 @@ const userOrders = async (req, res, next) => {
         const userOrders = await Order.findAll({
             where: {
                 UserId: idUser,
-                status: 'cart'
-            },
-            include:{
-                model: Product
             }
         })
         if (!userOrders.length) {
             return res.status(201).send('El usuario requerido no tiene ninguna orden')
         }
-        return res.send(userOrders)
+        const promises = userOrders.map(async order => {
+            try {
+                const raw_cart = await Product.findAll({
+                    include: { model: Order, where: { id: order.id } },
+                    order: ['name']
+                })
+                let cart = []
+                raw_cart.map(i => {
+                    let prod = {};
+        
+                    prod.id = i.id
+                    prod.name = i.name
+                    prod.description = i.description
+                    prod.price = i.price
+                    prod.photo = i.photo
+                    prod.stock = i.stock
+                    prod.selled = i.selled
+                    prod.perc_desc = i.perc_desc
+                    i.Orders.map(j => {
+                        prod.quantity = j.Order_Line.quantity
+                    })
+                    cart.push(prod)
+                })
+                return {
+                    products: cart,
+                    order
+                }
+            } catch(err) {
+                console.error(err)
+            }
+        })
+        const resultado = await Promise.all(promises).then(result => result).catch(err => console.log(err))
+        console.log(resultado)
+        return res.send(resultado)
     } catch (error) {
         next(error);
     }

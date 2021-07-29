@@ -121,9 +121,7 @@ const getAllCartItems = async (req, res, next, idUser = null) => {
             include: { model: Order, where: { id: order.id } },
             order: ['name']
         })
-        // console.log(req.params, 'req.params')
         if (!raw_cart.length) {
-            // return next({ message: "Aún no tienes productos en tu carrito de compras" })
             return res.status(200).send({
                 products: [],
                 orderId: order.id
