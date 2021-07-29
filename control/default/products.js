@@ -2,6 +2,7 @@ const { Product, Category, Review, User } = require('../../db.js');
 const { v4: uuidv4 } = require('uuid');
 const { Op } = require("sequelize");
 const productosmeli = require('../../bin/data/productsDB.json');
+const axios = require('axios')
 
 const itemsPerPage = 10
 
@@ -170,8 +171,23 @@ async function updateProduct(req, res, next) {
     const { id, name, photo, description, stock, selled, perc_desc, price, category } = req.body;
     if (!id) return next({ message: 'El id del producto es requerido'})
     try {
-        const product = await Product.findByPk(id)
+        const product = await Product.findByPk(id, {include: User})
         if (!product) return next({ message: 'El id del producto es incorrecto'})
+        console.log('info:', product.Users)
+        if (product.Users && product.stock === 0 && stock > 0){
+            product.Users.map((user) => {
+                console.log('aca pase')
+                axios(`http://localhost:3000/user/sendmail?type=available`,{
+                    headers: {
+                        name: user.name,
+                        email: user.email,
+                    },
+                    data: {
+                        prodName: name
+                    }
+                })
+            })
+        }
         if (name) { product.name = name }
         if (description) { product.description = description }
         if (stock) { product.stock = parseFloat(stock) }

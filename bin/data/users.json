@@ -41,5 +41,19 @@
         "name": "James Hetfield",
         "hashedPassword": "js234zxkxx45Swsxff",
         "email": "jameshetfield2232@gmail.com"
+    },
+    {
+        "userName": "AlbertasdasdsadoPerez",
+        "name": "Aasdasdasdasd",
+        "hashedPassword": "jskxx45Swsxff",
+        "email": "perezdiezf@gmail.com",
+        "admin": true
+    },
+    {
+        "userName": "MIra mira",
+        "name": "MIra mira",
+        "hashedPassword": "jskxx45Swsxff",
+        "email": "jpretamare@gmail.com",
+        "admin": true
     }
 ]
