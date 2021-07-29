@@ -172,10 +172,8 @@ async function updateProduct(req, res, next) {
                         name: user.name,
                         email: user.email,
                     },
-                    body: {
-                        prodName: product.name,
-                        description: product.description,
-                        photo: product.photo
+                    data: {
+                        prodName: name
                     }
                 })
             })
