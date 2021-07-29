@@ -36,5 +36,9 @@ module.exports = (sequelize) => {
         type: DataTypes.INTEGER,
         defaultValue: 0
     },
+    views: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
+    }
   });
 };
