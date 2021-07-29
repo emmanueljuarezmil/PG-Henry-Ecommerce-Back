@@ -16,8 +16,8 @@ async function getProducts(req, res, next) {
     if (validate.includes(orderBy)) orderBy = 'name'
     if (validate.includes(orderType)) orderType = 'asc'
     if (validate.includes(category)) category = ''
-    if (descFilter === 'true') descFilter = true
-    if (descFilter === 'false') descFilter = false
+    if (descFilter === 'true' ) descFilter = true
+    if (descFilter === 'false' || validate.includes(descFilter)) descFilter = false
     const where = descFilter ?
     {
         [Op.and]: [

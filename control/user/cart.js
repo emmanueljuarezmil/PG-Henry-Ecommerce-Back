@@ -194,42 +194,55 @@ const deleteCartItem = async (req, res, next) => {
 async function fullDbOrders() {
     try {
         const products = await Product.findAll()
-        for (let i of usersDBJson) {
-            let productIndex1=0
-            let productIndex2=5
-            let productIndex3=10
-            try {
-                const user = await User.findOne({
-                    where: {
-                        name: i.name
-                    }
-                })
-                let product1 = products[productIndex1++]
-                let product2 = products[productIndex2++]
-                let product3 = products[productIndex3++]
-                const order = await Order.create()
-                await user.addOrder(order);
+        const users = await User.findAll()
+        let productIndex = 0
+        for (let user of users) {
+            const order = await Order.create()
+            await user.addOrder(order);
+            for(let i = 0; i < 7; i++) {
                 await Order_Line.create({
                     orderID: order.id,
-                    productID: product1.id,
+                    productID: products[productIndex].dataValues.id,
                     quantity: 1,
-                    price: product1.price
+                    price: products[productIndex++].dataValues.price
                 })
-                await Order_Line.create({
-                    orderID: order.id,
-                    productID: product2.id,
-                    quantity: 1,
-                    price: product2.price
-                })
-                await Order_Line.create({
-                    orderID: order.id,
-                    productID: product3.id,
-                    quantity: 1,
-                    price: product3.price
-                })
-            } catch (error) {
-                console.error(error);
             }
+
+            // let productIndex1=0
+            // let productIndex2=5
+            // let productIndex3=10
+            // try {
+            //     const user = await User.findOne({
+            //         where: {
+            //             name: i.name
+            //         }
+            //     })
+            //     let product1 = products[productIndex1++]
+            //     let product2 = products[productIndex2++]
+            //     let product3 = products[productIndex3++]
+            //     const order = await Order.create()
+            //     await user.addOrder(order);
+            //     await Order_Line.create({
+            //         orderID: order.id,
+            //         productID: product1.id,
+            //         quantity: 1,
+            //         price: product1.price
+            //     })
+            //     await Order_Line.create({
+            //         orderID: order.id,
+            //         productID: product2.id,
+            //         quantity: 1,
+            //         price: product2.price
+            //     })
+            //     await Order_Line.create({
+            //         orderID: order.id,
+            //         productID: product3.id,
+            //         quantity: 1,
+            //         price: product3.price
+            //     })
+            // } catch (error) {
+            //     console.error(error);
+            // }
         }
     } catch(err) {
         console.error(err)

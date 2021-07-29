@@ -70,7 +70,14 @@ const addReviewsAutomatic = async () => {
         "Suena muy lindo",
         "Me compraria 5 más",
         "Me encanta",
-        "Muy bueno"
+        "Muy bueno",
+        " ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
     ]
     try {
         const users = await User.findAll()
