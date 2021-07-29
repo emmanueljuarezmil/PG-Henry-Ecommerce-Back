@@ -3,6 +3,7 @@ const { v4: uuidv4 } = require('uuid');
 const { Op } = require("sequelize");
 const productosmeli = require('../../bin/data/productsDB.json');
 const axios = require('axios')
+const {backendURL} = process.env
 
 const itemsPerPage = 10
 
@@ -175,7 +176,7 @@ async function updateProduct(req, res, next) {
         if (!product) return next({ message: 'El id del producto es incorrecto'})
         if (product.Users && product.stock === 0 && stock > 0){
             product.Users.map((user) => {
-                axios(`http://localhost:3000/user/sendmail?type=available`,{
+                axios(`${backendURL}/user/sendmail?type=available`,{
                     headers: {
                         name: user.name,
                         email: user.email,

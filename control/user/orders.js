@@ -1,6 +1,7 @@
 const { User, Product, Order, Order_Line } = require('../../db.js');
 const { Op } = require('sequelize')
 const axios = require('axios')
+const {backendURL} = process.env
 
 const exclude = ['createdAt', 'updatedAt']
 
@@ -237,7 +238,7 @@ const updateShipStatus = async (req, res, next) => {
                 }
             })
             try {
-                axios(`http://localhost:3000/user/sendmail?type=shippingApproved`,{
+                axios(`${backendURL}/user/sendmail?type=shippingApproved`,{
                     headers: {
                         nameshippingapproved: name,
                         emailshippingapproved: email,
