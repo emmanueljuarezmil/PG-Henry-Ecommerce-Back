@@ -1,5 +1,6 @@
 const { User, Product, Order, Order_Line } = require('../../db.js');
 const { Op } = require('sequelize')
+const axios = require('axios')
 
 const exclude = ['createdAt', 'updatedAt']
 
@@ -242,8 +243,8 @@ const updateShipStatus = async (req, res, next) => {
                         nameshippingapproved: name,
                         emailshippingapproved: email,
                         templateproductsshippingapproved,
-                        // shippingAddress: user.shippingAddress
-                        shippingaddress: 'Y eiaaaaa'
+                        shippingaddress: user.shippingAddress
+                        // shippingaddress: 'Y eiaaaaa'
                     }
                 })
             } catch(error) {

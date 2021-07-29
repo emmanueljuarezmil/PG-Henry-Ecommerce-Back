@@ -6,52 +6,57 @@
         "email": "JonDoe@gmail.com"
     },
     {
-        "userName": "CosmeFulanito",
-        "name": "Cosme Fulanito",
+        "userName": "SofiRocchietti",
+        "name": "Sofia Rocchietti",
         "hashedPassword": "Wsdfldksdf",
-        "email": "Cosmefulanito@gmail.com"
-    },
-    {
-        "userName": "AlbertoPerez",
-        "name": "Alberto Perez",
-        "hashedPassword": "jskxx45Swsxff",
-        "email": "albertoperezzzzz@gmail.com",
+        "email": "sofiadvr19@gmail.com",
         "admin": true
     },
     {
-        "userName": "JuanMartinez",
-        "name": "Juan Martinez",
+        "userName": "GianCucinotta",
+        "name": "Gianfranco Cucinotta",
         "hashedPassword": "jskxx45Swsxff",
-        "email": "JuanMartinez23451@gmail.com"
+        "email": "giancucinotta@gmail.com",
+        "admin": true
     },
     {
-        "userName": "PabloGuzman",
-        "name": "Pablo Guzman",
+        "userName": "EcommerceAdmin",
+        "name": "Ecommerce Admin",
+        "hashedPassword": "jskxx45Swsxff",
+        "email": "ecommercemusical@gmail.com",
+        "admin": true
+    },
+    {
+        "userName": "IñaOtegui",
+        "name": "Iñaki Otegui",
         "hashedPassword": "jskdf3xx45Swsxff",
-        "email": "PabloGuzman3434154@gmail.com"
+        "email": "inakiotegui1@gmail.com",
+        "admin": true
     },
     {
-        "userName": "AntonioRios",
-        "name": "Antonio Rios",
+        "userName": "RodriRomero",
+        "name": "Rodrigo Romero",
         "hashedPassword": "jskxasdx45Swsxff",
-        "email": "antoniorios432@gmail.com"
+        "email": "rodrigoignacio932@gmail.com",
+        "admin": true
     },
     {
-        "userName": "JamesHetfield",
-        "name": "James Hetfield",
+        "userName": "EmmaJuarez",
+        "name": "Emmanuel juarez",
         "hashedPassword": "js234zxkxx45Swsxff",
-        "email": "jameshetfield2232@gmail.com"
+        "email": "emmanueljuarezmil@gmail.com",
+        "admin": true
     },
     {
-        "userName": "AlbertasdasdsadoPerez",
-        "name": "Aasdasdasdasd",
+        "userName": "FerPerez",
+        "name": "Fernando Perez",
         "hashedPassword": "jskxx45Swsxff",
         "email": "perezdiezf@gmail.com",
         "admin": true
     },
     {
-        "userName": "MIra mira",
-        "name": "MIra mira",
+        "userName": "PablitoRetamar",
+        "name": "Pablo Retamar",
         "hashedPassword": "jskxx45Swsxff",
         "email": "jpretamare@gmail.com",
         "admin": true
