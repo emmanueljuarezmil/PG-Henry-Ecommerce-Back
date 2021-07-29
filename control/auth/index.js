@@ -53,10 +53,10 @@ const isAuth = async (req, res, next) => {
       else {
         const user = await User.findByPk(req.headers.iduser)
         if(!user) return res.status(400).send('No existen datos de usuario')
-        else next()
+        next()
       }
     } catch(err) {
-      next(err)
+      return res.status(400).send(err)
     }
   }
   else next()
@@ -66,11 +66,26 @@ const isAdmin = async (req, res, next) => {
   if(applyMiddlewares) {
     try {
       const {iduser} = req.headers
-    const user = await User.findByPk(iduser)
-    if(user && user.admin) next()
-    else return res.status(401).send('No autorizado')
+      const user = await User.findByPk(iduser)
+      if(!user) return res.status(400).send('No existen datos de usuario')
+      if(!user.admin) return res.status(400).send('Usuario sin permisos de admin')
+      next()
     } catch(err) {
-      next(err)
+      return res.status(400).send(err)
+    }
+  }
+  else next()
+}
+
+const isVerified = async (req, res, next) => {
+  if(applyMiddlewares) {
+    try {
+      const {iduser} = req.headers
+      const user = await User.findByPk(iduser)
+      if(!user.authenticatedByCode) return res.status(400).send('Usuario no verificado')
+      next()
+    } catch(err) {
+      return res.status(400).send(err)
     }
   }
   else next()
@@ -80,5 +95,6 @@ module.exports = {
   checkJwt,
   isAdmin,
   isAuth,
-  captureUser
+  captureUser,
+  isVerified
 }
