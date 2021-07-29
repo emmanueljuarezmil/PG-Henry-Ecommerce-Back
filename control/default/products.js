@@ -198,7 +198,7 @@ async function fullDbproducts(req, res, next) {
     for (let i of productosmeli) {
         try {
             var id = uuidv4();
-            var prodFinal = await Product.create({ name: i.name, id: id, price: i.price, photo: i.photo, description: i.descript, stock: i.stock, perc_desc: i.perc_desc })
+            var prodFinal = await Product.create({ name: i.name, id: id, price: i.price, photo: i.photo, description: i.descript, stock: i.stock, perc_desc: i.perc_desc, views: i.views })
             await prodFinal.setCategories(i.Categorias);
         } catch (error) {
             console.error(error);
