@@ -7,6 +7,7 @@ const cors = require('cors');
 const { auth } = require("express-openid-connect");
 const { checkJwt } = require('./control/auth')
 const indexRouter = require('./routes/index');
+const {frontURL} = process.env
 
 
 const jwt = require('express-jwt')
@@ -16,6 +17,14 @@ const app = express();
 // view engine setup
 /* app.set('views', path.join(__dirname, 'views')); */
 /* app.use(bodyParser.json()); */
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', frontURL); // update to match the domain you will make the request from
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+  next();
+});
 
 app.use(morgan('dev'));
 app.use(express.json());
