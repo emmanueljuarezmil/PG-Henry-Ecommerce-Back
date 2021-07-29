@@ -173,10 +173,8 @@ async function updateProduct(req, res, next) {
     try {
         const product = await Product.findByPk(id, {include: User})
         if (!product) return next({ message: 'El id del producto es incorrecto'})
-        console.log('info:', product.Users)
         if (product.Users && product.stock === 0 && stock > 0){
             product.Users.map((user) => {
-                console.log('aca pase')
                 axios(`http://localhost:3000/user/sendmail?type=available`,{
                     headers: {
                         name: user.name,

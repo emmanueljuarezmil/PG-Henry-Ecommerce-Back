@@ -81,7 +81,6 @@ const userOrders = async (req, res, next) => {
             }
         })
         const resultado = await Promise.all(promises).then(result => result).catch(err => console.log(err))
-        console.log(resultado)
         return res.send(resultado)
     } catch (error) {
         next(error);

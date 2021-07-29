@@ -463,7 +463,7 @@ const sendMail = async (req, res, next) => {
         return await transporter.sendMail(mailOptions_welcome, (err) => {
           if (err) next(err)
           else {
-            console.log('Envío exitoso');
+            console.log('Envío exitoso de mail Welcome');
             return res.send(mailOptions_welcome);
           }
         })
@@ -471,7 +471,6 @@ const sendMail = async (req, res, next) => {
         const emm = req.headers.email
         const nombre = req.headers.name
         const prodName = req.body.prodName
-        console.log(prodName);
         const templateHTML_available= `
 <table style="border-collapse: collapse;table-layout: fixed;border-spacing: 0;mso-table-lspace: 0pt;mso-table-rspace: 0pt;vertical-align: top;min-width: 320px;Margin: 0 auto;background-color: #f9f9f9;width:100%" cellpadding="0" cellspacing="0">
 <tbody>
@@ -889,7 +888,7 @@ const sendMail = async (req, res, next) => {
     return await transporter.sendMail(mailOptions_available, (err) => {
       if (err) next(err)
       else {
-        console.log('Envío exitoso');
+        console.log('Envío exitoso de mail de producto disponible');
         return res.send(mailOptions_available);
       }
     })
@@ -2220,7 +2219,7 @@ const sendMail = async (req, res, next) => {
     }
   } catch (error) {
     // next(error)
-    console.log('Error de sendmail: ', error)
+    console.error('Error de sendmail: ', error)
   }
 }
 
