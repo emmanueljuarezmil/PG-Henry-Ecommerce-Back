@@ -3,6 +3,7 @@ const { v4: uuidv4 } = require('uuid');
 const { Op } = require("sequelize");
 const productosmeli = require('../../bin/data/productsDB.json');
 const axios = require('axios')
+const {backendURL} = process.env
 
 const itemsPerPage = 10
 
@@ -16,8 +17,8 @@ async function getProducts(req, res, next) {
     if (validate.includes(orderBy)) orderBy = 'name'
     if (validate.includes(orderType)) orderType = 'asc'
     if (validate.includes(category)) category = ''
-    if (descFilter === 'true') descFilter = true
-    if (descFilter === 'false') descFilter = false
+    if (descFilter === 'true' ) descFilter = true
+    if (descFilter === 'false' || validate.includes(descFilter)) descFilter = false
     const where = descFilter ?
     {
         [Op.and]: [
@@ -111,7 +112,7 @@ async function getProductsById(req, res, next) {
             ]
         })
         if(!product) return next({message: "No se ha encontrado un producto con el id enviado"})
-        product.views+=1
+        product.views= product.views + 1
         await product.save()
         return res.status(200).json(product);
     } catch (err) {
@@ -174,14 +175,13 @@ async function updateProduct(req, res, next) {
     try {
         const product = await Product.findByPk(id, {include: User})
         if (!product) return next({ message: 'El id del producto es incorrecto'})
-        console.log('info:', product.Users)
         if (product.Users && product.stock === 0 && stock > 0){
             product.Users.map((user) => {
-                console.log('aca pase')
-                axios(`http://localhost:3000/user/sendmail?type=available`,{
+                axios(`${backendURL}/user/sendmail?type=available`,{
                     headers: {
                         name: user.name,
                         email: user.email,
+                        idproduct: id
                     },
                     data: {
                         prodName: name
