@@ -8,18 +8,28 @@ const itemsPerPage = 10
 const exclude = ['createdAt', 'updatedAt']
 
 async function getProducts(req, res, next) {
-    let { name, page, orderBy, orderType, category } = req.query
+    let { name, page, orderBy, orderType, category, descFilter } = req.query
     const validate = ['null', undefined, 'undefined', '']
     if (validate.includes(name)) name = ''
     if (validate.includes(page)) page = 1
     if (validate.includes(orderBy)) orderBy = 'name'
     if (validate.includes(orderType)) orderType = 'asc'
     if (validate.includes(category)) category = ''
+    if (descFilter === 'true') descFilter = true
+    if (descFilter === 'false') descFilter = false
+    const where = descFilter ?
+    {
+        [Op.and]: [
+            {name: { [Op.iLike]: `%${name}%` }},
+            {perc_desc: {[Op.not]: 0}}
+        ]
+    } :
+    {
+        name: { [Op.iLike]: `%${name}%` }
+    }
     try {
         const count = await Product.findAll({
-            where: {
-                name: { [Op.iLike]: `%${name}%` }
-            },
+            where,
             attributes: [],
             include: {
                 model: Category,
@@ -33,9 +43,7 @@ async function getProducts(req, res, next) {
             }
         })
         const products = await Product.findAll({
-            where: {
-                name: { [Op.iLike]: `%${name}%` }
-            },
+            where,
             attributes: {
                 exclude
             },
@@ -101,6 +109,8 @@ async function getProductsById(req, res, next) {
             ]
         })
         if(!product) return next({message: "No se ha encontrado un producto con el id enviado"})
+        product.views+=1
+        await product.save()
         return res.status(200).json(product);
     } catch (err) {
         next(err)
