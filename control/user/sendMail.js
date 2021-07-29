@@ -467,6 +467,29 @@ const sendMail = async (req, res, next) => {
             return res.send(mailOptions_welcome);
           }
         })
+      case 'available':
+        const emm = req.headers.email
+        const nombre = req.headers.name
+        const {prodName, description, photo} = req.body
+        const templateHTML_available = `
+        <div>
+          <p>Hola {nombre} uno de tus productos favoritos se encuentra disponible nuevamente, </p><br/>
+          <p>pasa a ver los nuevos {prodName} por nuestra tienda web</p> 
+        </div>`
+      const mailOptions_available = {
+      from: 'El Gramófono instrumentos <contacto@elgramofono.com>',
+      to: emm,//req.body.email,
+      subject: `Llegaron ${prodName}`,
+      html: templateHTML_available,
+    }
+    return await transporter.sendMail(mailOptions_available, (err) => {
+      if (err) next(err)
+      else {
+        console.log('Envío exitoso');
+        return res.send(mailOptions_available);
+      }
+    })
+
       case 'approved':
         const user_approved = await User.findOne({
           where: {
