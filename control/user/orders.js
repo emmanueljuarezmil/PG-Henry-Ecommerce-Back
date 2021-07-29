@@ -237,7 +237,7 @@ const updateShipStatus = async (req, res, next) => {
                 }
             })
             try {
-                await axios(`http://localhost:3000/user/sendmail?type=shippingApproved`,{
+                axios(`http://localhost:3000/user/sendmail?type=shippingApproved`,{
                     headers: {
                         nameshippingapproved: name,
                         emailshippingapproved: email,

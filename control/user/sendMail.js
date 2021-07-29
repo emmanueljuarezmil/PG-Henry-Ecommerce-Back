@@ -4,7 +4,7 @@ const { v4: uuidv4 } = require('uuid');
 
 const { User, Order, Order_Line, Product } = require('../../db.js');
 
-const { CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN } = process.env
+const { CLIENT_ID, CLIENT_SECRET, REFRESH_TOKEN, frontURL } = process.env
 
 const REDIRECT_URI = 'https://developers.google.com/oauthplayground ';
 
@@ -471,6 +471,7 @@ const sendMail = async (req, res, next) => {
         const emm = req.headers.email
         const nombre = req.headers.name
         const prodName = req.body.prodName
+        const productURL = `${frontURL}/product/${req.headers.idproduct}`
         const templateHTML_available= `
 <table style="border-collapse: collapse;table-layout: fixed;border-spacing: 0;mso-table-lspace: 0pt;mso-table-rspace: 0pt;vertical-align: top;min-width: 320px;Margin: 0 auto;background-color: #f9f9f9;width:100%" cellpadding="0" cellspacing="0">
 <tbody>
@@ -660,7 +661,7 @@ const sendMail = async (req, res, next) => {
       
 <div style="color: #3d3030; line-height: 140%; text-align: center; word-wrap: break-word;">
   <p style="font-size: 14px; line-height: 140%; text-align: center;"><span style="font-size: 40px; line-height: 56px; font-family: impact, chicago;"><span style="line-height: 56px; font-size: 40px;"><span style="line-height: 56px; font-size: 40px;">Hola ${nombre} uno de tus productos favoritos se encuentra disponible nuevamente,</span></span></span></p>
-  <p style="font-size: 14px; line-height: 140%; text-align: center;"><span style="font-size: 40px; line-height: 56px; font-family: impact, chicago;"><span style="line-height: 56px; font-size: 40px;"><span style="line-height: 56px; font-size: 40px;">pasa a ver los nuevos ${prodName} por nuestra tienda web</span></span></span></p>
+  <p style="font-size: 14px; line-height: 140%; text-align: center;"><span style="font-size: 40px; line-height: 56px; font-family: impact, chicago;"><span style="line-height: 56px; font-size: 40px;"><span style="line-height: 56px; font-size: 40px;">pasa a ver los nuevos <a href="${productURL}" target="_blank" rel="noopener noreferrer">${prodName}</a> por nuestra tienda web</span></span></span></p>
 </div>
 
     </td>
