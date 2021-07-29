@@ -75,93 +75,21 @@ const addReviewsAutomatic = async () => {
     try {
         const users = await User.findAll()
         const products = await Product.findAll()
-        let productIndex1=0
-        let productIndex2=2
-        let productIndex3=4
-        let productIndex4=6
-        let productIndex5=8
-        let productIndex6=10
-        const promises = users.map(async user => {
-            try {
-                const id1 = uuidv4()
-                const id2 = uuidv4()
-                const id3 = uuidv4()
-                const id4 = uuidv4()
-                const id5 = uuidv4()
-                const id6 = uuidv4()
-                const prod1 = await Product.findByPk(products[productIndex1++].id)
-                const prod2 = await Product.findByPk(products[productIndex2++].id)
-                const prod3 = await Product.findByPk(products[productIndex3++].id)
-                const prod4 = await Product.findByPk(products[productIndex4++].id)
-                const prod5 = await Product.findByPk(products[productIndex5++].id)
-                const prod6 = await Product.findByPk(products[productIndex6++].id)
-                const review1 = {
-                    id: id1,
+        for(let user of users) {
+            for(let product of products) {
+                const id = uuidv4()
+                const review = {
+                    id,
                     comment: randomComments[Math.round(Math.random()*randomComments.length)],
                     rating: Math.floor(Math.random()*3+3),
                     UserId: user.id,
-                    ProductId: prod1.id
+                    ProductId: product.id
                 }
-                const review2 = {
-                    id: id2,
-                    comment: randomComments[Math.round(Math.random()*randomComments.length)],
-                    rating: Math.floor(Math.random()*3+3),
-                    UserId: user.id,
-                    ProductId: prod2.id
-                }
-                const review3 = {
-                    id: id3,
-                    comment: randomComments[Math.round(Math.random()*randomComments.length)],
-                    rating: Math.floor(Math.random()*3+3),
-                    UserId: user.id,
-                    ProductId: prod3.id
-                }
-                const review4 = {
-                    id: id4,
-                    comment: randomComments[Math.round(Math.random()*randomComments.length)],
-                    rating: Math.floor(Math.random()*3+3),
-                    UserId: user.id,
-                    ProductId: prod4.id
-                }
-                const review5 = {
-                    id: id5,
-                    comment: randomComments[Math.round(Math.random()*randomComments.length)],
-                    rating: Math.floor(Math.random()*3+3),
-                    UserId: user.id,
-                    ProductId: prod5.id
-                }
-                const review6 = {
-                    id: id6,
-                    comment: randomComments[Math.round(Math.random()*randomComments.length)],
-                    rating: Math.floor(Math.random()*3+3),
-                    UserId: user.id,
-                    ProductId: prod6.id
-                }
-                await Review.create(review1) 
-                await prod1.addReview(review1.id)
-                await user.addReview(review1.id)
-                await Review.create(review2) 
-                await prod2.addReview(review2.id)
-                await user.addReview(review2.id)
-                await Review.create(review3) 
-                await prod3.addReview(review3.id)
-                await user.addReview(review3.id)
-                await Review.create(review4) 
-                await prod4.addReview(review4.id)
-                await user.addReview(review4.id)
-                await Review.create(review5) 
-                await prod5.addReview(review5.id)
-                await user.addReview(review5.id)
-                await Review.create(review6) 
-                await prod6.addReview(review6.id)
-                await user.addReview(review6.id)
-            } catch(err) {
-                console.error(err)
-            }      
-        })
-        await Promise.all(promises)
-        .then(result => result)
-        .catch(err => console.error(err))
+                const newReview = await Review.create(review)
+                await product.addReview(newReview)
+                await user.addReview(newReview)
+            }
+        }
     } catch(err) {
         console.error(err)
     }
