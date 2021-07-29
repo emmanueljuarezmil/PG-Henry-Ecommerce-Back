@@ -1,4 +1,4 @@
-const { User, Product, favourites } = require('../../db.js');
+const { User, Product, favourites, Review } = require('../../db.js');
 const { v4: uuidv4 } = require('uuid');
 const axios = require('axios')
 const { Op } = require("sequelize");
@@ -202,10 +202,24 @@ const quitFav= async(req, res, next) => {
     }
 }
 
-const getFavs = async(req, res, next) => {
+const getFavs = async(req, res, next) => { 
     const {iduser} = req.headers
     try {
-        const user = await User.findByPk(iduser, {include: Product})
+        const user = await User.findByPk(iduser, {
+            include: {
+                model: Product,
+                include: {
+                    model: Review
+                },
+                attributes:{
+                    exclude
+                }
+            },
+            attributes:{
+                exclude
+            }
+            
+        })
         return res.json(user)
     }catch(error){
         next(error)
