@@ -72,7 +72,6 @@ async function getProducts(req, res, next) {
             ],
             order: [[orderBy, orderType]]
         })
-        console.log('llegoooooo')
         return res.send({ totalPage: Math.ceil(count.length / itemsPerPage), products })
     } catch (err) {
         next(err)
