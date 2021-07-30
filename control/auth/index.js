@@ -56,6 +56,7 @@ const isAuth = async (req, res, next) => {
         next()
       }
     } catch(err) {
+      console.log('Error de isAuth')
       return res.status(400).send(err)
     }
   }
