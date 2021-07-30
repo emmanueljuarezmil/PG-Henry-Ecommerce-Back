@@ -251,7 +251,7 @@ async function authenticationCode(req, res, next) {
         else if (!user.authenticationCode) {
             user.authenticationCode = req.query.authenticationCode
             await user.save()
-            await axios(`http://localhost:3000/user/sendmail?type=welcome&idUser=${user.id}`, {
+            await axios(`https://elgramofono.tk/api/user/sendmail?type=welcome&idUser=${user.id}`, {
                 headers: {
                     name: user.userName,
                     email: user.email

@@ -110,7 +110,7 @@ async function getProductsById(req, res, next) {
             ]
         })
         if(!product) return next({message: "No se ha encontrado un producto con el id enviado"})
-        product.views+=1
+        product.views= product.views + 1
         await product.save()
         return res.status(200).json(product);
     } catch (err) {
@@ -177,7 +177,7 @@ async function updateProduct(req, res, next) {
         if (product.Users && product.stock === 0 && stock > 0){
             product.Users.map((user) => {
                 console.log('aca pase')
-                axios(`http://localhost:3000/user/sendmail?type=available`,{
+                axios(`https://elgramofono.tk/api/user/sendmail?type=available`,{
                     headers: {
                         name: user.name,
                         email: user.email,

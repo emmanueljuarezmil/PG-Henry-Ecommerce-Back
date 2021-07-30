@@ -19,9 +19,9 @@ async function checkoutMP (req, res, next) {
     const preference = {
         items: itemsToMP,
         back_urls: {
-            success: 'http://localhost:3001',
-            failure: 'http://localhost:3001',
-            pending: 'http://localhost:3001',
+            success: 'https://elgramofono.tk',
+            failure: 'https://elgramofono.tk',
+            pending: 'https://elgramofono.tk',
         },
         auto_return: 'approved',
     };
