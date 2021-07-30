@@ -91,7 +91,7 @@ const userOrders = async (req, res, next) => {
 const getOrderById = async (req, res, next) => {
     const { id } = req.params
     try {
-        const order = await Order.findAll({
+        const order = await Order.findOne({
             where: {
                 id
             },
@@ -103,12 +103,12 @@ const getOrderById = async (req, res, next) => {
                 attributes: {
                     exclude
                 },
-                through: {
-                    model: Order_Line,
-                    attributes: []
-                }
             }
         })
+        for(let product of order.Products) {
+            product.setDataValue('quantity', product.Order_Line.quantity)
+        }
+        console.log(order)
         return res.send(order)
     } catch (err) {
         next(err)
