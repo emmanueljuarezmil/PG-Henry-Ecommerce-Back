@@ -10,55 +10,63 @@
         "name": "Sofia Rocchietti",
         "hashedPassword": "Wsdfldksdf",
         "email": "sofiadvr19@gmail.com",
-        "admin": true
+        "admin": true,
+        "authenticatedByCode": true
     },
     {
         "userName": "GianCucinotta",
         "name": "Gianfranco Cucinotta",
         "hashedPassword": "jskxx45Swsxff",
         "email": "giancucinotta@gmail.com",
-        "admin": true
+        "admin": true,
+        "authenticatedByCode": true
     },
     {
         "userName": "EcommerceAdmin",
         "name": "Ecommerce Admin",
         "hashedPassword": "jskxx45Swsxff",
         "email": "ecommercemusical@gmail.com",
-        "admin": true
+        "admin": true,
+        "authenticatedByCode": true
     },
     {
         "userName": "IñaOtegui",
         "name": "Iñaki Otegui",
         "hashedPassword": "jskdf3xx45Swsxff",
         "email": "inakiotegui1@gmail.com",
-        "admin": true
+        "admin": true,
+        "authenticatedByCode": true
     },
     {
         "userName": "RodriRomero",
         "name": "Rodrigo Romero",
         "hashedPassword": "jskxasdx45Swsxff",
         "email": "rodrigoignacio932@gmail.com",
-        "admin": true
+        "admin": true,
+        "authenticatedByCode": true
     },
     {
         "userName": "EmmaJuarez",
         "name": "Emmanuel juarez",
         "hashedPassword": "js234zxkxx45Swsxff",
         "email": "emmanueljuarezmil@gmail.com",
-        "admin": true
+        "admin": true,
+        "authenticatedByCode": true
     },
     {
         "userName": "FerPerez",
         "name": "Fernando Perez",
         "hashedPassword": "jskxx45Swsxff",
         "email": "perezdiezf@gmail.com",
-        "admin": true
+        "admin": true,
+        "authenticatedByCode": true
     },
     {
         "userName": "PablitoRetamar",
         "name": "Pablo Retamar",
         "hashedPassword": "jskxx45Swsxff",
         "email": "jpretamare@gmail.com",
-        "admin": true
+        "admin": true,
+        "authenticatedByCode": true
     }
 ]
