@@ -471,7 +471,7 @@ const sendMail = async (req, res, next) => {
         const emm = req.headers.email
         const nombre = req.headers.name
         const prodName = req.body.prodName
-        const productURL = `${frontURL}/product/${req.headers.idproduct}`
+        const productURL = `${frontURL}/products/p/${req.headers.idproduct}`
         const templateHTML_available= `
 <table style="border-collapse: collapse;table-layout: fixed;border-spacing: 0;mso-table-lspace: 0pt;mso-table-rspace: 0pt;vertical-align: top;min-width: 320px;Margin: 0 auto;background-color: #f9f9f9;width:100%" cellpadding="0" cellspacing="0">
 <tbody>
