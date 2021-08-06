@@ -108,7 +108,6 @@ const getOrderById = async (req, res, next) => {
         for(let product of order.Products) {
             product.setDataValue('quantity', product.Order_Line.quantity)
         }
-        console.log(order)
         return res.send(order)
     } catch (err) {
         next(err)
@@ -177,8 +176,9 @@ const updateOrder = async (req, res, next) => {
             }
         })
         if (!order) {
-            order = await Order.create()
-            await order.addUser(UserId)
+            order = await Order.create({
+                UserId
+            })
         }
         for(let product of products) {
     
@@ -241,6 +241,7 @@ const updateOrder = async (req, res, next) => {
             orderId: order.id
         })
     } catch (err) {
+        console.error(err)
         return res.status(400).send(err)
     }
 };
