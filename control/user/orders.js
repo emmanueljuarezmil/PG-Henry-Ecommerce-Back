@@ -108,7 +108,7 @@ const getOrderById = async (req, res, next) => {
         for(let product of order.Products) {
             product.setDataValue('quantity', product.Order_Line.quantity)
         }
-        console.log(order)
+        // console.log(order)
         return res.send(order)
     } catch (err) {
         next(err)
