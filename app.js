@@ -18,6 +18,13 @@ const app = express();
 /* app.set('views', path.join(__dirname, 'views')); */
 /* app.use(bodyParser.json()); */
 
+app.use(morgan('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(cors())
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', frontURL || '*'); // update to match the domain you will make the request from
   res.header('Access-Control-Allow-Credentials', 'true');
@@ -25,13 +32,6 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
   next();
 });
-
-app.use(morgan('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(cors())
-app.use(express.static(path.join(__dirname, 'public')));
 
 // uncomment to see request data
 // app.use('/', (req,res,next) => {
